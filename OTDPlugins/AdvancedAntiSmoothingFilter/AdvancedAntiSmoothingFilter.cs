@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using TabletDriverPlugin;
 using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Tablet;
@@ -14,16 +13,10 @@ namespace OpenTabletDriverPlugins
     {
         public virtual Point Filter(Point point)
         {
-            if (!stopWatch.IsRunning)
-            {
-                stopWatch.Start();
-                return point;
-            }
+            TimeSpan timeSpanDelta = DateTime.Now - _lastTime;
 
-            stopWatch.Stop();
             _lastPredictedPoint ??= point;
-            float timeDelta = (float) stopWatch.Elapsed.TotalMilliseconds;
-            stopWatch.Reset();
+            float timeDelta = (float) timeSpanDelta.TotalMilliseconds;
 
             float XVelocity = (point.X - (_lastPoint ?? point).X) / timeDelta;
             float YVelocity = (point.Y - (_lastPoint ?? point).Y) / timeDelta;
@@ -72,7 +65,7 @@ namespace OpenTabletDriverPlugins
             _lastVelocityY = YVelocity;
             _lastPredictedPoint = predicted;
             _lastPoint = point;
-            stopWatch.Start();
+            _lastTime = DateTime.Now;
             return predicted;
         }
 
@@ -127,7 +120,7 @@ namespace OpenTabletDriverPlugins
         private LinkedList<float> _yVelocityAvg = new LinkedList<float>();
         private LinkedList<float> _xAccelAvg = new LinkedList<float>();
         private LinkedList<float> _yAccelAvg = new LinkedList<float>();
-        private Stopwatch stopWatch = new Stopwatch();
+        private DateTime _lastTime;
 
         [BooleanProperty("Pure Prediction", "Enable pure predicted cursor. (Use with Caution! Inaccurate, not yet ready)")]
         public bool PurePredict
