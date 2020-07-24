@@ -5,14 +5,14 @@ OTDPlugins is a collection of extensions for [OpenTabletDriver](https://github.c
 
 ## Plugins
 
-- Advanced AntiSmoothing Filter
+- [Advanced AntiSmoothing Filter](https://github.com/X9VoiD/OTDPlugins/wiki/Advanced-Anti-Smoothing-Filter) (deprecated)
 
       Latency Compensation
     
-- ExpASFilter
+- [ExpASFilter](https://github.com/X9VoiD/OTDPlugins/wiki/ExperimentalASFilter)
 
       Physically Accurate Latency Compensation
       Noise Reduction
-      Pure Prediction
-      Highly Configurable (from anti-smoothing to low-latency smoothing)
-    > and [HaHaBear](https://www.youtube.com/channel/UC2oeDq4MU9fUvPRVn2ZuYKw) simulator (when misconfigured)
+      MachineLearning-based Prediction
+      Highly Configurable
+    > [HaHaBear](https://www.youtube.com/channel/UC2oeDq4MU9fUvPRVn2ZuYKw) simulator (when misconfigured)
