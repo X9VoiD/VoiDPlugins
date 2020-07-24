@@ -170,7 +170,7 @@ namespace OpenTabletDriverPlugins
 
         #endregion Private Functions
 
-        private int _samples = 4, _degree = 1, _ahead = 6;
+        private int _samples = 6, _degree = 1, _ahead = 8;
         private LinkedList<TimeSeriesPoint> _timeSeriesPoints = new LinkedList<TimeSeriesPoint>();
         private LinkedList<double> _reportRateAvg = new LinkedList<double>();
         private double _reportRate;
