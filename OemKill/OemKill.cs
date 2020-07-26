@@ -43,7 +43,10 @@ namespace OemKill
         {
             // XP-Pen
             "PentabletService",
-            "PenTablet"
+            "PenTablet",
+            "WacomDesktopCenter",
+            "Wacom_Tablet",
+            "Pen_Tablet"
         };
 
         public void Dispose() { }
