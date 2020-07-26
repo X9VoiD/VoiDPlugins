@@ -23,6 +23,7 @@ jobs:
       run: |
         dotnet publish AdvancedAntiSmoothingFilter/AdvancedAntiSmoothingFilter.csproj --configuration Release --framework netcoreapp3.1 -o ./build/netcoreapp3.1/AASF
         dotnet publish ExperimentalASFilter/ExperimentalASFilter.csproj --configuration Release --framework netcoreapp3.1 -o ./build/netcoreapp3.1/EASF
+        dotnet publish OemKill/OemKill.csproj --configuration Release --framework netcoreapp3.1 -o ./build/netcoreapp3.1/OemKill
     - name: Setup .NET 5.0
       uses: actions/setup-dotnet@v1
       with:
@@ -31,6 +32,7 @@ jobs:
       run: |
         dotnet publish AdvancedAntiSmoothingFilter/AdvancedAntiSmoothingFilter.csproj --configuration Release --framework net5.0 -o ./build/net5.0/AASF
         dotnet publish ExperimentalASFilter/ExperimentalASFilter.csproj --configuration Release --framework net5.0 -o ./build/net5.0/EASF
+        dotnet publish OemKill/OemKill.csproj --configuration Release --framework net5.0 -o ./build/net5.0/OemKill
     - name: Upload AASF (NET Core 3.1)
       uses: actions/upload-artifact@main
       with:
@@ -63,3 +65,19 @@ jobs:
           ./build/net5.0/EASF/*.dll
           !./build/net5.0/EASF/*.json
           !./build/net5.0/EASF/TabletDriverPlugin.dll
+    - name: Upload OemKill (NET Core 3.1)
+      uses: actions/upload-artifact@main
+      with:
+        name: OemKill (NET Core 3.1)
+        path: |
+          ./build/netcoreapp3.1/OemKill/*.dll
+          !./build/netcoreapp3.1/OemKill/*.json
+          !./build/netcoreapp3.1/OemKill/TabletDriverPlugin.dll
+    - name: Upload OemKill (NET 5.0)
+      uses: actions/upload-artifact@main
+      with:
+        name: OemKill (NET 5.0)
+        path: |
+          ./build/net5.0/OemKill/*.dll
+          !./build/net5.0/OemKill/*.json
+          !./build/net5.0/OemKill/TabletDriverPlugin.dll
