@@ -24,7 +24,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.x
+        
     - name: Build
+      env:
+        plugin: ${{ matrix.plugin }}
       run: dotnet publish $plugin --configuration Release --framework netcoreapp3.1 -o ./build/netcoreapp3.1/$plugin
       
     - name: Upload ${{ matrix.plugin }}
@@ -35,6 +38,3 @@ jobs:
           ./build/netcoreapp3.1/${{ matrix.plugin }}/*.dll
           !./build/netcoreapp3.1/${{ matrix.plugin }}/*.json
           !./build/netcoreapp3.1/${{ matrix.plugin }}/TabletDriverPlugin.dll
-          
-      env:
-        plugin: ${{ matrix.plugin }}
