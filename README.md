@@ -16,3 +16,8 @@ OTDPlugins is a collection of extensions for [OpenTabletDriver](https://github.c
       MachineLearning-based Prediction
       Highly Configurable
     > [HaHaBear](https://www.youtube.com/channel/UC2oeDq4MU9fUvPRVn2ZuYKw) simulator (when misconfigured)
+    
+- [OemKill](https://github.com/X9VoiD/OTDPlugins/wiki/OemKill)
+
+      Automatically kill OEM Tablet Driver processes
+      
