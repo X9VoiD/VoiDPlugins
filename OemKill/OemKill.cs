@@ -44,6 +44,8 @@ namespace OemKill
             // XP-Pen
             "PentabletService",
             "PenTablet",
+
+            // Wacom
             "WacomDesktopCenter",
             "Wacom_Tablet",
             "Pen_Tablet"
