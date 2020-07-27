@@ -1,6 +1,5 @@
 ﻿using ExpASFilter;
 using MathNet.Numerics;
-using MathNet.Numerics.LinearRegression;
 using System;
 using System.Collections.Generic;
 using TabletDriverPlugin;
@@ -17,7 +16,6 @@ namespace OpenTabletDriverPlugins
         {
             DateTime date = DateTime.Now;
             CalcReportRate(date);
-            var reportRateAvg = CalcReportRateAvg();
 
             if (AddTimeSeriesPoint(point, date))
             {
@@ -36,23 +34,12 @@ namespace OpenTabletDriverPlugins
                 }
 
                 Polynomial xCoeff, yCoeff;
-                if (Weighted)
-                {
-                    var weights = CalcWeight();
-                    xCoeff = new Polynomial(Fit.PolynomialWeighted(timeMatrix, x, weights, Degree));
-                    yCoeff = new Polynomial(Fit.PolynomialWeighted(timeMatrix, y, weights, Degree));
-                }
-                else
-                {
-                    xCoeff = new Polynomial(Fit.Polynomial(timeMatrix, x, Degree, DirectRegressionMethod.Svd));
-                    yCoeff = new Polynomial(Fit.Polynomial(timeMatrix, y, Degree, DirectRegressionMethod.Svd));
-                }
+                var weights = CalcWeight(Weight);
+                xCoeff = new Polynomial(Fit.PolynomialWeighted(timeMatrix, x, weights, Degree));
+                yCoeff = new Polynomial(Fit.PolynomialWeighted(timeMatrix, y, weights, Degree));
 
                 double predictAhead;
-                if (Sync)
-                    predictAhead = 1000.0 / reportRateAvg * Ahead;
-                else
-                    predictAhead = (date - _timeSeriesPoints.First.Value.Date).TotalMilliseconds + Compensation;
+                predictAhead = (date - _timeSeriesPoints.First.Value.Date).TotalMilliseconds + Compensation;
 
                 predicted.X = (float)xCoeff.Evaluate(predictAhead);
                 predicted.Y = (float)yCoeff.Evaluate(predictAhead);
@@ -64,7 +51,7 @@ namespace OpenTabletDriverPlugins
 
                 var now = DateTime.Now;
                 if ((now - date).TotalMilliseconds > CalcReportRateAvg())
-                    Log.Write("ExpASFilter", now + ": CPU choking hard. Latency higher than normal. We missed a hz.");
+                    Log.Write("ExpASFilter", now + ": High CPU Latency. Report delayed.");
 
                 _lastTime = date;
                 return predicted;
@@ -107,15 +94,11 @@ namespace OpenTabletDriverPlugins
 
             if (axis == Axis.X)
                 foreach (var timePoint in _timeSeriesPoints)
-                {
                     points[++index] = timePoint.Point.X;
-                }
 
             else if (axis == Axis.Y)
                 foreach (var timePoint in _timeSeriesPoints)
-                {
                     points[++index] = timePoint.Point.Y;
-                }
 
             return points;
         }
@@ -156,13 +139,13 @@ namespace OpenTabletDriverPlugins
             return avg / _reportRateAvg.Count;
         }
 
-        private double[] CalcWeight()
+        private double[] CalcWeight(double ratio)
         {
             var weights = new List<double>();
             var weightsNormalized = new List<double>();
             double weight = 1;
             foreach (var point in _timeSeriesPoints)
-                weights.Add(weight *= 2);
+                weights.Add(weight *= ratio);
             foreach (var _weight in weights)
                 weightsNormalized.Add(_weight / weights[^1]);
             return weightsNormalized.ToArray();
@@ -170,18 +153,18 @@ namespace OpenTabletDriverPlugins
 
         #endregion Private Functions
 
-        private int _samples = 6, _degree = 1, _ahead = 8;
+        private double _compensation = 0, _weight = 2;
+        private int _samples = 20, _degree = 2;
         private LinkedList<TimeSeriesPoint> _timeSeriesPoints = new LinkedList<TimeSeriesPoint>();
         private LinkedList<double> _reportRateAvg = new LinkedList<double>();
         private double _reportRate;
         private DateTime _lastTime = DateTime.Now;
-        private double _compensation;
-        private bool _normalize, _sync, _weighted;
+        private bool _normalize;
         private int _screenWidth, _screenHeight;
 
         #region Controls
 
-        [UnitProperty("Compensation", "ms")]
+        [UnitProperty("Offset", "ms")]
         public double Compensation
         {
             set => CompensationFunc(ref _compensation, value);
@@ -195,14 +178,21 @@ namespace OpenTabletDriverPlugins
             get => _samples;
         }
 
-        [Property("Degree")]
+        [Property("Complexity")]
         public int Degree
         {
             set => DegreeFunc(ref _degree, value);
             get => _degree;
         }
 
-        [BooleanProperty("Normalize", "Preprocess the input before performing regression. (may improve accuracy) Set Screen Dimensions below when enabling Normalization.")]
+        [Property("Weight")]
+        public double Weight
+        {
+            set => RaiseAndSetIfChanged(ref _weight, value);
+            get => _weight;
+        }
+
+        [BooleanProperty("Normalize", "Preprocess the input. Set Screen Dimensions below when enabling Normalization.")]
         public bool Normalize
         {
             set => RaiseAndSetIfChanged(ref _normalize, value);
@@ -223,61 +213,37 @@ namespace OpenTabletDriverPlugins
             get => _screenHeight;
         }
 
-        [BooleanProperty("Synchronize to Report Rate", "Compensation will be ignored in respect for tablet's report rate. Set below how many tablet reports to predict ahead.")]
-        public bool Sync
-        {
-            set => RaiseAndSetIfChanged(ref _sync, value);
-            get => _sync;
-        }
-
-        [Property("Reports Ahead")]
-        public int Ahead
-        {
-            set => RaiseAndSetIfChanged(ref _ahead, value);
-            get => _ahead;
-        }
-
-        [BooleanProperty("Exponential Weighted Polynomial Regression", "Well...")]
-        public bool Weighted
-        {
-            set => RaiseAndSetIfChanged(ref _weighted, value);
-            get => _weighted;
-        }
-
         #endregion Controls
 
         #region Control Utility Functions
 
         private void CompensationFunc(ref double a, double value)
         {
-            if (value > 30)
-                Log.Write("ExpASFilter", "Unrealistic latency compensation. [Compensation: " + value + "ms]", true);
+            if (value == 0)
+                Log.Write("ExpASFilter", "Mode: Sub-Zero Latency Cursor Correction");
+            else if (value > 0)
+            {
+                Log.Write("ExpASFilter", "Mode: Latency Compensation");
+                if (value > 18)
+                    Log.Write("ExpASFilter", "Unrealistic latency compensation. [Compensation: " + value + "ms]", true);
+            }
+            else if (value < 0)
+                Log.Write("ExpASFilter", "Mode: Interpolation");
             RaiseAndSetIfChanged(ref a, value);
         }
 
         private void SamplesFunc(ref int a, int value)
         {
             int minimum = Degree + 1;
-            var suggested = Math.Pow(Degree, 2);
 
-            if (value > 12)
-                Log.Write("ExpASFilter",
-                    "Samples too high. Expect higher latency." +
-                    "[Samples: " + value + "]", true);
-
-            else if (value <= minimum)
+            if (value <= minimum)
             {
                 Log.Write("ExpASFilter",
                     "Samples too low for selected degree." +
-                    "[Samples: " + value + ", Required Minimum: " + minimum + "]", true);
+                    "[Samples: " + value + ", Requirement: >" + value + "]", true);
                 RaiseAndSetIfChanged(ref a, minimum);
                 return;
             }
-
-            if (value <= suggested)
-                Log.Write("ExpASFilter",
-                    "Samples might not be enough for an accurate prediction." +
-                    "[Samples: " + value + ", Suggestion: " + suggested + "]");
 
             RaiseAndSetIfChanged(ref a, value);
         }
@@ -286,11 +252,14 @@ namespace OpenTabletDriverPlugins
         {
             if (value == 0)
             {
-                Log.Write("ExpASFilter", "Degree cannot be zero", true);
+                Log.Write("ExpASFilter", "Complexity cannot be zero", true);
             }
-            else if (value > 5)
+            else if (value > 10)
+            {
                 Log.Write("ExpASFilter", "Degree too high, might cause instability and inaccuracy issues" +
-                    "[Suggestion: Degree <= 5]");
+                          "[Suggestion: (Degree <= 10, Normalization: enable)]");
+            }
+
             RaiseAndSetIfChanged(ref a, value);
         }
 
