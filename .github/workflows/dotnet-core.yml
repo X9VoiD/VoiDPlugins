@@ -38,3 +38,4 @@ jobs:
           ./build/netcoreapp3.1/${{ matrix.plugin }}/*.dll
           !./build/netcoreapp3.1/${{ matrix.plugin }}/*.json
           !./build/netcoreapp3.1/${{ matrix.plugin }}/TabletDriverPlugin.dll
+          !./build/netcoreapp3.1/${{ matrix.plugin }}/Newtonsoft.Json.dll
