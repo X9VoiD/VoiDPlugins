@@ -4,10 +4,6 @@
 OTDPlugins is a collection of extensions for [OpenTabletDriver](https://github.com/InfinityGhost/OpenTabletDriver). 
 
 ## Plugins
-
-- [Advanced AntiSmoothing Filter](https://github.com/X9VoiD/OTDPlugins/wiki/Advanced-Anti-Smoothing-Filter) (deprecated)
-
-      Latency Compensation
     
 - [ExpASFilter](https://github.com/X9VoiD/OTDPlugins/wiki/ExperimentalASFilter)
 

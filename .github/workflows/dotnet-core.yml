@@ -13,7 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        plugin: [AdvancedAntiSmoothingFilter, ExperimentalASFilter, OemKill]
+        plugin: [ExperimentalASFilter, OemKill]
 
     runs-on: ubuntu-latest
 
