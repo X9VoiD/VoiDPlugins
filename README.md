@@ -3,6 +3,19 @@
 
 OTDPlugins is a collection of extensions for [OpenTabletDriver](https://github.com/InfinityGhost/OpenTabletDriver). 
 
+## Installation
+
+Select and Download plugins from [Github Actions](https://github.com/X9VoiD/OTDPlugins/actions), then unpack to this directory below
+
+#### Windows
+`%localappdata%\OpenTabletDriver\Plugins`
+
+#### Linux
+`~/.config/OpenTabletDriver/Plugins`
+
+#### MacOS
+`$HOME/Library/Application Support/OpenTabletDriver/Plugins`    
+
 ## Plugins
     
 - [ExpASFilter](https://github.com/X9VoiD/OTDPlugins/wiki/ExperimentalASFilter)
