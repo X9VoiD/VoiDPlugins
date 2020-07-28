@@ -35,8 +35,16 @@ namespace OpenTabletDriverPlugins
 
                 Polynomial xCoeff, yCoeff;
                 var weights = CalcWeight(Weight);
-                xCoeff = new Polynomial(Fit.PolynomialWeighted(timeMatrix, x, weights, Degree));
-                yCoeff = new Polynomial(Fit.PolynomialWeighted(timeMatrix, y, weights, Degree));
+                try
+                {
+                    xCoeff = new Polynomial(Fit.PolynomialWeighted(timeMatrix, x, weights, Degree));
+                    yCoeff = new Polynomial(Fit.PolynomialWeighted(timeMatrix, y, weights, Degree));
+                }
+                catch (Exception)
+                {
+                    Log.Write("ExpASFilter", "Error in calculation");
+                    return point;
+                }
 
                 double predictAhead;
                 predictAhead = (date - _timeSeriesPoints.First.Value.Date).TotalMilliseconds + Compensation;
@@ -50,7 +58,7 @@ namespace OpenTabletDriverPlugins
                 }
 
                 var now = DateTime.Now;
-                if ((now - date).TotalMilliseconds > CalcReportRateAvg())
+                if ((now - date).TotalMilliseconds > 1000.0 / CalcReportRateAvg())
                     Log.Write("ExpASFilter", now + ": High CPU Latency. Report delayed.");
 
                 _lastTime = date;
@@ -220,7 +228,7 @@ namespace OpenTabletDriverPlugins
         private void CompensationFunc(ref double a, double value)
         {
             if (value == 0)
-                Log.Write("ExpASFilter", "Mode: Sub-Zero Latency Cursor Correction");
+                Log.Write("ExpASFilter", "Mode: Low Latency Cursor Correction");
             else if (value > 0)
             {
                 Log.Write("ExpASFilter", "Mode: Latency Compensation");
