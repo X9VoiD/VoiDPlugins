@@ -20,14 +20,17 @@ namespace OemKill
 
             if (oemProcesses.ToList().Count == 0)
             {
-                Log.Write("OemKill", "No processes found");
+                Log.Write("OemKill", "No oem process found");
                 return true;
             }
 
             try
             {
                 foreach (var process in oemProcesses)
+                {
                     process.Kill();
+                    Log.Write("OemKill", "Killing " + process.ProcessName);
+                }
             }
             catch (Exception e)
             {
