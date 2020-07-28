@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30309.148
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvancedAntiSmoothingFilter", "AdvancedAntiSmoothingFilter\AdvancedAntiSmoothingFilter.csproj", "{57B25DD4-4DBC-4A63-84D0-7C50E33D3185}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExperimentalASFilter", "ExperimentalASFilter\ExperimentalASFilter.csproj", "{6421C523-5A5A-4F52-BB6B-A35F2381AA6E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OemKill", "OemKill\OemKill.csproj", "{4EC8FA2D-0CCC-4FC3-A32A-BC063924A803}"
@@ -15,10 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{57B25DD4-4DBC-4A63-84D0-7C50E33D3185}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57B25DD4-4DBC-4A63-84D0-7C50E33D3185}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57B25DD4-4DBC-4A63-84D0-7C50E33D3185}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57B25DD4-4DBC-4A63-84D0-7C50E33D3185}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6421C523-5A5A-4F52-BB6B-A35F2381AA6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6421C523-5A5A-4F52-BB6B-A35F2381AA6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6421C523-5A5A-4F52-BB6B-A35F2381AA6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
