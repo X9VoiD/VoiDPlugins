@@ -16,10 +16,28 @@ namespace OpenTabletDriverPlugins
         {
             DateTime date = DateTime.Now;
             CalcReportRate(date);
+            var predicted = new Point();
+            var feedPoint = new Point();
+            bool fed = false;
 
-            if (AddTimeSeriesPoint(point, date))
+            if (Feed)
             {
-                var predicted = new Point();
+                if (AddPoint(point))
+                {
+                    foreach (var lastPoint in _lastPoints)
+                        feedPoint += lastPoint;
+                    feedPoint.X /= _lastPoints.Count;
+                    feedPoint.Y /= _lastPoints.Count;
+                    fed = AddTimeSeriesPoint(feedPoint, date);
+                }
+            }
+            else
+            {
+                fed = AddTimeSeriesPoint(point, date);
+            }
+
+            if (fed)
+            {
                 var timeMatrix = ConstructTimeDesignMatrix();
                 double[] x, y;
                 if (Normalize)
@@ -40,7 +58,7 @@ namespace OpenTabletDriverPlugins
                     xCoeff = new Polynomial(Fit.PolynomialWeighted(timeMatrix, x, weights, Degree));
                     yCoeff = new Polynomial(Fit.PolynomialWeighted(timeMatrix, y, weights, Degree));
                 }
-                catch (Exception)
+                catch
                 {
                     Log.Write("ExpASFilter", "Error in calculation");
                     return point;
@@ -51,10 +69,28 @@ namespace OpenTabletDriverPlugins
 
                 predicted.X = (float)xCoeff.Evaluate(predictAhead);
                 predicted.Y = (float)yCoeff.Evaluate(predictAhead);
+
                 if (Normalize)
                 {
                     predicted.X *= ScreenWidth;
                     predicted.Y *= ScreenHeight;
+                }
+
+                Point finalPoint = new Point();
+
+                if (Feed || AvgSamples == 0)
+                    finalPoint = predicted;
+                else
+                {
+                    if (AddPoint(predicted) && AvgSamples > 0)
+                    {
+                        foreach (var tempPoint in _lastPoints)
+                        {
+                            finalPoint += tempPoint;
+                        }
+                        finalPoint.X /= _lastPoints.Count;
+                        finalPoint.Y /= _lastPoints.Count;
+                    }
                 }
 
                 var now = DateTime.Now;
@@ -62,7 +98,7 @@ namespace OpenTabletDriverPlugins
                     Log.Write("ExpASFilter", now + ": High CPU Latency. Report delayed.");
 
                 _lastTime = date;
-                return predicted;
+                return finalPoint;
             }
             _lastTime = date;
             return point;
@@ -76,6 +112,16 @@ namespace OpenTabletDriverPlugins
             if (_timeSeriesPoints.Count > Samples)
                 _timeSeriesPoints.RemoveFirst();
             if (_timeSeriesPoints.Count == Samples)
+                return true;
+            return false;
+        }
+
+        private bool AddPoint(Point point)
+        {
+            _lastPoints.AddLast(point);
+            if (_lastPoints.Count > AvgSamples)
+                _lastPoints.RemoveFirst();
+            if (_lastPoints.Count == AvgSamples)
                 return true;
             return false;
         }
@@ -162,13 +208,14 @@ namespace OpenTabletDriverPlugins
         #endregion Private Functions
 
         private double _compensation = 0, _weight = 2;
-        private int _samples = 20, _degree = 2;
+        private int _samples = 20, _avgSamples, _degree = 2;
         private LinkedList<TimeSeriesPoint> _timeSeriesPoints = new LinkedList<TimeSeriesPoint>();
         private LinkedList<double> _reportRateAvg = new LinkedList<double>();
         private double _reportRate;
         private DateTime _lastTime = DateTime.Now;
-        private bool _normalize;
+        private bool _normalize, _feed;
         private int _screenWidth, _screenHeight;
+        private LinkedList<Point> _lastPoints = new LinkedList<Point>();
 
         #region Controls
 
@@ -219,6 +266,20 @@ namespace OpenTabletDriverPlugins
         {
             set => RaiseAndSetIfChanged(ref _screenHeight, value);
             get => _screenHeight;
+        }
+
+        [Property("Averaging Samples")]
+        public int AvgSamples
+        {
+            set => RaiseAndSetIfChanged(ref _avgSamples, value);
+            get => _avgSamples;
+        }
+
+        [BooleanProperty("Feed to Filter", "")]
+        public bool Feed
+        {
+            set => RaiseAndSetIfChanged(ref _feed, value);
+            get => _feed;
         }
 
         #endregion Controls
