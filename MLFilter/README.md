@@ -14,11 +14,13 @@ These are the different configuration knobs for the filter.
 
 Amount of time in milliseconds to offset the prediction for the next point.
 
-* Zero Offset - Filter will apply sub-zero latency cursor correction.
+* Zero Offset - Filter will apply low latency cursor correction.
 * Positive Offset - Filter will try to predict future cursor position.
 * Negative Offset - Filter will delay cursor position to smooth out movement.
 
-> *Over compensating may result in inaccurate and erratic cursor movement.*
+> *High positive offset may result in inaccurate and erratic cursor movement.*  
+
+> *High negative offset does not guarantee smoother cursor movement.*
 
 ### Samples
 
