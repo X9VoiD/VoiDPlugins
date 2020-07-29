@@ -51,7 +51,11 @@ namespace OemKill
             // Wacom
             "WacomDesktopCenter",
             "Wacom_Tablet",
-            "Pen_Tablet"
+            "Pen_Tablet",
+
+            // Gaomon
+            "Gaomon Tablet",
+            "TabletDriverCore"
         };
 
         public void Dispose() { }
