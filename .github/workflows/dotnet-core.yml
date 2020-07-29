@@ -13,7 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        plugin: [ExperimentalASFilter, OemKill]
+        plugin: [MLFilter, OemKill]
 
     runs-on: ubuntu-latest
 

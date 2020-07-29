@@ -1,17 +1,17 @@
-# ExpASFilter
+# MLFilter
 
-A general purpose filter which uses machine learning techniques to process cursor points of up to N samples and M degree of complexity. It can be configured to be used as a latency compensation filter, or a low-latency jitter-reduction filter.
+A general purpose filter which uses machine learning techniques to process cursor points of up to N samples and M degree of complexity. It can be configured to be used as a latency compensation filter, a low latency cursor correction filter, or a smart smoothing filter.
 
-# Installation
+## Installation
 
 Donwnload the plugins from [latest releases.](https://github.com/X9VoiD/OTDPlugins/actions)
 
-# Configuration Help
+## Configuration Help
 
 These are the different configuration knobs for the filter.
 
 
-## Offset
+### Offset
 Amount of time in milliseconds to offset the prediction for the next point.    
 
 * Zero Offset - Filter will apply sub-zero latency cursor correction.
@@ -20,7 +20,7 @@ Amount of time in milliseconds to offset the prediction for the next point.
 > *Over compensating may result in inaccurate and erratic cursor movement.*    
    
 
-## Samples
+### Samples
 Determines how long of a history to keep to feed into the filter.    
 
 A sample is defined as an update in cursor position.    
@@ -29,18 +29,18 @@ A sample is defined as an update in cursor position.
     
 > **Sample must be Degree +1!**    
 
-## Complexity
+### Complexity
 Determines the complexity of prediction to compute by the filter.    
     
 > **Higher complexities might require normalization to work correctly.**
     
 
-## Normalize
+### Normalize
 Determines whether to convert cursor position scale to a maximum of 1. Helps when using high complexity    
 > **_Screen Width_ and _Screen Height_ have to be configured if turning on normalization**
     
 
-# Recommended Settings (for 266hz tablets)
+## Recommended Settings (for 266hz tablets)
 
 | Settings | Value |
 | :--- | :--- |

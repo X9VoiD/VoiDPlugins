@@ -18,7 +18,7 @@ Select and Download plugins from [Github Actions](https://github.com/X9VoiD/OTDP
 
 ## Plugins
     
-- [ExpASFilter](https://github.com/X9VoiD/OTDPlugins/wiki/ExperimentalASFilter)
+- [MLFilter](https://github.com/X9VoiD/OTDPlugins/wiki/MLFilter)
 
       Physically Accurate Latency Compensation
       Noise Reduction
