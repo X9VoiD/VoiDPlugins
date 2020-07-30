@@ -1,4 +1,4 @@
-﻿using ExpASFilter;
+﻿using MLFilter;
 using MathNet.Numerics;
 using System;
 using System.Collections.Generic;
@@ -6,11 +6,11 @@ using TabletDriverPlugin;
 using TabletDriverPlugin.Attributes;
 using TabletDriverPlugin.Tablet;
 
-namespace OpenTabletDriverPlugins
+namespace OTDPlugins
 {
 
-    [PluginName("Experimental AS Filter")]
-    public class ExperimentalASFilter : Notifier, IFilter
+    [PluginName("MLFilter")]
+    public class MLFilter : Notifier, IFilter
     {
         public virtual Point Filter(Point point)
         {
@@ -60,7 +60,7 @@ namespace OpenTabletDriverPlugins
                 }
                 catch
                 {
-                    Log.Write("ExpASFilter", "Error in calculation");
+                    Log.Write("MLFilter", "Error in calculation");
                     return point;
                 }
 
@@ -95,7 +95,7 @@ namespace OpenTabletDriverPlugins
 
                 var now = DateTime.Now;
                 if ((now - date).TotalMilliseconds > 1000.0 / CalcReportRateAvg())
-                    Log.Write("ExpASFilter", now + ": High CPU Latency. Report delayed.");
+                    Log.Write("MLFilter", now + ": High CPU Latency. Report delayed.");
 
                 _lastTime = date;
                 return finalPoint;
@@ -289,15 +289,15 @@ namespace OpenTabletDriverPlugins
         private void CompensationFunc(ref double a, double value)
         {
             if (value == 0)
-                Log.Write("ExpASFilter", "Mode: Low Latency Cursor Correction");
+                Log.Write("MLFilter", "Mode: Low Latency Cursor Correction");
             else if (value > 0)
             {
-                Log.Write("ExpASFilter", "Mode: Latency Compensation");
+                Log.Write("MLFilter", "Mode: Latency Compensation");
                 if (value > 18)
-                    Log.Write("ExpASFilter", "Unrealistic latency compensation. [Compensation: " + value + "ms]", true);
+                    Log.Write("MLFilter", "Unrealistic latency compensation. [Compensation: " + value + "ms]", true);
             }
             else if (value < 0)
-                Log.Write("ExpASFilter", "Mode: Interpolation");
+                Log.Write("MLFilter", "Mode: Interpolation");
             RaiseAndSetIfChanged(ref a, value);
         }
 
@@ -307,7 +307,7 @@ namespace OpenTabletDriverPlugins
 
             if (value <= minimum)
             {
-                Log.Write("ExpASFilter",
+                Log.Write("MLFilter",
                     "Samples too low for selected degree." +
                     "[Samples: " + value + ", Requirement: >" + value + "]", true);
                 RaiseAndSetIfChanged(ref a, minimum);
@@ -321,11 +321,11 @@ namespace OpenTabletDriverPlugins
         {
             if (value == 0)
             {
-                Log.Write("ExpASFilter", "Complexity cannot be zero", true);
+                Log.Write("MLFilter", "Complexity cannot be zero", true);
             }
             else if (value > 10)
             {
-                Log.Write("ExpASFilter", "Degree too high, might cause instability and inaccuracy issues" +
+                Log.Write("MLFilter", "Degree too high, might cause instability and inaccuracy issues" +
                           "[Suggestion: (Degree <= 10, Normalization: enable)]");
             }
 
@@ -339,7 +339,7 @@ namespace OpenTabletDriverPlugins
     }
 }
 
-namespace ExpASFilter
+namespace MLFilter
 {
     enum Axis {
         X,
