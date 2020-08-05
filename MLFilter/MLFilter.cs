@@ -60,7 +60,6 @@ namespace OTDPlugins
                 }
                 catch
                 {
-                    Log.Write("MLFilter", "Error in calculation");
                     return point;
                 }
 
@@ -94,8 +93,6 @@ namespace OTDPlugins
                 }
 
                 var now = DateTime.Now;
-                if ((now - date).TotalMilliseconds > 1000.0 / CalcReportRateAvg())
-                    Log.Write("MLFilter", now + ": High CPU Latency. Report delayed.");
 
                 _lastTime = date;
                 return finalPoint;
@@ -288,16 +285,6 @@ namespace OTDPlugins
 
         private void CompensationFunc(ref double a, double value)
         {
-            if (value == 0)
-                Log.Write("MLFilter", "Mode: Low Latency Cursor Correction");
-            else if (value > 0)
-            {
-                Log.Write("MLFilter", "Mode: Latency Compensation");
-                if (value > 18)
-                    Log.Write("MLFilter", "Unrealistic latency compensation. [Compensation: " + value + "ms]", true);
-            }
-            else if (value < 0)
-                Log.Write("MLFilter", "Mode: Interpolation");
             RaiseAndSetIfChanged(ref a, value);
         }
 
@@ -307,9 +294,6 @@ namespace OTDPlugins
 
             if (value <= minimum)
             {
-                Log.Write("MLFilter",
-                    "Samples too low for selected degree." +
-                    "[Samples: " + value + ", Requirement: >" + value + "]", true);
                 RaiseAndSetIfChanged(ref a, minimum);
                 return;
             }
@@ -319,16 +303,6 @@ namespace OTDPlugins
 
         private void DegreeFunc(ref int a, int value)
         {
-            if (value == 0)
-            {
-                Log.Write("MLFilter", "Complexity cannot be zero", true);
-            }
-            else if (value > 10)
-            {
-                Log.Write("MLFilter", "Degree too high, might cause instability and inaccuracy issues" +
-                          "[Suggestion: (Degree <= 10, Normalization: enable)]");
-            }
-
             RaiseAndSetIfChanged(ref a, value);
         }
 
