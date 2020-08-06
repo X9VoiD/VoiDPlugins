@@ -92,16 +92,12 @@ namespace OTDPlugins
                     }
                 }
 
-                var now = DateTime.Now;
-
                 _lastTime = date;
                 return finalPoint;
             }
             _lastTime = date;
             return point;
         }
-
-        #region Private Functions
 
         private bool AddTimeSeriesPoint(Point point, DateTime time)
         {
@@ -202,111 +198,52 @@ namespace OTDPlugins
             return weightsNormalized.ToArray();
         }
 
-        #endregion Private Functions
-
-        private double _compensation = 0, _weight = 2;
-        private int _samples = 20, _avgSamples, _degree = 2;
+        private int _samples = 20;
         private LinkedList<TimeSeriesPoint> _timeSeriesPoints = new LinkedList<TimeSeriesPoint>();
         private LinkedList<double> _reportRateAvg = new LinkedList<double>();
         private double _reportRate;
         private DateTime _lastTime = DateTime.Now;
-        private bool _normalize, _feed;
-        private int _screenWidth, _screenHeight;
         private LinkedList<Point> _lastPoints = new LinkedList<Point>();
 
-        #region Controls
-
         [UnitProperty("Offset", "ms")]
-        public double Compensation
-        {
-            set => CompensationFunc(ref _compensation, value);
-            get => _compensation;
-        }
+        public double Compensation { set; get; }
 
         [Property("Samples")]
         public int Samples
         {
-            set => SamplesFunc(ref _samples, value);
+            set
+            {
+                int minimum = Degree + 1;
+
+                if (value <= minimum)
+                {
+                    _samples = value;
+                    return;
+                }
+            }
             get => _samples;
         }
 
         [Property("Complexity")]
-        public int Degree
-        {
-            set => DegreeFunc(ref _degree, value);
-            get => _degree;
-        }
+        public int Degree { set; get; }
 
         [Property("Weight")]
-        public double Weight
-        {
-            set => RaiseAndSetIfChanged(ref _weight, value);
-            get => _weight;
-        }
+        public double Weight { set; get; }
 
         [BooleanProperty("Normalize", "Preprocess the input. Set Screen Dimensions below when enabling Normalization.")]
-        public bool Normalize
-        {
-            set => RaiseAndSetIfChanged(ref _normalize, value);
-            get => _normalize;
-        }
+        public bool Normalize { set; get; }
 
         [UnitProperty("Screen Width", "px")]
-        public int ScreenWidth
-        {
-            set => RaiseAndSetIfChanged(ref _screenWidth, value);
-            get => _screenWidth;
-        }
+        public int ScreenWidth { set; get; }
 
         [UnitProperty("Screen Height", "px")]
-        public int ScreenHeight
-        {
-            set => RaiseAndSetIfChanged(ref _screenHeight, value);
-            get => _screenHeight;
-        }
+        public int ScreenHeight { set; get; }
 
         [Property("Averaging Samples")]
-        public int AvgSamples
-        {
-            set => RaiseAndSetIfChanged(ref _avgSamples, value);
-            get => _avgSamples;
-        }
+        public int AvgSamples { set; get; }
 
         [BooleanProperty("Feed to Filter", "")]
-        public bool Feed
-        {
-            set => RaiseAndSetIfChanged(ref _feed, value);
-            get => _feed;
-        }
-
-        #endregion Controls
-
-        #region Control Utility Functions
-
-        private void CompensationFunc(ref double a, double value)
-        {
-            RaiseAndSetIfChanged(ref a, value);
-        }
-
-        private void SamplesFunc(ref int a, int value)
-        {
-            int minimum = Degree + 1;
-
-            if (value <= minimum)
-            {
-                RaiseAndSetIfChanged(ref a, minimum);
-                return;
-            }
-
-            RaiseAndSetIfChanged(ref a, value);
-        }
-
-        private void DegreeFunc(ref int a, int value)
-        {
-            RaiseAndSetIfChanged(ref a, value);
-        }
-
-        #endregion Control Utility Functions
+        public bool Feed { set; get; }
 
         public FilterStage FilterStage => FilterStage.PostTranspose;
 
