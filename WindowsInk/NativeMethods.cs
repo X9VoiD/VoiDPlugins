@@ -3,7 +3,6 @@ using System.Runtime.InteropServices;
 
 namespace WindowsInk
 {
-    using HSYNTHETICPOINTERDEVICE = IntPtr;
     using HANDLE = IntPtr;
     using HWND = IntPtr;
     using DWORD = UInt32;
@@ -20,6 +19,7 @@ namespace WindowsInk
             Y = y;
         }
     }
+
     public enum POINTER_INPUT_TYPE
     {
         PT_POINTER,
@@ -29,9 +29,18 @@ namespace WindowsInk
         PT_TOUCHPAD
     }
 
+    public enum POINTER_DEVICE_TYPE
+    {
+        INTEGRATED_PEN,
+        EXTERNAL_PEN,
+        TOUCH,
+        TOUCH_PAD,
+        MAX
+    }
+
     public enum POINTER_FEEDBACK_MODE
     {
-        DEFAULT,
+        DEFAULT = 1,
         INDIRECT,
         NONE
     }
@@ -53,25 +62,42 @@ namespace WindowsInk
 
     public enum POINTER_FLAGS
     {
-        POINTER_FLAG_NONE = 0x00000000,
-        POINTER_FLAG_NEW = 0x00000001,
-        POINTER_FLAG_INRANGE = 0x00000002,
-        POINTER_FLAG_INCONTACT = 0x00000004,
-        POINTER_FLAG_FIRSTBUTTON = 0x00000010,
-        POINTER_FLAG_SECONDBUTTON = 0x00000020,
-        POINTER_FLAG_THIRDBUTTON = 0x00000040,
-        POINTER_FLAG_FOURTHBUTTON = 0x00000080,
-        POINTER_FLAG_FIFTHBUTTON = 0x00000100,
-        POINTER_FLAG_PRIMARY = 0x00002000,
-        POINTER_FLAG_CONFIDENCE = 0x000004000,
-        POINTER_FLAG_CANCELED = 0x000008000,
-        POINTER_FLAG_DOWN = 0x00010000,
-        POINTER_FLAG_UPDATE = 0x00020000,
-        POINTER_FLAG_UP = 0x00040000,
-        POINTER_FLAG_WHEEL = 0x00080000,
-        POINTER_FLAG_HWHEEL = 0x00100000,
-        POINTER_FLAG_CAPTURECHANGED = 0x00200000,
-        POINTER_FLAG_HASTRANSFORM = 0x00400000,
+        NONE = 0x00000000,
+        NEW = 0x00000001,
+        INRANGE = 0x00000002,
+        INCONTACT = 0x00000004,
+        FIRSTBUTTON = 0x00000010,
+        SECONDBUTTON = 0x00000020,
+        THIRDBUTTON = 0x00000040,
+        FOURTHBUTTON = 0x00000080,
+        FIFTHBUTTON = 0x00000100,
+        PRIMARY = 0x00002000,
+        CONFIDENCE = 0x000004000,
+        CANCELED = 0x000008000,
+        DOWN = 0x00010000,
+        UPDATE = 0x00020000,
+        UP = 0x00040000,
+        WHEEL = 0x00080000,
+        HWHEEL = 0x00100000,
+        CAPTURECHANGED = 0x00200000,
+        HASTRANSFORM = 0x00400000,
+    }
+
+    public enum PEN_FLAGS
+    {
+        NONE = 0x00000000,
+        BARREL = 0x00000001,
+        INVERTED = 0x00000002,
+        ERASER = 0x00000004
+    }
+
+    public enum PEN_MASK
+    {
+        NONE = 0x00000000,
+        PRESSURE = 0x00000001,
+        ROTATION = 0x00000002,
+        TILT_X = 0x00000004,
+        TILT_Y = 0x00000008
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -95,23 +121,6 @@ namespace WindowsInk
         public POINTER_BUTTON_CHANGE_TYPE ButtonChangeType;
     }
 
-    public enum PEN_FLAGS
-    {
-        NONE = 0x00000000,
-        BARREL = 0x00000001,
-        INVERTED = 0x00000002,
-        ERASER = 0x00000004
-    }
-
-    public enum PEN_MASK
-    {
-        NONE = 0x00000000,
-        PRESSURE = 0x00000001,
-        ROTATION = 0x00000002,
-        TILT_X = 0x00000004,
-        TILT_Y = 0x00000008
-    }
-
     public struct POINTER_PEN_INFO
     {
         public POINTER_INFO pointerInfo;
@@ -130,14 +139,31 @@ namespace WindowsInk
         public POINTER_PEN_INFO penInfo;
     }
 
+    [StructLayout(LayoutKind.Sequential)]
+    public unsafe struct POINTER_DEVICE_INFO
+    {
+        public DWORD displayOrientation;
+        public IntPtr device;
+        public POINTER_DEVICE_TYPE pointerDeviceType;
+        public IntPtr monitor;
+        public ulong startingCursorId;
+        public ushort maxActiveContacts;
+
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 520)]
+        public string productString;
+    }
+
     public static class NativeMethods
     {
-        [DllImport("user32.dll")]
-        public static extern HSYNTHETICPOINTERDEVICE CreateSyntheticPointerDevice(POINTER_INPUT_TYPE pointerType,
-                                                                           UInt32 maxCount, POINTER_FEEDBACK_MODE mode);
+        [DllImport("user32.dll", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        public static extern IntPtr CreateSyntheticPointerDevice(POINTER_INPUT_TYPE pointerType,
+                                                                           ulong maxCount, POINTER_FEEDBACK_MODE mode);
 
-        [DllImport("user32.dll")]
-        public static extern bool InjectSyntheticPointerInput(HSYNTHETICPOINTERDEVICE device,
-            [In, MarshalAs(UnmanagedType.LPArray)] POINTER_TYPE_INFO[] pointerInfo, UInt32 count);
+        [DllImport("user32.dll", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool InjectSyntheticPointerInput(IntPtr device, [In, MarshalAs(UnmanagedType.LPArray)] POINTER_TYPE_INFO[] pointerInfo, uint count);
+
+        [DllImport("user32.dll", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        public static extern bool GetPointerDevices(ref uint deviceCount, IntPtr pointerDevices);
     }
 }
