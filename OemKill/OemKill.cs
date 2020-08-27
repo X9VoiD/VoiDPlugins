@@ -20,6 +20,7 @@ namespace OemKill
 
             if (oemProcesses.ToList().Count == 0)
             {
+                Log.Write("OemKill", "No oem process found");
                 return true;
             }
 
@@ -28,17 +29,20 @@ namespace OemKill
                 foreach (var process in oemProcesses)
                 {
                     process.Kill();
+                    Log.Write("OemKill", "Killing " + process.ProcessName);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Log.Write("OemKill", "Failed. Reason: " + e.Message, LogLevel.Error);
                 return false;
             }
 
+            Log.Write("OemKill", "Oem process killed successfully");
             return true;
         }
 
-        List<string> OemProcesses = new List<string>
+        readonly List<string> OemProcesses = new List<string>
         {
             // XP-Pen
             "PentabletService",

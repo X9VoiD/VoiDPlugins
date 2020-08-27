@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="MathNet.Numerics" Version="4.11.0" />
-    <PackageReference Include="TabletDriverPlugin" Version="0.3.0" />
+    <ProjectReference Include="../.modules/OpenTabletDriver/TabletDriverPlugin/TabletDriverPlugin.csproj" />
   </ItemGroup>
 
 </Project>

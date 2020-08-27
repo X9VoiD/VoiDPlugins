@@ -15,7 +15,6 @@ namespace OTDPlugins
         public virtual Point Filter(Point point)
         {
             DateTime date = DateTime.Now;
-            CalcReportRate(date);
             var predicted = new Point();
             var feedPoint = new Point();
             bool fed = false;
@@ -60,11 +59,12 @@ namespace OTDPlugins
                 }
                 catch
                 {
+                    Log.Write("MLFilter", "Error in calculation", LogLevel.Error);
                     return point;
                 }
 
                 double predictAhead;
-                predictAhead = (date - _timeSeriesPoints.First.Value.Date).TotalMilliseconds + Compensation;
+                predictAhead = (date - _timeSeriesPoints.First.Value.Date).TotalMilliseconds + Offset;
 
                 predicted.X = (float)xCoeff.Evaluate(predictAhead);
                 predicted.Y = (float)yCoeff.Evaluate(predictAhead);
@@ -156,34 +156,21 @@ namespace OTDPlugins
             var index = -1;
 
             if (axis == Axis.X)
+            {
                 foreach (var timePoint in _timeSeriesPoints)
                 {
                     points[++index] = timePoint.Point.X / ScreenWidth;
                 }
-
+            }
             else if (axis == Axis.Y)
+            {
                 foreach (var timePoint in _timeSeriesPoints)
                 {
                     points[++index] = timePoint.Point.Y / ScreenHeight;
                 }
+            }
 
             return points;
-        }
-
-        private void CalcReportRate(DateTime now)
-        {
-            _reportRate = 1000.0 / (now - _lastTime).TotalMilliseconds;
-            _reportRateAvg.AddLast(_reportRate);
-            if (_reportRateAvg.Count > 10)
-                _reportRateAvg.RemoveFirst();
-        }
-
-        private double CalcReportRateAvg()
-        {
-            double avg = 0;
-            foreach (var sample in _reportRateAvg)
-                avg += sample;
-            return avg / _reportRateAvg.Count;
         }
 
         private double[] CalcWeight(double ratio)
@@ -198,15 +185,38 @@ namespace OTDPlugins
             return weightsNormalized.ToArray();
         }
 
-        private int _samples = 20;
         private LinkedList<TimeSeriesPoint> _timeSeriesPoints = new LinkedList<TimeSeriesPoint>();
-        private LinkedList<double> _reportRateAvg = new LinkedList<double>();
-        private double _reportRate;
         private DateTime _lastTime = DateTime.Now;
         private LinkedList<Point> _lastPoints = new LinkedList<Point>();
 
+        private double _offset = 0;
         [UnitProperty("Offset", "ms")]
-        public double Compensation { set; get; }
+        public double Offset
+        {
+            set
+            {
+                if (value == 0)
+                {
+                    Log.Write("MLFilter", "Mode: Low Latency Jitter Reduction");
+                }
+                else if (value > 0)
+                {
+                    Log.Write("MLFilter", "Mode: Latency Compensation");
+                    if (value > 18)
+                    {
+                        Log.Write("MLFilter", "Unrealistic latency compensation. [Compensation: " + value + "ms]", LogLevel.Warning);
+                    }
+                }
+                else if (value < 0)
+                {
+                    Log.Write("MLFilter", "Mode: AI Smoothing");
+                }
+                _offset = value;
+            }
+            get => _offset;
+        }
+
+        private int _samples = 20;
 
         [Property("Samples")]
         public int Samples
@@ -217,6 +227,9 @@ namespace OTDPlugins
 
                 if (value <= minimum)
                 {
+                    Log.Write("MLFilter",
+                              "Samples too low for selected degree." +
+                              $"[Samples:{value} Requirement: >{minimum}]", LogLevel.Warning);
                     _samples = value;
                     return;
                 }
@@ -224,8 +237,28 @@ namespace OTDPlugins
             get => _samples;
         }
 
+        private int _degree;
         [Property("Complexity")]
-        public int Degree { set; get; }
+        public int Degree
+        {
+            set
+            {
+                if (value == 0)
+                {
+                    Log.Write("MLFilter", "Complexity cannot be zero", LogLevel.Error);
+                    Log.Write("MLFilter", "Complexity: 1");
+                    _degree = 1;
+                    return;
+                }
+                else if (value > 10)
+                {
+                    Log.Write("MLFilter", "Degree too high, might cause instability and inaccuracy issues" +
+                              "[Suggestion: (Degree <= 10, Normalization: enable)]", LogLevel.Warning);
+                }
+                _degree = value;
+            }
+            get => _degree;
+        }
 
         [Property("Weight")]
         public double Weight { set; get; }
