@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TabletDriverPlugin" Version="0.3.2" />
+    <ProjectReference Include="../.modules/OpenTabletDriver/TabletDriverPlugin/TabletDriverPlugin.csproj" />
   </ItemGroup>
 
 </Project>

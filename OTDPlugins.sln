@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MLFilter", "MLFilter\MLFilt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OemKill", "OemKill\OemKill.csproj", "{4EC8FA2D-0CCC-4FC3-A32A-BC063924A803}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsInk", "WindowsInk\WindowsInk.csproj", "{FC135341-4870-4555-8917-7248CFE07FCC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TouchEmu", "TouchEmu\TouchEmu.csproj", "{FC135341-4870-4555-8917-7248CFE07FCC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

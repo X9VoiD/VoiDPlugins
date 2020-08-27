@@ -2,38 +2,39 @@ using System;
 using System.Runtime.InteropServices;
 using TabletDriverPlugin;
 
-namespace WindowsInk
+namespace TouchEmu
 {
-    public static class Pen
+    public static class Touch
     {
         private static IntPtr _penHandle;
         private static POINTER_TYPE_INFO[] pointer;
         private static uint _pointerId;
         private static IntPtr _sourceDevice;
 
-        public static void Init()
+        public static unsafe void Init()
         {
-            uint count = 0;
-            NativeMethods.GetPointerDevices(ref count, out var pointerDevices);
-            foreach (var device in pointerDevices)
+            NativeMethods.GetPointerDevices(out uint count, null);
+            POINTER_DEVICE_INFO[] pointerDevices = new POINTER_DEVICE_INFO[count];
+            NativeMethods.GetPointerDevices(out count, pointerDevices);
+            for (int i = 0; i < count; i++)
             {
+                var device = pointerDevices[i];
                 if (device.pointerDeviceType == POINTER_DEVICE_TYPE.EXTERNAL_PEN ||
                     device.pointerDeviceType == POINTER_DEVICE_TYPE.INTEGRATED_PEN)
                 {
                     _pointerId = (uint)device.startingCursorId;
-                    _sourceDevice = device.device;
+                    _sourceDevice = new IntPtr(device.device);
                 }
             }
 
-            Log.Write("WindowsInk", "Pen created", LogLevel.Debug);
             var _pointerInfo = new POINTER_INFO
             {
                 pointerType = POINTER_INPUT_TYPE.PT_PEN,
                 pointerId = _pointerId,
                 frameId = 0,
                 pointerFlags = POINTER_FLAGS.NONE,
-                sourceDevice = IntPtr.Zero,
-                hwndTarget = IntPtr.Zero,
+                sourceDevice = _sourceDevice,
+                hwndTarget = NativeMethods.GetForegroundWindow(),
                 ptPixelLocation = new POINT(),
                 ptPixelLocationRaw = new POINT(),
                 dwTime = 0,
@@ -67,9 +68,7 @@ namespace WindowsInk
             _penHandle = NativeMethods.CreateSyntheticPointerDevice(POINTER_INPUT_TYPE.PT_PEN, 1, POINTER_FEEDBACK_MODE.INDIRECT);
             var err = Marshal.GetLastWin32Error();
             if (err < 0 || _penHandle == IntPtr.Zero)
-                Log.Write("WindowsInk", "Failed creating synthetic pointer. Reason: " + err, LogLevel.Error);
-            else
-                Log.Write("WindowsInk", "Pen handle retrieved successfully", LogLevel.Debug);
+                throw new Exception("Failed to create handle.");
 
             // Notify WindowsInk
             ClearPointerFlags(POINTER_FLAGS.NEW);
@@ -83,16 +82,19 @@ namespace WindowsInk
         {
             if (!NativeMethods.InjectSyntheticPointerInput(_penHandle, pointer, 1))
             {
-                Log.Write("WindowsInk", "Injection Failed. Reason: " + Marshal.GetLastWin32Error());
+                throw new Exception($"Input injection failed. Reason: {Marshal.GetLastWin32Error()}");
             }
+        }
+
+        public static void SetTarget()
+        {
+            pointer[0].penInfo.pointerInfo.hwndTarget = NativeMethods.GetForegroundWindow();
         }
 
         public static void SetPosition(POINT point)
         {
             pointer[0].penInfo.pointerInfo.ptPixelLocation = point;
             pointer[0].penInfo.pointerInfo.ptPixelLocationRaw = point;
-            // pointer[0].penInfo.pointerInfo.ptHimetricLocation = point;
-            // pointer[0].penInfo.pointerInfo.ptHimetricLocationRaw = point;
         }
 
         public static void SetPressure(uint pressure)

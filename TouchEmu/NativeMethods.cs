@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace WindowsInk
+namespace TouchEmu
 {
     using HANDLE = IntPtr;
     using HWND = IntPtr;
@@ -143,10 +143,10 @@ namespace WindowsInk
     public unsafe struct POINTER_DEVICE_INFO
     {
         public DWORD displayOrientation;
-        public IntPtr device;
+        public void* device;
         public POINTER_DEVICE_TYPE pointerDeviceType;
-        public IntPtr monitor;
-        public ulong startingCursorId;
+        public void* monitor;
+        public uint startingCursorId;
         public ushort maxActiveContacts;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 520)]
@@ -164,6 +164,10 @@ namespace WindowsInk
         public static extern bool InjectSyntheticPointerInput(IntPtr device, [In, MarshalAs(UnmanagedType.LPArray)] POINTER_TYPE_INFO[] pointerInfo, uint count);
 
         [DllImport("user32.dll", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
-        public static extern bool GetPointerDevices(ref uint deviceCount, IntPtr pointerDevices);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static unsafe extern bool GetPointerDevices(out uint deviceCount, [In, Out, MarshalAs(UnmanagedType.LPArray)] POINTER_DEVICE_INFO[] pointerDevices);
+
+        [DllImport("user32.dll", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
+        public static extern IntPtr GetForegroundWindow();
     }
 }
