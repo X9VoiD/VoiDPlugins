@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-using TabletDriverPlugin;
+using OpenTabletDriver.Plugin;
 
 namespace TouchEmu
 {

@@ -2,9 +2,10 @@
 using MathNet.Numerics;
 using System;
 using System.Collections.Generic;
-using TabletDriverPlugin;
-using TabletDriverPlugin.Attributes;
-using TabletDriverPlugin.Tablet;
+using System.Numerics;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace OTDPlugins
 {
@@ -12,11 +13,11 @@ namespace OTDPlugins
     [PluginName("MLFilter")]
     public class MLFilter : Notifier, IFilter
     {
-        public virtual Point Filter(Point point)
+        public virtual Vector2 Filter(Vector2 point)
         {
             DateTime date = DateTime.Now;
-            var predicted = new Point();
-            var feedPoint = new Point();
+            var predicted = new Vector2();
+            var feedPoint = new Vector2();
             bool fed = false;
 
             if (Feed)
@@ -75,7 +76,7 @@ namespace OTDPlugins
                     predicted.Y *= ScreenHeight;
                 }
 
-                Point finalPoint = new Point();
+                Vector2 finalPoint = new Vector2();
 
                 if (Feed || AvgSamples == 0)
                     finalPoint = predicted;
@@ -99,7 +100,7 @@ namespace OTDPlugins
             return point;
         }
 
-        private bool AddTimeSeriesPoint(Point point, DateTime time)
+        private bool AddTimeSeriesPoint(Vector2 point, DateTime time)
         {
             _timeSeriesPoints.AddLast(new TimeSeriesPoint(point, time));
             if (_timeSeriesPoints.Count > Samples)
@@ -109,7 +110,7 @@ namespace OTDPlugins
             return false;
         }
 
-        private bool AddPoint(Point point)
+        private bool AddPoint(Vector2 point)
         {
             _lastPoints.AddLast(point);
             if (_lastPoints.Count > AvgSamples)
@@ -187,7 +188,7 @@ namespace OTDPlugins
 
         private LinkedList<TimeSeriesPoint> _timeSeriesPoints = new LinkedList<TimeSeriesPoint>();
         private DateTime _lastTime = DateTime.Now;
-        private LinkedList<Point> _lastPoints = new LinkedList<Point>();
+        private LinkedList<Vector2> _lastPoints = new LinkedList<Vector2>();
 
         private double _offset = 0;
         [UnitProperty("Offset", "ms")]
@@ -291,13 +292,13 @@ namespace MLFilter
     }
     public class TimeSeriesPoint
     {
-        public TimeSeriesPoint(Point point, DateTime date)
+        public TimeSeriesPoint(Vector2 point, DateTime date)
         {
             Point = point;
             Date = date;
         }
 
-        public Point Point { get; }
+        public Vector2 Point { get; }
         public DateTime Date { get; }
 
     }

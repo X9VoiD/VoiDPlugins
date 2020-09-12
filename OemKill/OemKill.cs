@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using TabletDriverPlugin;
-using TabletDriverPlugin.Attributes;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
 
 namespace OemKill
 {

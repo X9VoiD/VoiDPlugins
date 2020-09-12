@@ -1,7 +1,8 @@
-using TabletDriverPlugin;
-using TabletDriverPlugin.Attributes;
-using TabletDriverPlugin.Output;
-using TabletDriverPlugin.Platform.Pointer;
+using System.Numerics;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace TouchEmu
 {
@@ -38,7 +39,7 @@ namespace TouchEmu
             return;
         }
 
-        public void SetPosition(Point pos)
+        public void SetPosition(Vector2 pos)
         {
             Touch.SetPosition(new POINT((int)pos.X, (int)pos.Y));
             if (_inContact != _lastContact)
