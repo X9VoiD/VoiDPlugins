@@ -25,6 +25,7 @@ namespace WindowsInk
         private InkReport InkReport;
         private readonly HidStream VMultiDev;
         private Area ScreenArea;
+        private bool EraserState;
 
         public InkHandler(Area screenArea)
         {
@@ -52,6 +53,7 @@ namespace WindowsInk
             }
 
             ScreenArea = screenArea;
+            EraserState = false;
         }
 
         public void MouseDown(MouseButton button)
@@ -59,13 +61,18 @@ namespace WindowsInk
             switch (button)
             {
                 case MouseButton.Left:
-                    EnableBit(ButtonMask.Press);
+                    if (!EraserState)
+                    {
+                        EnableBit(ButtonMask.Press);
+                    }
                     break;
                 case MouseButton.Right:
                     EnableBit(ButtonMask.Barrel);
                     break;
                 case MouseButton.Middle:
                     EnableBit(ButtonMask.Eraser);
+                    DisableBit(ButtonMask.Press);
+                    EraserState = true;
                     StateChange();
                     break;
             }
@@ -83,6 +90,7 @@ namespace WindowsInk
                     break;
                 case MouseButton.Middle:
                     DisableBit(ButtonMask.Eraser);
+                    EraserState = false;
                     StateChange();
                     break;
             }
@@ -112,9 +120,15 @@ namespace WindowsInk
 
         private void StateChange()
         {
-            DisableBit(ButtonMask.InRange);
+            var prevState = InkReport.Buttons;
+            var prevPressure = InkReport.Pressure;
+            InkReport.ReportID = 0;
+            InkReport.Buttons = 0;
+            InkReport.Pressure = 0;
             VMultiDev.Write(InkReport);
-            EnableBit(ButtonMask.InRange);
+            InkReport.ReportID = 0x05;
+            InkReport.Buttons = prevState;
+            InkReport.Pressure = prevPressure;
         }
     }
 }
