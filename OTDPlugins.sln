@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OemKill", "OemKill\OemKill.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TouchEmu", "TouchEmu\TouchEmu.csproj", "{FC135341-4870-4555-8917-7248CFE07FCC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsInk", "WindowsInk\WindowsInk.csproj", "{5DDEBB0A-D359-49F4-B1AE-7A13DB28987B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{FC135341-4870-4555-8917-7248CFE07FCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC135341-4870-4555-8917-7248CFE07FCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC135341-4870-4555-8917-7248CFE07FCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DDEBB0A-D359-49F4-B1AE-7A13DB28987B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DDEBB0A-D359-49F4-B1AE-7A13DB28987B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DDEBB0A-D359-49F4-B1AE-7A13DB28987B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DDEBB0A-D359-49F4-B1AE-7A13DB28987B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
