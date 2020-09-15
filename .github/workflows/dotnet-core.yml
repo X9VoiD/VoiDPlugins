@@ -7,7 +7,7 @@ jobs:
   build:
     strategy:
       matrix:
-        plugin: [MLFilter, OemKill, TouchEmu]
+        plugin: [MLFilter, OemKill, TouchEmu, WindowsInk]
 
     runs-on: ubuntu-latest
 
