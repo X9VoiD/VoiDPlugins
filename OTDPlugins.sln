@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TouchEmu", "TouchEmu\TouchE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsInk", "WindowsInk\WindowsInk.csproj", "{5DDEBB0A-D359-49F4-B1AE-7A13DB28987B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMultiMode", "VMultiMode\VMultiMode.csproj", "{7D086384-9E50-45A1-BD7A-ECF44CB31223}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{5DDEBB0A-D359-49F4-B1AE-7A13DB28987B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DDEBB0A-D359-49F4-B1AE-7A13DB28987B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DDEBB0A-D359-49F4-B1AE-7A13DB28987B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D086384-9E50-45A1-BD7A-ECF44CB31223}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D086384-9E50-45A1-BD7A-ECF44CB31223}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D086384-9E50-45A1-BD7A-ECF44CB31223}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D086384-9E50-45A1-BD7A-ECF44CB31223}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

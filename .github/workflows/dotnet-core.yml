@@ -7,7 +7,7 @@ jobs:
   build:
     strategy:
       matrix:
-        plugin: [MLFilter, OemKill, TouchEmu, WindowsInk]
+        plugin: [MLFilter, OemKill, TouchEmu, WindowsInk, VMultiMode]
 
     runs-on: ubuntu-latest
 
@@ -33,5 +33,6 @@ jobs:
         path: |
           ./build/netcoreapp3.1/${{ matrix.plugin }}/*.dll
           !./build/netcoreapp3.1/${{ matrix.plugin }}/*.json
+          !./build/netcoreapp3.1/${{ matrix.plugin }}/*.pdb
           !./build/netcoreapp3.1/${{ matrix.plugin }}/OpenTabletDriver.Plugin.dll
           !./build/netcoreapp3.1/${{ matrix.plugin }}/Newtonsoft.Json.dll
