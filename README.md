@@ -1,11 +1,11 @@
 
-# OTDPlugins ![.NET Core](https://github.com/X9VoiD/OTDPlugins/workflows/.NET%20Core/badge.svg)
+# OTDPlugins ![.NET Core](https://github.com/X9VoiD/VoiDPlugins/workflows/.NET%20Core/badge.svg)
 
 OTDPlugins is a collection of extensions for [OpenTabletDriver](https://github.com/InfinityGhost/OpenTabletDriver). 
 
 ## Installation
 
-Select and Download plugins from [Github Actions](https://github.com/X9VoiD/OTDPlugins/actions), then unpack to this directory below
+Select and Download plugins from [Github Actions](https://github.com/X9VoiD/VoiDPlugins/actions), then unpack to this directory below
 
 #### Windows
 `%localappdata%\OpenTabletDriver\Plugins`
