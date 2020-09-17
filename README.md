@@ -17,16 +17,37 @@ Select and Download plugins from [Github Actions](https://github.com/X9VoiD/OTDP
 `$HOME/Library/Application Support/OpenTabletDriver/Plugins`    
 
 ## Plugins
-    
-- [MLFilter](https://github.com/X9VoiD/OTDPlugins/wiki/MLFilter)
 
-      Physically Accurate Latency Compensation
+### Output Modes
+
+- [TouchEmu](https://github.com/X9VoiD/VoiDPlugins/wiki/TouchEmu)
+
+      Touch input emulation (RawInput incompatible)
+      Natural Scrolling everywhere
+
+- [VMultiMode](https://github.com/X9VoiD/VoiDPlugins/wiki/VMultiMode)
+
+      Classic VMulti input emulation
+      Supports both absolute and relative modes
+
+- [WindowsInk](https://github.com/X9VoiD/VoiDPlugins/wiki/WindowsInk)
+
+      Pen pressure support
+      100% compliance to Windows Ink
+      Upto 8192 levels of pressure
+
+### Filters
+
+- [MLFilter](https://github.com/X9VoiD/VoidPlugins/wiki/MLFilter)
+
       Noise Reduction
       MachineLearning-based Prediction
       Highly Configurable
     > [HaHaBear](https://www.youtube.com/channel/UC2oeDq4MU9fUvPRVn2ZuYKw) simulator (when misconfigured)
-    
-- [OemKill](https://github.com/X9VoiD/OTDPlugins/wiki/OemKill)
+
+### Tools
+
+- [OemKill](https://github.com/X9VoiD/VoiDPlugins/wiki/OemKill)
 
       Automatically kill OEM Tablet Driver processes
-      
+
