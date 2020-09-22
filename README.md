@@ -5,7 +5,7 @@ OTDPlugins is a collection of extensions for [OpenTabletDriver](https://github.c
 
 ## Installation
 
-Select and Download plugins from [Releases](https://github.com/X9VoiD/VoiDPlugins/releases), then unpack to these directories below
+Select and Download plugins from [Releases](https://github.com/X9VoiD/VoiDPlugins/releases/latest), then unpack to these directories below
 
 #### Windows
 `%localappdata%\OpenTabletDriver\Plugins`
