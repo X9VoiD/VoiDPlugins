@@ -17,9 +17,7 @@ jobs:
         submodules: recursive
       
     - name: Setup ${{ matrix.net }}
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.x
+      uses: actions/setup-dotnet@v1.7.0
         
     - name: Build
       env:
