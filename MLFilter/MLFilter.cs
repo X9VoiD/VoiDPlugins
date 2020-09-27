@@ -9,35 +9,16 @@ using OpenTabletDriver.Plugin.Tablet;
 
 namespace OTDPlugins
 {
-
     [PluginName("MLFilter")]
     public class MLFilter : Notifier, IFilter
     {
         public virtual Vector2 Filter(Vector2 point)
         {
             DateTime date = DateTime.Now;
-            var predicted = new Vector2();
-            var feedPoint = new Vector2();
-            bool fed = false;
 
-            if (Feed)
+            if (AddTimeSeriesPoint(point, date))
             {
-                if (AddPoint(point))
-                {
-                    foreach (var lastPoint in _lastPoints)
-                        feedPoint += lastPoint;
-                    feedPoint.X /= _lastPoints.Count;
-                    feedPoint.Y /= _lastPoints.Count;
-                    fed = AddTimeSeriesPoint(feedPoint, date);
-                }
-            }
-            else
-            {
-                fed = AddTimeSeriesPoint(point, date);
-            }
-
-            if (fed)
-            {
+                var predicted = new Vector2();
                 var timeMatrix = ConstructTimeDesignMatrix();
                 double[] x, y;
                 if (Normalize)
@@ -69,32 +50,14 @@ namespace OTDPlugins
 
                 predicted.X = (float)xCoeff.Evaluate(predictAhead);
                 predicted.Y = (float)yCoeff.Evaluate(predictAhead);
-
                 if (Normalize)
                 {
                     predicted.X *= ScreenWidth;
                     predicted.Y *= ScreenHeight;
                 }
 
-                Vector2 finalPoint = new Vector2();
-
-                if (Feed || AvgSamples == 0)
-                    finalPoint = predicted;
-                else
-                {
-                    if (AddPoint(predicted) && AvgSamples > 0)
-                    {
-                        foreach (var tempPoint in _lastPoints)
-                        {
-                            finalPoint += tempPoint;
-                        }
-                        finalPoint.X /= _lastPoints.Count;
-                        finalPoint.Y /= _lastPoints.Count;
-                    }
-                }
-
                 _lastTime = date;
-                return finalPoint;
+                return predicted;
             }
             _lastTime = date;
             return point;
@@ -106,16 +69,6 @@ namespace OTDPlugins
             if (_timeSeriesPoints.Count > Samples)
                 _timeSeriesPoints.RemoveFirst();
             if (_timeSeriesPoints.Count == Samples)
-                return true;
-            return false;
-        }
-
-        private bool AddPoint(Vector2 point)
-        {
-            _lastPoints.AddLast(point);
-            if (_lastPoints.Count > AvgSamples)
-                _lastPoints.RemoveFirst();
-            if (_lastPoints.Count == AvgSamples)
                 return true;
             return false;
         }
@@ -272,12 +225,6 @@ namespace OTDPlugins
 
         [UnitProperty("Screen Height", "px")]
         public int ScreenHeight { set; get; }
-
-        [Property("Averaging Samples")]
-        public int AvgSamples { set; get; }
-
-        [BooleanProperty("Feed to Filter", "")]
-        public bool Feed { set; get; }
 
         public FilterStage FilterStage => FilterStage.PostTranspose;
 
