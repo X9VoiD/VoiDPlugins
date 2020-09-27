@@ -65,12 +65,16 @@ namespace WindowsInk
                     {
                         EnableBit(ButtonMask.Press);
                     }
+                    else
+                    {
+                        EnableBit(ButtonMask.Eraser);
+                    }
                     break;
                 case MouseButton.Right:
                     EnableBit(ButtonMask.Barrel);
                     break;
                 case MouseButton.Middle:
-                    EnableBit(ButtonMask.Eraser);
+                    EnableBit(ButtonMask.Invert);
                     DisableBit(ButtonMask.Press);
                     EraserState = true;
                     StateChange();
@@ -84,12 +88,13 @@ namespace WindowsInk
             {
                 case MouseButton.Left:
                     DisableBit(ButtonMask.Press);
+                    DisableBit(ButtonMask.Eraser);
                     break;
                 case MouseButton.Right:
                     DisableBit(ButtonMask.Barrel);
                     break;
                 case MouseButton.Middle:
-                    DisableBit(ButtonMask.Eraser);
+                    DisableBit(ButtonMask.Invert);
                     EraserState = false;
                     StateChange();
                     break;
