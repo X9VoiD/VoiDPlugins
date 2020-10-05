@@ -50,16 +50,16 @@ namespace OTDPlugins.MeL.Core
             return points;
         }
 
-        private double[] CalcWeight(int samples, double ratio)
+        private double[] CalcWeight(double ratio)
         {
-            var weights = new List<double>();
-            var weightsNormalized = new List<double>();
+            var weights = new double[Samples];
+            var weightsNormalized = new double[Samples];
             double weight = 1;
-            for (int i = 0; i < samples; i++)
-                weights.Add(weight *= ratio);
-            foreach (var _weight in weights)
-                weightsNormalized.Add(_weight / weights[^1]);
-            return weightsNormalized.ToArray();
+            for (int i = 0; i < Samples; i++)
+                weights[i] = weight *= ratio;
+            for (int i = 0; i < Samples; i++)
+                weightsNormalized[i] = weights[i] / weights[^1];
+            return weightsNormalized;
         }
     }
 }

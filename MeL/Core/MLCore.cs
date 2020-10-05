@@ -9,7 +9,7 @@ namespace OTDPlugins.MeL.Core
     {
         public MLCore()
         {
-            Weight = 1.3f;
+            Weight = 1.4f;
         }
 
         public void Add(Vector2 point)
@@ -46,11 +46,11 @@ namespace OTDPlugins.MeL.Core
             return predicted;
         }
 
-        public bool IsReady { private set; get; } = false;
+        public bool IsReady { private set; get; }
 
-        public int Samples { set; get; } = 3;
+        public int Samples { set; get; } = 20;
         public int Complexity { set; get; } = 2;
-        public float Weight { set => this.weights = CalcWeight(Samples, value); }
+        public float Weight { set => this.weights = CalcWeight(value); }
         public DateTime TimeNow { get => DateTime.UtcNow; }
     }
 }

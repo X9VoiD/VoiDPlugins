@@ -1,17 +1,18 @@
+using System;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet;
 using OTDPlugins.MeL.Core;
 
-namespace OTDPlugins.MeL.Filter
+namespace OTDPlugins.MeL
 {
-    [PluginName("MeLFilter")]
+    [PluginName("MeL")]
     public class MeLFilter : IFilter
     {
         public Vector2 Filter(Vector2 point)
         {
             Core.Add(point);
-            return Core.IsReady ? Core.Predict(Core.TimeNow, Offset) : point;
+            return Core.IsReady ? Core.Predict(DateTime.UtcNow, Offset) : point;
         }
 
         public FilterStage FilterStage => FilterStage.PostTranspose;
@@ -26,7 +27,7 @@ namespace OTDPlugins.MeL.Filter
         public int Complexity { set => Core.Complexity = value; }
 
         [Property("Weight")]
-        public int Weight { set => Core.Weight = value; }
+        public float Weight { set => Core.Weight = value; }
 
         private readonly MLCore Core = new MLCore();
     }

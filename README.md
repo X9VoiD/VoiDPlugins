@@ -1,37 +1,24 @@
-
 # OTDPlugins ![.NET Core](https://github.com/X9VoiD/VoiDPlugins/workflows/.NET%20Core/badge.svg)
 
 OTDPlugins is a collection of extensions for [OpenTabletDriver](https://github.com/InfinityGhost/OpenTabletDriver).
 
 ## Installation
 
-Select and Download plugins from [Releases](https://github.com/X9VoiD/VoiDPlugins/releases/latest), then unpack to these directories below
+Select and Download plugins from [Latest Release](https://github.com/X9VoiD/VoiDPlugins/releases/latest), then unpack to these directories below.
 
-### Windows
-
-`%localappdata%\OpenTabletDriver\Plugins`
-
-### Linux
-
-`~/.config/OpenTabletDriver/Plugins`
-
-### MacOS
-
-`$HOME/Library/Application Support/OpenTabletDriver/Plugins`
+| Platform | Path |
+| :-- | :-- |
+| Windows | `%localappdata%\OpenTabletDriver\Plugins` |
+| Linux | `~/.config/OpenTabletDriver/Plugins` |
+| MacOS | `$HOME/Library/Application Support/OpenTabletDriver/Plugins` |
 
 ## Plugins
 
+### [MeL](https://github.com/X9VoiD/VoiDPlugins/wiki/MeL)
+
+      Machine Learning Plugin
+
 ### Output Modes
-
-- [TouchEmu](https://github.com/X9VoiD/VoiDPlugins/wiki/TouchEmu)
-
-      Touch input emulation (RawInput incompatible)
-      Natural Scrolling everywhere
-
-- [VMultiMode](https://github.com/X9VoiD/VoiDPlugins/wiki/VMultiMode)
-
-      Classic VMulti input emulation
-      Supports both absolute and relative modes
 
 - [WindowsInk](https://github.com/X9VoiD/VoiDPlugins/wiki/WindowsInk)
 
@@ -39,14 +26,15 @@ Select and Download plugins from [Releases](https://github.com/X9VoiD/VoiDPlugin
       100% compliance to Windows Ink
       Upto 8192 levels of pressure
 
-### Filters
+- [VMultiMode](https://github.com/X9VoiD/VoiDPlugins/wiki/VMultiMode)
 
-- [MLFilter](https://github.com/X9VoiD/VoidPlugins/wiki/MLFilter)
+      Classic VMulti input emulation
+      Supports both absolute and relative modes
 
-      Noise Reduction
-      MachineLearning-based Prediction
-      Highly Configurable
-    > [HaHaBear](https://www.youtube.com/channel/UC2oeDq4MU9fUvPRVn2ZuYKw) simulator (when misconfigured)
+- [TouchEmu](https://github.com/X9VoiD/VoiDPlugins/wiki/TouchEmu)
+
+      Touch input emulation (RawInput incompatible)
+      Natural Scrolling everywhere
 
 ### Tools
 

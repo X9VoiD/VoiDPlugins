@@ -5,10 +5,10 @@ using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet;
 using OTDPlugins.MeL.Core;
 
-namespace OTDPlugins.MeL.Interpolator
+namespace OTDPlugins.MeL
 {
     [PluginName("MeL")]
-    public class MeL : IInterpolator
+    public class MeLInterp : IInterpolator
     {
         public void NewReport(Vector2 point, uint pressure)
         {
