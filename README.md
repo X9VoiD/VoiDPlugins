@@ -12,32 +12,34 @@ Select and Download plugins from [Latest Release](https://github.com/X9VoiD/VoiD
 | Linux | `~/.config/OpenTabletDriver/Plugins` |
 | MacOS | `$HOME/Library/Application Support/OpenTabletDriver/Plugins` |
 
-## Plugins
+# Plugins
+
+## Experimental
 
 ### [MeL](https://github.com/X9VoiD/VoiDPlugins/wiki/MeL)
 
       Machine Learning Plugin
 
-### Output Modes
+## Output Modes
 
-- [WindowsInk](https://github.com/X9VoiD/VoiDPlugins/wiki/WindowsInk)
+### [WindowsInk](https://github.com/X9VoiD/VoiDPlugins/wiki/WindowsInk)
 
       Pen pressure support
       100% compliance to Windows Ink
       Upto 8192 levels of pressure
 
-- [VMultiMode](https://github.com/X9VoiD/VoiDPlugins/wiki/VMultiMode)
+### [VMultiMode](https://github.com/X9VoiD/VoiDPlugins/wiki/VMultiMode)
 
       Classic VMulti input emulation
       Supports both absolute and relative modes
 
-- [TouchEmu](https://github.com/X9VoiD/VoiDPlugins/wiki/TouchEmu)
+### [TouchEmu](https://github.com/X9VoiD/VoiDPlugins/wiki/TouchEmu)
 
       Touch input emulation (RawInput incompatible)
       Natural Scrolling everywhere
 
-### Tools
+## Tools
 
-- [OemKill](https://github.com/X9VoiD/VoiDPlugins/wiki/OemKill)
+### [OemKill](https://github.com/X9VoiD/VoiDPlugins/wiki/OemKill)
 
       Automatically kill OEM Tablet Driver processes
