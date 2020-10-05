@@ -1,20 +1,23 @@
 
 # OTDPlugins ![.NET Core](https://github.com/X9VoiD/VoiDPlugins/workflows/.NET%20Core/badge.svg)
 
-OTDPlugins is a collection of extensions for [OpenTabletDriver](https://github.com/InfinityGhost/OpenTabletDriver). 
+OTDPlugins is a collection of extensions for [OpenTabletDriver](https://github.com/InfinityGhost/OpenTabletDriver).
 
 ## Installation
 
 Select and Download plugins from [Releases](https://github.com/X9VoiD/VoiDPlugins/releases/latest), then unpack to these directories below
 
-#### Windows
+### Windows
+
 `%localappdata%\OpenTabletDriver\Plugins`
 
-#### Linux
+### Linux
+
 `~/.config/OpenTabletDriver/Plugins`
 
-#### MacOS
-`$HOME/Library/Application Support/OpenTabletDriver/Plugins`    
+### MacOS
+
+`$HOME/Library/Application Support/OpenTabletDriver/Plugins`
 
 ## Plugins
 
@@ -50,4 +53,3 @@ Select and Download plugins from [Releases](https://github.com/X9VoiD/VoiDPlugin
 - [OemKill](https://github.com/X9VoiD/VoiDPlugins/wiki/OemKill)
 
       Automatically kill OEM Tablet Driver processes
-
