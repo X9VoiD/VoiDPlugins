@@ -14,7 +14,7 @@ namespace WindowsInk
         public static InkHandler InkHandler = null;
     }
 
-    [PluginName("Artist Mode"), SupportedPlatform(PluginPlatform.Windows)]
+    [PluginName("Artist Mode (Windows Ink)"), SupportedPlatform(PluginPlatform.Windows)]
     public class WindowsInk : AbsoluteOutputMode
     {
         public override IVirtualTablet VirtualTablet => WindowsInkState.InkHandler ?? new InkHandler(Output);
