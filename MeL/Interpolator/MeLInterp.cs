@@ -2,20 +2,20 @@
 
 using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OTDPlugins.MeL.Core;
 
 namespace OTDPlugins.MeL
 {
     [PluginName("MeL")]
-    public class MeLInterp : IInterpolator
+    public class MeLInterp : Interpolator
     {
-        public void NewReport(Vector2 point, uint pressure)
+        public override void NewReport(Vector2 point, uint pressure)
         {
             Core.Add(point);
         }
 
-        public void Interpolate(InterpolatorArgs output)
+        public override void Interpolate(InterpolatorArgs output)
         {
             if (Core.IsReady)
                 output.Position = Core.Predict(Core.TimeNow, 0);
