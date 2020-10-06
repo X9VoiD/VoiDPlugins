@@ -1,6 +1,7 @@
 #if false
 
 using System.Numerics;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OTDPlugins.MeL.Core;
@@ -18,7 +19,16 @@ namespace OTDPlugins.MeL
         public override void Interpolate(InterpolatorArgs output)
         {
             if (Core.IsReady)
-                output.Position = Core.Predict(Core.TimeNow, 0);
+            {
+                try
+                {
+                    output.Position = Core.Predict(Core.TimeNow, 0);
+                }
+                catch
+                {
+                    Log.Write("MeLInterp", "Unknown error in MeLCore");
+                }
+            }
         }
 
         [Property("Samples")]

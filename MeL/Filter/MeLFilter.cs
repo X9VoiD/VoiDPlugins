@@ -1,5 +1,6 @@
 using System;
 using System.Numerics;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet;
 using OTDPlugins.MeL.Core;
@@ -12,7 +13,15 @@ namespace OTDPlugins.MeL
         public Vector2 Filter(Vector2 point)
         {
             Core.Add(point);
-            return Core.IsReady ? Core.Predict(DateTime.UtcNow, Offset) : point;
+            try
+            {
+                return Core.IsReady ? Core.Predict(DateTime.UtcNow, Offset) : point;
+            }
+            catch
+            {
+                Log.Write("MeLFilter", "Unknown error in MeLCore", LogLevel.Error);
+                return point;
+            }
         }
 
         public FilterStage FilterStage => FilterStage.PostTranspose;

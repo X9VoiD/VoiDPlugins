@@ -14,7 +14,12 @@ namespace OTDPlugins.MeL.Core
 
         public void Add(Vector2 point)
         {
-            if (AddTimeSeriesPoint(point, TimeNow))
+            Add(point, TimeNow);
+        }
+
+        public void Add(Vector2 point, DateTime time)
+        {
+            if (AddTimeSeriesPoint(point, time))
             {
                 IsReady = true;
                 var timeMatrix = ConstructTimeDesignMatrix();
