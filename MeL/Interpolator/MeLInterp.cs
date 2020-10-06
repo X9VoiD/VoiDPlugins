@@ -28,7 +28,7 @@ namespace OTDPlugins.MeL
         public int Complexity { set => Core.Complexity = value; }
 
         [Property("Weight")]
-        public int Weight { set => Core.Weight = value; }
+        public float Weight { set => Core.Weight = value; }
 
         private readonly MLCore Core = new MLCore();
     }
