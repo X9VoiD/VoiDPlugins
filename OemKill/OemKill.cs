@@ -55,7 +55,11 @@ namespace OemKill
 
             // Gaomon
             "Gaomon Tablet",
-            "TabletDriverCore"
+            "TabletDriverCore",
+
+            // VEIKK
+            "TabletDriverCenter",
+            "TabletDriverSetting"
         };
 
         public void Dispose() { }
