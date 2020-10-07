@@ -26,7 +26,7 @@ namespace OTDPlugins.MeL
 
         public FilterStage FilterStage => FilterStage.PostTranspose;
 
-        [UnitProperty("Offset", "ms")]
+        [Property("Offset"), Unit("ms")]
         public float Offset { set; get; }
 
         [Property("Samples")]

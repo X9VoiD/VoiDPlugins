@@ -3,7 +3,9 @@
 using System.Numerics;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
+using OpenTabletDriver.Plugin.Timers;
 using OTDPlugins.MeL.Core;
 
 namespace OTDPlugins.MeL
@@ -11,24 +13,30 @@ namespace OTDPlugins.MeL
     [PluginName("MeL")]
     public class MeLInterp : Interpolator
     {
-        public override void NewReport(Vector2 point, uint pressure)
+        public MeLInterp(ITimer scheduler) : base(scheduler)
         {
-            Core.Add(point);
         }
 
-        public override void Interpolate(InterpolatorArgs output)
+        public override void UpdateState(ITabletReport report)
+        {
+            SyntheticReport = new SyntheticTabletReport(report);
+            Core.Add(report.Position);
+        }
+
+        public override ITabletReport Interpolate()
         {
             if (Core.IsReady)
             {
                 try
                 {
-                    output.Position = Core.Predict(Core.TimeNow, 0);
+                    SyntheticReport.Position = Core.Predict(Core.TimeNow, 0);
                 }
                 catch
                 {
                     Log.Write("MeLInterp", "Unknown error in MeLCore");
                 }
             }
+            return SyntheticReport;
         }
 
         [Property("Samples")]
@@ -41,6 +49,7 @@ namespace OTDPlugins.MeL
         public float Weight { set => Core.Weight = value; }
 
         private readonly MLCore Core = new MLCore();
+        private SyntheticTabletReport SyntheticReport;
     }
 }
 
