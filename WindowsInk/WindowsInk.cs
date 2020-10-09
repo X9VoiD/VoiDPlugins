@@ -19,15 +19,20 @@ namespace WindowsInk
     {
         public override IVirtualTablet VirtualTablet => WindowsInkState.InkHandler ?? new InkHandler(Output);
     }
-
-    public class InkHandler : IVirtualTablet, IPressureHandler
+    [PluginName("Relative Artist Mode (Windows Ink)"), SupportedPlatform(PluginPlatform.Windows)]
+    public class WindowsInkRelative : RelativeOutputMode
+    {
+        public override IVirtualMouse VirtualMouse => (WindowsInkState.InkHandler ?? new InkHandler());
+    }
+    public class InkHandler : IVirtualTablet, IPressureHandler, IVirtualMouse
     {
         private InkReport InkReport;
         private readonly HidStream VMultiDev;
         private Area ScreenArea;
         private bool EraserState;
+        private Vector2 last_pos = new Vector2(0,0);
 
-        public InkHandler(Area screenArea)
+        public InkHandler(Area screenArea = null)
         {
             WindowsInkState.InkHandler = this;
 
@@ -105,6 +110,14 @@ namespace WindowsInk
         {
             InkReport.X = (ushort)(pos.X / ScreenArea.Width * 32767);
             InkReport.Y = (ushort)(pos.Y / ScreenArea.Height * 32767);
+            VMultiDev.Write(InkReport);
+        }
+        public void Move(float dX, float dY)
+        {
+            last_pos.X += dX;
+            last_pos.Y += dY;
+            InkReport.X = (ushort)(last_pos.X / ScreenArea.Width * 32767);
+            InkReport.Y = (ushort)(last_pos.Y / ScreenArea.Height * 32767);
             VMultiDev.Write(InkReport);
         }
 
