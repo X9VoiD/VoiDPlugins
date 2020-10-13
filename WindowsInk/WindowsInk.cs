@@ -19,20 +19,27 @@ namespace WindowsInk
     {
         public override IVirtualTablet VirtualTablet => WindowsInkState.InkHandler ?? new InkHandler(Output);
     }
+
     [PluginName("Relative Artist Mode (Windows Ink)"), SupportedPlatform(PluginPlatform.Windows)]
     public class WindowsInkRelative : RelativeOutputMode
     {
-        public override IVirtualMouse VirtualMouse => (WindowsInkState.InkHandler ?? new InkHandler());
+        public class AbsoluteOutput : AbsoluteOutputMode
+        {
+            public override IVirtualTablet VirtualTablet => WindowsInkState.InkHandler ?? new InkHandler(Output);
+        }
+        private AbsoluteOutput AbsoluteOutputHelper;
+        public override IVirtualMouse VirtualMouse => (WindowsInkState.InkHandler ?? new InkHandler(AbsoluteOutputHelper.Output));
     }
+
     public class InkHandler : IVirtualTablet, IPressureHandler, IVirtualMouse
     {
         private InkReport InkReport;
         private readonly HidStream VMultiDev;
         private Area ScreenArea;
         private bool EraserState;
-        private Vector2 last_pos = new Vector2(0,0);
+        private Vector2 LastPos;
 
-        public InkHandler(Area screenArea = null)
+        public InkHandler(Area screenArea)
         {
             WindowsInkState.InkHandler = this;
 
@@ -114,10 +121,10 @@ namespace WindowsInk
         }
         public void Move(float dX, float dY)
         {
-            last_pos.X += dX;
-            last_pos.Y += dY;
-            InkReport.X = (ushort)(last_pos.X / ScreenArea.Width * 32767);
-            InkReport.Y = (ushort)(last_pos.Y / ScreenArea.Height * 32767);
+            LastPos.X += dX;
+            LastPos.Y += dY;
+            InkReport.X = (ushort)(LastPos.X / ScreenArea.Width * 32767);
+            InkReport.Y = (ushort)(LastPos.Y / ScreenArea.Height * 32767);
             VMultiDev.Write(InkReport);
         }
 
