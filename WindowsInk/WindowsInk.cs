@@ -23,11 +23,12 @@ namespace WindowsInk
     [PluginName("Relative Artist Mode (Windows Ink)"), SupportedPlatform(PluginPlatform.Windows)]
     public class WindowsInkRelative : RelativeOutputMode
     {
+        [PluginIgnore, SupportedPlatform(PluginPlatform.Windows)]
         public class AbsoluteOutput : AbsoluteOutputMode
         {
             public override IVirtualTablet VirtualTablet => WindowsInkState.InkHandler ?? new InkHandler(Output);
         }
-        private AbsoluteOutput AbsoluteOutputHelper;
+        private AbsoluteOutput AbsoluteOutputHelper = new AbsoluteOutput();
         public override IVirtualMouse VirtualMouse => (WindowsInkState.InkHandler ?? new InkHandler(AbsoluteOutputHelper.Output));
     }
 
