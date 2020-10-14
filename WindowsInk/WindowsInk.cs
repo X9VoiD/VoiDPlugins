@@ -35,7 +35,6 @@ namespace WindowsInk
             }
         };
         public override IVirtualMouse VirtualMouse => (WindowsInkState.InkHandler ?? new InkHandler(Output));
-       
     }
 
     public class InkHandler : IVirtualTablet, IPressureHandler, IVirtualMouse
