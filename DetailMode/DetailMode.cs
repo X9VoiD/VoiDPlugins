@@ -25,7 +25,7 @@ namespace DetailMode
         public static bool SetPosition { set; get; }
         public Vector2 Filter(Vector2 OriginalPoint)
         {
-            if (DetailFilter.SetPosition)
+            if (DetailFilter.SetPosition && Info.Driver.OutputMode is OpenTabletDriver.Plugin.Output.AbsoluteOutputMode)
                 DetailFilter.StartingPoint = new Vector2(OriginalPoint.X, OriginalPoint.Y);
             return DetailFilter.IsActive ? new Vector2(OriginalPoint.X * this.Scale + DetailFilter.StartingPoint.X, OriginalPoint.Y * this.Scale + DetailFilter.StartingPoint.Y) : OriginalPoint;
         }
