@@ -4,6 +4,7 @@ using HidSharp;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using static WindowsInk.VMulti;
 
@@ -23,13 +24,18 @@ namespace WindowsInk
     [PluginName("Relative Artist Mode (Windows Ink)"), SupportedPlatform(PluginPlatform.Windows)]
     public class WindowsInkRelative : RelativeOutputMode
     {
-        [PluginIgnore, SupportedPlatform(PluginPlatform.Windows)]
-        public class AbsoluteOutput : AbsoluteOutputMode
+        private Area Output = new Area
         {
-            public override IVirtualTablet VirtualTablet => WindowsInkState.InkHandler ?? new InkHandler(Output);
-        }
-        private AbsoluteOutput AbsoluteOutputHelper = new AbsoluteOutput();
-        public override IVirtualMouse VirtualMouse => (WindowsInkState.InkHandler ?? new InkHandler(AbsoluteOutputHelper.Output));
+            Width = Info.Driver.VirtualScreen.Width,
+            Height = Info.Driver.VirtualScreen.Height,
+            Position = new Vector2
+            {
+                X = Info.Driver.VirtualScreen.Position.X,
+                Y = Info.Driver.VirtualScreen.Position.Y
+            }
+        };
+        public override IVirtualMouse VirtualMouse => (WindowsInkState.InkHandler ?? new InkHandler(Output));
+       
     }
 
     public class InkHandler : IVirtualTablet, IPressureHandler, IVirtualMouse
