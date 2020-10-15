@@ -11,13 +11,13 @@ namespace ScriptRunner
 {
     internal static class ScriptRunnerHelper
     {
-        public static Dictionary<int, string> ScriptPathList = new Dictionary<int, string>();
+        public static List<string> ScriptPathList = Enumerable.Repeat("", 10).ToList();
     }
 
     [PluginName("Script Runner")]
     public class ScriptRunner : ITool, IValidateBinding, IBinding
     {
-        public Dictionary<int, string> ScriptPathList = ScriptRunnerHelper.ScriptPathList;
+        public List<string> ScriptPathList = ScriptRunnerHelper.ScriptPathList;
         public string[] ValidProperties
         {
             get
@@ -31,23 +31,25 @@ namespace ScriptRunner
             }
         }
         public string Property { set; get; }
-        public Action Press => (Action)(() =>  RunScript(ScriptPathList[Int32.Parse(Property)]) );
+        public Action Press => (Action)(() => RunScript(ScriptPathList[Int32.Parse(Property)]));
         private void RunScript(string path)
         {
-            //TODO: distinguish between platforms
-            new Process
+            try
             {
-                StartInfo = new ProcessStartInfo(path)
+                new Process
                 {
-                    UseShellExecute = true
-                }
-            }.Start();
+                    StartInfo = new ProcessStartInfo(path)
+                    {
+                        UseShellExecute = true
+                    }
+                }.Start();
+            }
+            catch { }
         }
         public Action Release => (Action)(() => { });
         public bool Initialize() { return true; }
         public void Dispose() { }
 
-        //TODO: make this dynamic
         [Property("Script Path 0")]
         public string ScriptPath0
         {
