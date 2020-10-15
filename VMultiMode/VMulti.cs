@@ -74,7 +74,6 @@ namespace VMultiMode
         {
             protected T Report;
             protected HidStream VMultiDev;
-            protected Area ScreenArea;
 
             protected void Init(string Name, byte ReportID)
             {

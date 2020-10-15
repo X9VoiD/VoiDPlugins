@@ -24,18 +24,18 @@ namespace OemKill
                 return true;
             }
 
-            try
+            foreach (var process in oemProcesses)
             {
-                foreach (var process in oemProcesses)
+                try
                 {
                     process.Kill();
                     Log.Write("OemKill", "Killing " + process.ProcessName);
                 }
-            }
-            catch (Exception e)
-            {
-                Log.Write("OemKill", "Failed. Reason: " + e.Message, LogLevel.Error);
-                return false;
+                catch (Exception e)
+                {
+                    Log.Write("OemKill", "Failed. Reason: " + e.Message, LogLevel.Error);
+                    return false;
+                }
             }
 
             Log.Write("OemKill", "Oem process killed successfully");

@@ -9,28 +9,21 @@ using static WindowsInk.VMulti;
 
 namespace WindowsInk
 {
-    internal static class WindowsInkState
-    {
-        public static InkHandler InkHandler = null;
-    }
-
     [PluginName("Artist Mode (Windows Ink)"), SupportedPlatform(PluginPlatform.Windows)]
     public class WindowsInk : AbsoluteOutputMode
     {
-        public override IVirtualTablet VirtualTablet => WindowsInkState.InkHandler ?? new InkHandler(Output);
+        private readonly IVirtualTablet InkHandler = new InkHandler();
+        public override IVirtualTablet VirtualTablet => InkHandler;
     }
 
     public class InkHandler : IVirtualTablet, IPressureHandler
     {
         private InkReport InkReport;
         private readonly HidStream VMultiDev;
-        private Area ScreenArea;
         private bool EraserState;
 
-        public InkHandler(Area screenArea)
+        public InkHandler()
         {
-            WindowsInkState.InkHandler = this;
-
             InkReport = new InkReport()
             {
                 VMultiID = 0x40,
@@ -52,7 +45,6 @@ namespace WindowsInk
                 }
             }
 
-            ScreenArea = screenArea;
             EraserState = false;
         }
 
@@ -103,8 +95,8 @@ namespace WindowsInk
 
         public void SetPosition(Vector2 pos)
         {
-            InkReport.X = (ushort)(pos.X / ScreenArea.Width * 32767);
-            InkReport.Y = (ushort)(pos.Y / ScreenArea.Height * 32767);
+            InkReport.X = (ushort)(pos.X / Info.Driver.VirtualScreen.Width * 32767);
+            InkReport.Y = (ushort)(pos.Y / Info.Driver.VirtualScreen.Height * 32767);
             VMultiDev.Write(InkReport);
         }
 
