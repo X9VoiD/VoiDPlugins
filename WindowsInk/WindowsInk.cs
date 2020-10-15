@@ -1,10 +1,8 @@
-using System;
 using System.Numerics;
 using HidSharp;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using static WindowsInk.VMulti;
 
@@ -17,20 +15,11 @@ namespace WindowsInk
         public override IVirtualTablet VirtualTablet => InkHandler;
     }
 
-    [PluginName("Relative Artist Mode (Windows Ink)"), SupportedPlatform(PluginPlatform.Windows)]
+    [PluginName("Artist Mode (Relative Windows Ink)"), SupportedPlatform(PluginPlatform.Windows)]
     public class WindowsInkRelative : RelativeOutputMode
     {
-        private Area Output = new Area
-        {
-            Width = Info.Driver.VirtualScreen.Width,
-            Height = Info.Driver.VirtualScreen.Height,
-            Position = new Vector2
-            {
-                X = Info.Driver.VirtualScreen.Position.X,
-                Y = Info.Driver.VirtualScreen.Position.Y
-            }
-        };
-        public override IVirtualMouse VirtualMouse => (WindowsInkState.InkHandler ?? new InkHandler(Output));
+        private readonly IVirtualMouse InkHandler = new InkHandler();
+        public override IVirtualMouse VirtualMouse => InkHandler;
     }
 
     public class InkHandler : IVirtualTablet, IPressureHandler, IVirtualMouse
@@ -39,6 +28,8 @@ namespace WindowsInk
         private readonly HidStream VMultiDev;
         private bool EraserState;
         private Vector2 LastPos;
+        private readonly float Width = Info.Driver.VirtualScreen.Width;
+        private readonly float Height = Info.Driver.VirtualScreen.Height;
 
         public InkHandler()
         {
@@ -113,16 +104,17 @@ namespace WindowsInk
 
         public void SetPosition(Vector2 pos)
         {
-            InkReport.X = (ushort)(pos.X / Info.Driver.VirtualScreen.Width * 32767);
-            InkReport.Y = (ushort)(pos.Y / Info.Driver.VirtualScreen.Height * 32767);
+            InkReport.X = (ushort)(pos.X / Width * 32767);
+            InkReport.Y = (ushort)(pos.Y / Height * 32767);
             VMultiDev.Write(InkReport);
         }
+
         public void Move(float dX, float dY)
         {
             LastPos.X += dX;
             LastPos.Y += dY;
-            InkReport.X = (ushort)(LastPos.X / ScreenArea.Width * 32767);
-            InkReport.Y = (ushort)(LastPos.Y / ScreenArea.Height * 32767);
+            InkReport.X = (ushort)(LastPos.X / Width * 32767);
+            InkReport.Y = (ushort)(LastPos.Y / Height * 32767);
             VMultiDev.Write(InkReport);
         }
 
@@ -145,11 +137,9 @@ namespace WindowsInk
         {
             var prevState = InkReport.Buttons;
             var prevPressure = InkReport.Pressure;
-            InkReport.ReportID = 0;
             InkReport.Buttons = 0;
             InkReport.Pressure = 0;
             VMultiDev.Write(InkReport);
-            InkReport.ReportID = 0x05;
             InkReport.Buttons = prevState;
             InkReport.Pressure = prevPressure;
         }
