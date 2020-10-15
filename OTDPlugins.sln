@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VMultiMode", "VMultiMode\VM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeL", "MeL\MeL.csproj", "{F0931C43-4A63-4CDB-9B5F-A8DC50557109}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DetailMode", "DetailMode\DetailMode.csproj", "{3315D19C-54CB-4947-8CF5-54953870FB4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrecisionControl", "PrecisionControl\PrecisionControl.csproj", "{3315D19C-54CB-4947-8CF5-54953870FB4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
