@@ -4,17 +4,13 @@ using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
-namespace TouchEmu
+namespace VoiDPlugins.TouchEmu
 {
-    public static class TouchState
-    {
-        public static IVirtualTablet touchPointer = new TouchPointerHandler();
-    }
-
     [PluginName("Touch Emu"), SupportedPlatform(PluginPlatform.Windows)]
     public class TouchOutputMode : AbsoluteOutputMode
     {
-        public override IVirtualTablet VirtualTablet => TouchState.touchPointer;
+        private readonly IVirtualTablet TouchPointer = new TouchPointerHandler();
+        public override IVirtualTablet VirtualTablet => TouchPointer;
     }
 
     public class TouchPointerHandler : IVirtualTablet, IPressureHandler

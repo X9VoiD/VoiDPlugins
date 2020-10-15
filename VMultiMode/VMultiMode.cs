@@ -3,9 +3,9 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Pointer;
-using static VMultiMode.VMulti;
+using static VoiDPlugins.VMultiMode.VMulti;
 
-namespace VMultiMode
+namespace VoiDPlugins.VMultiMode
 {
     [PluginName("VMulti Absolute Output Mode"), SupportedPlatform(PluginPlatform.Windows)]
     public class VMultiAbsMode : AbsoluteOutputMode

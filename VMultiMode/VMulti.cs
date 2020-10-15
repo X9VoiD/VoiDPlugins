@@ -1,9 +1,8 @@
-using System.Numerics;
 using HidSharp;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
-namespace VMultiMode
+namespace VoiDPlugins.VMultiMode
 {
     public static class VMulti
     {

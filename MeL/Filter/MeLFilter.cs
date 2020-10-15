@@ -3,9 +3,9 @@ using System.Numerics;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet;
-using OTDPlugins.MeL.Core;
+using VoiDPlugins.MeL.Core;
 
-namespace OTDPlugins.MeL
+namespace VoiDPlugins.MeL
 {
     [PluginName("MeL")]
     public class MeLFilter : IFilter

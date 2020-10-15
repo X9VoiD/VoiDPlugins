@@ -5,7 +5,7 @@ using System.Linq;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 
-namespace OemKill
+namespace VoiDPlugins.OemKill
 {
     [SupportedPlatform(PluginPlatform.Windows)]
     [PluginName("OEM Kill")]

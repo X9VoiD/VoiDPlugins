@@ -6,9 +6,9 @@ using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.Plugin.Timers;
-using OTDPlugins.MeL.Core;
+using VoiDPlugins.MeL.Core;
 
-namespace OTDPlugins.MeL
+namespace VoiDPlugins.MeL
 {
     [PluginName("MeL")]
     public class MeLInterp : Interpolator

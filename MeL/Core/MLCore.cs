@@ -3,7 +3,7 @@ using System;
 using System.Numerics;
 using OpenTabletDriver.Plugin;
 
-namespace OTDPlugins.MeL.Core
+namespace VoiDPlugins.MeL.Core
 {
     internal partial class MLCore
     {

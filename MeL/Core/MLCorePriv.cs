@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using MathNet.Numerics;
 
-namespace OTDPlugins.MeL.Core
+namespace VoiDPlugins.MeL.Core
 {
     partial class MLCore
     {

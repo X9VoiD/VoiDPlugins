@@ -4,9 +4,9 @@ using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Pointer;
-using static WindowsInk.VMulti;
+using static VoiDPlugins.WindowsInk.VMulti;
 
-namespace WindowsInk
+namespace VoiDPlugins.WindowsInk
 {
     [PluginName("Artist Mode (Windows Ink)"), SupportedPlatform(PluginPlatform.Windows)]
     public class WindowsInk : AbsoluteOutputMode

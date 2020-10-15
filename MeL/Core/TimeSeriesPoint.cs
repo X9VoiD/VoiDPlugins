@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
 
-namespace OTDPlugins.MeL.Core
+namespace VoiDPlugins.MeL.Core
 {
     public class TimeSeriesPoint
     {

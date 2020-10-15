@@ -1,6 +1,4 @@
-using System;
-
-namespace WindowsInk
+namespace VoiDPlugins.WindowsInk
 {
     public static class VMulti
     {

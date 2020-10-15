@@ -1,4 +1,4 @@
-namespace OTDPlugins.MeL.Core
+namespace VoiDPlugins.MeL.Core
 {
     internal enum Axis
     {

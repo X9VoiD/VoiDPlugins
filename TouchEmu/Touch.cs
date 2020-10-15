@@ -1,8 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
-using OpenTabletDriver.Plugin;
 
-namespace TouchEmu
+namespace VoiDPlugins.TouchEmu
 {
     public static class Touch
     {

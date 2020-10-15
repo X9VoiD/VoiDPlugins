@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace TouchEmu
+namespace VoiDPlugins.TouchEmu
 {
     using HANDLE = IntPtr;
     using HWND = IntPtr;
