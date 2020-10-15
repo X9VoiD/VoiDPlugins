@@ -1,12 +1,12 @@
 # OemKill
 
-Automatically kills OEM tablet driver processes.
+Automatically kills OEM tablet driver processes. (Windows only)
 
 ## Installation
 
-Download OemKill from [Latest Release.](https://github.com/X9VoiD/VoiDPlugins/releases/latest)
+Download OemKill plugin from [latest releases.](https://github.com/X9VoiD/vmulti-bin/releases/latest)
 
-Then copy `OemKill.dll` to:
+Then copy zip contents to:
 
 | Platform | Path |
 | :-- | :-- |
@@ -15,10 +15,11 @@ Then copy `OemKill.dll` to:
 | MacOS | `$HOME/Library/Application Support/OpenTabletDriver/Plugins` |
 
 ## Currently Identified OEM Drivers
-
+    
 | OEM | Support |
 | :-- | :--: |
 | Wacom | Yes |
 | XP Pen | Yes |
 | Gaomon | Yes |
+| VEIKK | Yes |
 | Huion | No |
