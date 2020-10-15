@@ -25,7 +25,7 @@ namespace ScriptRunner
                 string[] Properties = new string[10];
                 for (int index = 0; index <= 9; index++)
                 {
-                    Properties[index] = $"Script Path {index}";
+                    Properties[index] = $"{index}";
                 }
                 return Properties;
             }
