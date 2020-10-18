@@ -11,23 +11,19 @@ namespace PrecisionControl
     public class PrecisionControl: IBinding, IValidateBinding, IFilter
     {
         public static Vector2 StartingPoint;
-        public float _Scale;
         public static bool IsActive { set; get; }
         public static bool SetPosition { set; get; }
         public string Property { set; get; }
 
-        public Action Press => (Action)(() =>
-            {
-                IsActive = !IsActive;
-                SetPosition = true;
-            });
-
-        public Action Release => (Action)(() => SetPosition = false);
-
-        public string[] ValidProperties
+        public Action Press => () =>
         {
-            get { return new[]{ "Toggle Precision Control" }; }
-        }
+            IsActive = !IsActive;
+            SetPosition = true;
+        };
+
+        public Action Release => () => SetPosition = false;
+
+        public string[] ValidProperties => new[] { "Toggle Precision Control" };
 
         public Vector2 Filter(Vector2 OriginalPoint)
         {
@@ -37,11 +33,7 @@ namespace PrecisionControl
         }
 
         [SliderProperty("Precision Multiplier", 0.0f, 10f, 0.3f)]
-        public float Scale
-        {
-            get => _Scale;
-            set { _Scale = value; }
-        }
+        public float Scale { get; set; }
 
         public FilterStage FilterStage => FilterStage.PostTranspose;
     }
