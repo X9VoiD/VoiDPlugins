@@ -3,7 +3,7 @@ using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Attributes;
 using System;
 using System.Numerics;
-using System.Linq;
+using OpenTabletDriver.Plugin.Output;
 
 namespace PrecisionControl
 {
@@ -17,23 +17,50 @@ namespace PrecisionControl
 
         public Action Press => () =>
         {
-            IsActive = !IsActive;
+            if (Property == "Toggle")
+                IsActive = !IsActive;
+            else if (Property == "Hold")
+                IsActive = true;
             SetPosition = true;
         };
 
-        public Action Release => () => SetPosition = false;
+        public Action Release => () =>
+        {
+            if (Property == "Hold")
+                IsActive = false;
+        };
 
-        public string[] ValidProperties => new[] { "Toggle Precision Control" };
+        public string[] ValidProperties => new[] { "Toggle", "Hold" };
 
         public Vector2 Filter(Vector2 OriginalPoint)
         {
-            if (SetPosition && Info.Driver.OutputMode is OpenTabletDriver.Plugin.Output.AbsoluteOutputMode)
-                StartingPoint = new Vector2(OriginalPoint.X, OriginalPoint.Y);
-            return IsActive ? new Vector2(OriginalPoint.X * Scale + StartingPoint.X, OriginalPoint.Y * Scale + StartingPoint.Y) : OriginalPoint;
+            if (SetPosition)
+            {
+                StartingPoint = OriginalPoint;
+                SetPosition = false;
+            }
+
+            if (IsActive)
+            {
+                switch (Info.Driver.OutputMode)
+                {
+                    case AbsoluteOutputMode _:
+                        var delta = (OriginalPoint - StartingPoint) * Scale;
+                        return StartingPoint + delta;
+                    case RelativeOutputMode _:
+                        return OriginalPoint * Scale;
+                    default:
+                        return OriginalPoint;
+                }
+            }
+            else
+            {
+                return OriginalPoint;
+            }
         }
 
         [SliderProperty("Precision Multiplier", 0.0f, 10f, 0.3f)]
-        public float Scale { get; set; }
+        public float Scale { get; set; } = 0.3f;
 
         public FilterStage FilterStage => FilterStage.PostTranspose;
     }
