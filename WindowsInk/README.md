@@ -28,6 +28,10 @@ Then copy zip contents to:
 | Linux | `~/.config/OpenTabletDriver/Plugins` |
 | MacOS | `$HOME/Library/Application Support/OpenTabletDriver/Plugins` |
 
+## Usage
+
+Enable WindowsInk by selecting it as an output mode on the OutputModeSelector of Output tab.
+
 ## Acknowledgements
 
 Huge thanks to [skyborgff](https://github.com/skyborgff) for the [base implementation](https://github.com/skyborgff/OpenTabletDriverPlugins/tree/WindowsInk)!

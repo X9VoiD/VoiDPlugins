@@ -4,7 +4,7 @@ Automatically kills OEM tablet driver processes. (Windows only)
 
 ## Installation
 
-Download OemKill plugin from [latest releases.](https://github.com/X9VoiD/vmulti-bin/releases/latest)
+Download OemKill plugin from [latest releases.](https://github.com/X9VoiD/VoiDPlugins/releases/latest)
 
 Then copy zip contents to:
 
@@ -14,8 +14,12 @@ Then copy zip contents to:
 | Linux | `~/.config/OpenTabletDriver/Plugins` |
 | MacOS | `$HOME/Library/Application Support/OpenTabletDriver/Plugins` |
 
-## Currently Identified OEM Drivers
-    
+## Usage
+
+Enable OemKill on Tool tab then restart OTD
+
+## Currently Supported OEM Drivers
+
 | OEM | Support |
 | :-- | :--: |
 | Wacom | Yes |

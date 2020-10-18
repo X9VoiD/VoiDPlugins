@@ -7,7 +7,7 @@ jobs:
   build:
     strategy:
       matrix:
-        plugin: [MeL, OemKill, TouchEmu, WindowsInk, VMultiMode]
+        plugin: [MeL, OemKill, TouchEmu, WindowsInk, VMultiMode, PrecisionControl]
 
     runs-on: ubuntu-latest
 

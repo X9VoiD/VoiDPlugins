@@ -20,3 +20,7 @@ Then copy zip contents to:
 | Windows | `%localappdata%\OpenTabletDriver\Plugins` |
 | Linux | `~/.config/OpenTabletDriver/Plugins` |
 | MacOS | `$HOME/Library/Application Support/OpenTabletDriver/Plugins` |
+
+## Usage
+
+Enable VMultiMode by selecting it as an output mode on the OutputModeSelector of Output tab.

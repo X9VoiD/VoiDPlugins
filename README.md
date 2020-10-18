@@ -20,6 +20,12 @@ Select and Download plugins from [Latest Release](https://github.com/X9VoiD/VoiD
 
       Machine Learning Plugin
 
+## Filters
+
+### [PrecisionControl](https://github.com/X9VoiD/VoiDPlugins/wiki/PrecisionControl)
+
+      Toggleable sensitivity
+
 ## Output Modes
 
 ### [WindowsInk](https://github.com/X9VoiD/VoiDPlugins/wiki/WindowsInk)
