@@ -24,7 +24,7 @@ Select and Download plugins from [Latest Release](https://github.com/X9VoiD/VoiD
 
 ### [PrecisionControl](https://github.com/X9VoiD/VoiDPlugins/wiki/PrecisionControl)
 
-      Toggleable sensitivity
+      Dynamic sensitivity switching
 
 ## Output Modes
 
