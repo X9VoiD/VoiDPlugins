@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MeL", "MeL\MeL.csproj", "{F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrecisionControl", "PrecisionControl\PrecisionControl.csproj", "{3315D19C-54CB-4947-8CF5-54953870FB4F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptRunner", "ScriptRunner\ScriptRunner.csproj", "{7B727343-91A8-44DA-AF2A-9FC8A0986AA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{3315D19C-54CB-4947-8CF5-54953870FB4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3315D19C-54CB-4947-8CF5-54953870FB4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3315D19C-54CB-4947-8CF5-54953870FB4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B727343-91A8-44DA-AF2A-9FC8A0986AA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B727343-91A8-44DA-AF2A-9FC8A0986AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B727343-91A8-44DA-AF2A-9FC8A0986AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B727343-91A8-44DA-AF2A-9FC8A0986AA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
