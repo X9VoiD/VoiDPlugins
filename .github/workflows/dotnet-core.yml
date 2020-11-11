@@ -3,11 +3,11 @@ name: .NET Core
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-       
+
   build:
     strategy:
       matrix:
-        plugin: [MeL, OemKill, TouchEmu, WindowsInk, VMultiMode, PrecisionControl]
+        plugin: [MeL, OemKill, TouchEmu, WindowsInk, VMultiMode, PrecisionControl, ScriptRunner]
 
     runs-on: ubuntu-latest
 
@@ -15,22 +15,24 @@ jobs:
     - uses: actions/checkout@master
       with:
         submodules: recursive
-      
+
     - name: Setup ${{ matrix.net }}
-      uses: actions/setup-dotnet@v1.7.0
-        
+      uses: actions/setup-dotnet@main
+      with:
+        dotnet-version: '5.0.100'
+
     - name: Build
       env:
         plugin: ${{ matrix.plugin }}
-      run: dotnet publish $plugin --configuration Release --framework netcoreapp3.1 -o ./build/netcoreapp3.1/$plugin
-      
+      run: dotnet publish $plugin --configuration Release --framework net5 -o ./build/$plugin
+
     - name: Upload ${{ matrix.plugin }}
       uses: actions/upload-artifact@main
       with:
         name: ${{ matrix.plugin }}
         path: |
-          ./build/netcoreapp3.1/${{ matrix.plugin }}/*.dll
-          !./build/netcoreapp3.1/${{ matrix.plugin }}/*.json
-          !./build/netcoreapp3.1/${{ matrix.plugin }}/*.pdb
-          !./build/netcoreapp3.1/${{ matrix.plugin }}/OpenTabletDriver.Plugin.dll
-          !./build/netcoreapp3.1/${{ matrix.plugin }}/Newtonsoft.Json.dll
+          ./build/${{ matrix.plugin }}/*.dll
+          !./build/${{ matrix.plugin }}/*.json
+          !./build/${{ matrix.plugin }}/*.pdb
+          !./build/${{ matrix.plugin }}/OpenTabletDriver.Plugin.dll
+          !./build/${{ matrix.plugin }}/Newtonsoft.Json.dll

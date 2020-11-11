@@ -15,11 +15,17 @@ namespace VoiDPlugins.MeL
             Core.Add(point);
             try
             {
-                return Core.IsReady ? Core.Predict(DateTime.UtcNow, Offset) : point;
+                var a = Core.IsReady ? Core.Predict(DateTime.UtcNow, Offset) : point;
+                rateLimit = false;
+                return a;
             }
             catch
             {
-                Log.Write("MeLFilter", "Unknown error in MeLCore", LogLevel.Error);
+                if (!rateLimit)
+                {
+                    Log.Write("MeLFilter", "Unknown error in MeLCore", LogLevel.Error);
+                    rateLimit = true;
+                }
                 return point;
             }
         }
@@ -39,5 +45,6 @@ namespace VoiDPlugins.MeL
         public float Weight { set => Core.Weight = value; }
 
         private readonly MLCore Core = new MLCore();
+        private bool rateLimit;
     }
 }
