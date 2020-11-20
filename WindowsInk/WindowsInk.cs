@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using HidSharp;
 using OpenTabletDriver.Plugin;
@@ -111,8 +112,8 @@ namespace VoiDPlugins.WindowsInk
 
         public void Move(float dX, float dY)
         {
-            LastPos.X += dX;
-            LastPos.Y += dY;
+            LastPos.X = Math.Clamp(LastPos.X + dX, 0, Width);
+            LastPos.Y = Math.Clamp(LastPos.Y + dY, 0, Height);
             InkReport.X = (ushort)(LastPos.X / Width * 32767);
             InkReport.Y = (ushort)(LastPos.Y / Height * 32767);
             VMultiDev.Write(InkReport);
