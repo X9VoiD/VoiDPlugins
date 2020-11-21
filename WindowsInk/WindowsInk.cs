@@ -48,11 +48,15 @@ namespace VoiDPlugins.WindowsInk
                 if (device.GetMaxOutputReportLength() == 65 && device.GetMaxInputReportLength() == 65)
                 {
                     device.TryOpen(out VMultiDev);
-                    if (VMultiDev == null)
-                    {
-                        Log.Write("WindowsInk", "Cannot find VirtualHID", LogLevel.Error);
-                    }
+                    if (VMultiDev != null)
+                        break;
                 }
+            }
+
+            if (VMultiDev == null)
+            {
+                Log.Write("WindowsInk", "Cannot find VirtualHID", LogLevel.Error);
+                Log.Write("WindowsInk", "Install VMulti driver here: https://github.com/X9VoiD/vmulti-bin/releases/latest");
             }
 
             EraserState = false;
