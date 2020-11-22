@@ -36,3 +36,4 @@ jobs:
           !./build/${{ matrix.plugin }}/*.pdb
           !./build/${{ matrix.plugin }}/OpenTabletDriver.Plugin.dll
           !./build/${{ matrix.plugin }}/Newtonsoft.Json.dll
+          !./build/${{ matrix.plugin }}/HidSharpCore.dll
