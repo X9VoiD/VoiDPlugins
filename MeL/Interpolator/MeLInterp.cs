@@ -1,9 +1,5 @@
-#if false
-
-using System.Numerics;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
 using OpenTabletDriver.Plugin.Timers;
 using VoiDPlugins.MeL.Core;
@@ -17,13 +13,13 @@ namespace VoiDPlugins.MeL
         {
         }
 
-        public override void UpdateState(ITabletReport report)
+        public override void UpdateState(SyntheticTabletReport report)
         {
             SyntheticReport = new SyntheticTabletReport(report);
             Core.Add(report.Position);
         }
 
-        public override ITabletReport Interpolate()
+        public override SyntheticTabletReport Interpolate()
         {
             if (Core.IsReady)
             {
@@ -52,5 +48,3 @@ namespace VoiDPlugins.MeL
         private SyntheticTabletReport SyntheticReport;
     }
 }
-
-#endif
