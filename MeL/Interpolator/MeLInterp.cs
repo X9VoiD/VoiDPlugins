@@ -1,3 +1,4 @@
+using System;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet.Interpolator;
@@ -15,8 +16,15 @@ namespace VoiDPlugins.MeL
 
         public override void UpdateState(SyntheticTabletReport report)
         {
+            var now = DateTime.UtcNow;
+            var reportMs = (now - lastTime).TotalMilliseconds;
+            reportMsAvg += (reportMs - reportMsAvg) / 50.0;
+            lastTime = now;
             SyntheticReport = new SyntheticTabletReport(report);
-            Core.Add(report.Position);
+            if (reportMs > 100)
+                reportMsAvg = 4;
+            if (reportMs >= reportMsAvg * 0.75)
+                Core.Add(report.Position);
         }
 
         public override SyntheticTabletReport Interpolate()
@@ -25,7 +33,7 @@ namespace VoiDPlugins.MeL
             {
                 try
                 {
-                    SyntheticReport.Position = Core.Predict(Core.TimeNow, 0);
+                    SyntheticReport.Position = Core.Predict(MLCore.TimeNow, 0);
                 }
                 catch
                 {
@@ -46,5 +54,7 @@ namespace VoiDPlugins.MeL
 
         private readonly MLCore Core = new MLCore();
         private SyntheticTabletReport SyntheticReport;
+        private new DateTime lastTime;
+        private new double reportMsAvg = 4.0;
     }
 }

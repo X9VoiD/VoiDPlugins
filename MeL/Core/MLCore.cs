@@ -1,6 +1,7 @@
-using MathNet.Numerics;
 using System;
+using System.Linq;
 using System.Numerics;
+using MathNet.Numerics;
 using OpenTabletDriver.Plugin;
 
 namespace VoiDPlugins.MeL.Core
@@ -14,7 +15,7 @@ namespace VoiDPlugins.MeL.Core
 
         public void Add(Vector2 point)
         {
-            Add(point, TimeNow);
+            Add(point, MLCore.TimeNow);
         }
 
         public void Add(Vector2 point, DateTime time)
@@ -23,9 +24,8 @@ namespace VoiDPlugins.MeL.Core
             {
                 IsReady = true;
                 var timeMatrix = ConstructTimeDesignMatrix();
-                double[] x, y;
-                x = ConstructTargetMatrix(Axis.X);
-                y = ConstructTargetMatrix(Axis.Y);
+                var x = ConstructTargetMatrix(Axis.X);
+                var y = ConstructTargetMatrix(Axis.Y);
                 try
                 {
                     this.xCoeff = new Polynomial(Fit.PolynomialWeighted(timeMatrix, x, this.weights, Complexity));
@@ -43,7 +43,7 @@ namespace VoiDPlugins.MeL.Core
         {
             var predicted = new Vector2();
             double predictAhead;
-            predictAhead = (now - this.timeSeriesPoints.First.Value.Date).TotalMilliseconds + offset;
+            predictAhead = (now - this.timeSeriesPoints.PeekFirst().Date).TotalMilliseconds + offset;
 
             predicted.X = (float)this.xCoeff.Evaluate(predictAhead);
             predicted.Y = (float)this.yCoeff.Evaluate(predictAhead);
@@ -53,9 +53,19 @@ namespace VoiDPlugins.MeL.Core
 
         public bool IsReady { private set; get; }
 
-        public int Samples { set; get; } = 20;
+        private int samples;
+        public int Samples
+        {
+            set
+            {
+                this.timeSeriesPoints = new RingBuffer<TimeSeriesPoint>(value);
+                this.samples = value;
+            }
+            get => this.samples;
+        }
+
         public int Complexity { set; get; } = 2;
-        public float Weight { set => this.weights = CalcWeight(value); }
-        public DateTime TimeNow { get => DateTime.UtcNow; }
+        public float Weight { set => this.weights = CalcWeight(value).ToArray(); }
+        public static DateTime TimeNow { get => DateTime.UtcNow; }
     }
 }

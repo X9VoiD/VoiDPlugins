@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using MathNet.Numerics;
 
@@ -9,19 +8,17 @@ namespace VoiDPlugins.MeL.Core
     {
         private double[] weights;
         private Polynomial xCoeff, yCoeff;
-        private readonly LinkedList<TimeSeriesPoint> timeSeriesPoints = new LinkedList<TimeSeriesPoint>();
+        private RingBuffer<TimeSeriesPoint> timeSeriesPoints;
 
         private bool AddTimeSeriesPoint(Vector2 point, DateTime time)
         {
-            this.timeSeriesPoints.AddLast(new TimeSeriesPoint(point, time));
-            if (this.timeSeriesPoints.Count > Samples)
-                this.timeSeriesPoints.RemoveFirst();
-            return this.timeSeriesPoints.Count == Samples;
+            this.timeSeriesPoints.Insert(new TimeSeriesPoint(point, time));
+            return this.timeSeriesPoints.Filled;
         }
 
         private double[] ConstructTimeDesignMatrix()
         {
-            var baseTime = this.timeSeriesPoints.First.Value.Date;
+            var baseTime = this.timeSeriesPoints.PeekFirst().Date;
             var data = new double[Samples];
             var index = 0;
             foreach (var timePoint in this.timeSeriesPoints)
