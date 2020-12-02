@@ -16,7 +16,7 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Setup ${{ matrix.net }}
+    - name: Setup NET 5
       uses: actions/setup-dotnet@main
       with:
         dotnet-version: '5.0.100'
