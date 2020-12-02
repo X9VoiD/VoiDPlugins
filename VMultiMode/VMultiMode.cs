@@ -10,22 +10,19 @@ namespace VoiDPlugins.VMultiMode
     [PluginName("VMulti Absolute Output Mode"), SupportedPlatform(PluginPlatform.Windows)]
     public class VMultiAbsMode : AbsoluteOutputMode
     {
-        private readonly IVirtualTablet AbsHandler = new VMultiAbsHandler();
-        public override IVirtualTablet VirtualTablet => AbsHandler;
+        private readonly IAbsolutePointer AbsHandler = new VMultiAbsHandler();
+        public override IAbsolutePointer Pointer => AbsHandler;
     }
 
     [PluginName("VMulti Relative Output Mode"), SupportedPlatform(PluginPlatform.Windows)]
     public class VMultiRelMode : AbsoluteOutputMode
     {
-        private readonly IVirtualTablet RelHandler = new VMultiRelHandler();
-        public override IVirtualTablet VirtualTablet => RelHandler;
+        private readonly IAbsolutePointer RelHandler = new VMultiRelHandler();
+        public override IAbsolutePointer Pointer => RelHandler;
     }
 
-    public class VMultiAbsHandler : VMultiHandler<VMultiAbsReport>, IVirtualTablet
+    public class VMultiAbsHandler : VMultiHandler<VMultiAbsReport>, IAbsolutePointer
     {
-        private readonly float Width = Info.Driver.VirtualScreen.Width;
-        private readonly float Height = Info.Driver.VirtualScreen.Height;
-
         public VMultiAbsHandler()
         {
             Init("VMultiAbs", 0x09);
@@ -33,13 +30,14 @@ namespace VoiDPlugins.VMultiMode
 
         public void SetPosition(Vector2 pos)
         {
-            Report.X = (ushort)(pos.X / Width * 32767);
-            Report.Y = (ushort)(pos.Y / Height * 32767);
+            var newPos = pos / ScreenToVMulti;
+            Report.X = (ushort)newPos.X;
+            Report.Y = (ushort)newPos.Y;
             VMultiDev.Write(Report.ToBytes());
         }
     }
 
-    public class VMultiRelHandler : VMultiHandler<VMultiRelReport>, IVirtualTablet
+    public class VMultiRelHandler : VMultiHandler<VMultiRelReport>, IAbsolutePointer
     {
         private ushort prevX, prevY;
 

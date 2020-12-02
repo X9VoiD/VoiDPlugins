@@ -2,12 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace VoiDPlugins.MeL.Core
+namespace VoiDPlugins
 {
     internal class RingBuffer<T> : IEnumerable<T>
     {
         public int Size { private set; get; }
-        public bool Filled { private set; get; }
+        public bool IsFilled { private set; get; }
 
         private T[] dataStream;
         private int head;
@@ -24,7 +24,7 @@ namespace VoiDPlugins.MeL.Core
             if (this.head == this.Size)
             {
                 this.head = 0;
-                this.Filled = true;
+                this.IsFilled = true;
             }
         }
 

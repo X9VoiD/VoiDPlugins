@@ -1,5 +1,7 @@
+using System.Numerics;
 using HidSharp;
 using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace VoiDPlugins.VMultiMode
@@ -68,11 +70,12 @@ namespace VoiDPlugins.VMultiMode
             Middle = 4,
         }
 
-
         public class VMultiHandler<T> where T : VMultiReport, new()
         {
             protected T Report;
             protected HidStream VMultiDev;
+            protected Vector2 ScreenMax, ScreenToVMulti;
+            private readonly IVirtualScreen VirtualScreen = (Info.Driver as IVirtualDisplayDriver).VirtualScreen;
 
             protected void Init(string Name, byte ReportID)
             {
@@ -90,12 +93,19 @@ namespace VoiDPlugins.VMultiMode
                     if (device.GetMaxOutputReportLength() == 65 && device.GetMaxInputReportLength() == 65)
                     {
                         device.TryOpen(out VMultiDev);
-                        if (VMultiDev == null)
-                        {
-                            Log.Write(Name, "Cannot find VirtualHID", LogLevel.Error);
-                        }
+                        if (VMultiDev != null)
+                            break;
                     }
                 }
+
+                if (VMultiDev == null)
+                {
+                    Log.Write(Name, "Cannot find VirtualHID", LogLevel.Error);
+                    Log.Write(Name, "Install VMulti driver here: https://github.com/X9VoiD/vmulti-bin/releases/latest");
+                }
+
+                ScreenMax = new Vector2(VirtualScreen.Width, VirtualScreen.Height);
+                ScreenToVMulti = ScreenMax / 32767;
             }
 
             public void MouseDown(MouseButton button)

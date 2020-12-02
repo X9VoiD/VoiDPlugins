@@ -9,11 +9,11 @@ namespace VoiDPlugins.TouchEmu
     [PluginName("Touch Emu"), SupportedPlatform(PluginPlatform.Windows)]
     public class TouchOutputMode : AbsoluteOutputMode
     {
-        private readonly IVirtualTablet TouchPointer = new TouchPointerHandler();
-        public override IVirtualTablet VirtualTablet => TouchPointer;
+        private readonly IAbsolutePointer TouchPointer = new TouchPointerHandler();
+        public override IAbsolutePointer Pointer => TouchPointer;
     }
 
-    public class TouchPointerHandler : IVirtualTablet, IPressureHandler
+    public class TouchPointerHandler : IAbsolutePointer, IVirtualTablet
     {
         private bool _inContact;
         private bool _lastContact;

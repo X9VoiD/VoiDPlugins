@@ -4,33 +4,35 @@ using HidSharp;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using static VoiDPlugins.WindowsInk.VMulti;
 
 namespace VoiDPlugins.WindowsInk
 {
+
     [PluginName("Artist Mode (Windows Ink)"), SupportedPlatform(PluginPlatform.Windows)]
     public class WindowsInk : AbsoluteOutputMode
     {
-        private readonly IVirtualTablet InkHandler = new InkHandler();
-        public override IVirtualTablet VirtualTablet => InkHandler;
+        private readonly IAbsolutePointer InkHandler = new InkHandler();
+        public override IAbsolutePointer Pointer => InkHandler;
     }
 
     [PluginName("Artist Mode (Relative Windows Ink)"), SupportedPlatform(PluginPlatform.Windows)]
     public class WindowsInkRelative : RelativeOutputMode
     {
-        private readonly IVirtualMouse InkHandler = new InkHandler();
-        public override IVirtualMouse VirtualMouse => InkHandler;
+        private readonly IRelativePointer InkHandler = new InkHandler();
+        public override IRelativePointer Pointer => InkHandler;
     }
 
-    public class InkHandler : IVirtualTablet, IPressureHandler, IVirtualMouse
+    public class InkHandler : IAbsolutePointer, IRelativePointer, IVirtualTablet, IVirtualMouse
     {
-        private InkReport InkReport;
+        private readonly IVirtualScreen VirtualScreen = (Info.Driver as IVirtualDisplayDriver).VirtualScreen;
         private readonly HidStream VMultiDev;
-        private bool EraserState;
+        private InkReport InkReport;
         private Vector2 LastPos;
-        private readonly float Width = Info.Driver.VirtualScreen.Width;
-        private readonly float Height = Info.Driver.VirtualScreen.Height;
+        private bool EraserState;
+        private readonly Vector2 ScreenMax, ScreenToVMulti;
 
         public InkHandler()
         {
@@ -59,6 +61,8 @@ namespace VoiDPlugins.WindowsInk
                 Log.Write("WindowsInk", "Install VMulti driver here: https://github.com/X9VoiD/vmulti-bin/releases/latest");
             }
 
+            ScreenMax = new Vector2(VirtualScreen.Width, VirtualScreen.Height) * 32767;
+            ScreenToVMulti = ScreenMax / 32767;
             EraserState = false;
         }
 
@@ -109,17 +113,20 @@ namespace VoiDPlugins.WindowsInk
 
         public void SetPosition(Vector2 pos)
         {
-            InkReport.X = (ushort)(pos.X / Width * 32767);
-            InkReport.Y = (ushort)(pos.Y / Height * 32767);
+            var newPos = pos / ScreenToVMulti;
+            InkReport.X = (ushort)newPos.X;
+            InkReport.Y = (ushort)newPos.Y;
             VMultiDev.Write(InkReport);
         }
 
-        public void Move(float dX, float dY)
+        public void Translate(Vector2 delta)
         {
-            LastPos.X = Math.Clamp(LastPos.X + dX, 0, Width);
-            LastPos.Y = Math.Clamp(LastPos.Y + dY, 0, Height);
-            InkReport.X = (ushort)(LastPos.X / Width * 32767);
-            InkReport.Y = (ushort)(LastPos.Y / Height * 32767);
+            var newPos = LastPos + delta;
+            LastPos.X = Math.Clamp(newPos.X, 0, ScreenMax.X);
+            LastPos.Y = Math.Clamp(newPos.Y, 0, ScreenMax.Y);
+            var reportPos = LastPos / ScreenToVMulti;
+            InkReport.X = (ushort)reportPos.X;
+            InkReport.Y = (ushort)reportPos.Y;
             VMultiDev.Write(InkReport);
         }
 
