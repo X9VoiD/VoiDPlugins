@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrecisionControl", "Precisi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ScriptRunner", "ScriptRunner\ScriptRunner.csproj", "{7B727343-91A8-44DA-AF2A-9FC8A0986AA4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reconstructor", "Reconstructor\Reconstructor.csproj", "{22628430-4AC4-4F9C-BAF4-229092C90979}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{7B727343-91A8-44DA-AF2A-9FC8A0986AA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B727343-91A8-44DA-AF2A-9FC8A0986AA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B727343-91A8-44DA-AF2A-9FC8A0986AA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22628430-4AC4-4F9C-BAF4-229092C90979}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22628430-4AC4-4F9C-BAF4-229092C90979}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22628430-4AC4-4F9C-BAF4-229092C90979}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22628430-4AC4-4F9C-BAF4-229092C90979}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
