@@ -35,6 +35,12 @@ namespace VoiDPlugins
                     lastAvg = point;
                     return truePoint;
                 }
+                case ReconstructionAlg.ReverseMCMA:
+                {
+                    var truePoint = lastAvg.HasValue ? ReverseMCMAFunc(point, lastAvg.Value, Window) : point;
+                    lastAvg = point;
+                    return truePoint;
+                }
                 default:
                     return point;
             }
@@ -59,6 +65,11 @@ namespace VoiDPlugins
             return (currentEMA - (lastEMA * (1 - weight))) / weight;
         }
 
+        private static Vector2 ReverseMCMAFunc(Vector2 currentMCMA, Vector2 lastMCMA, float weight)
+        {
+            return ((currentMCMA - lastMCMA) / weight) + lastMCMA;
+        }
+
         [BooleanProperty("Reverse MA", "Set to True if the tablet is using MA algorithm for smoothing/noise reduction")]
         [ToolTip(
             "100% reconstruction accuracy when the tablet smoothing algorithm is MA and the window is exactly known\n\n" +
@@ -68,7 +79,7 @@ namespace VoiDPlugins
         {
             set
             {
-                if (value == true)
+                if (value)
                     mode = ReconstructionAlg.ReverseMA;
             }
         }
@@ -77,14 +88,14 @@ namespace VoiDPlugins
         [ToolTip
         (
             "99.999~% reconstruction accuracy when the tablet smoothing algorithm is CMA and the window is exactly known\n\n" +
-            "Better reconstruction stability when true tablet smoothing algorithm is unknown\n\n" +
+            "Good reconstruction stability when true tablet smoothing algorithm is unknown\n\n" +
             "Not entirely 100% accurate due to decimal errors in the order of 1x10^-15, which is extremely small"
         )]
         public bool ReverseCMA
         {
             set
             {
-                if (value == true)
+                if (value)
                     mode = ReconstructionAlg.ReverseCMA;
             }
         }
@@ -92,16 +103,34 @@ namespace VoiDPlugins
         [BooleanProperty("Reverse EMA", "Set to True if the tablet is using EMA algorithm for smoothing/noise reduction")]
         [ToolTip
         (
-            "99.999~% reconstruction accuracy when the tablet smoothing algorithm is EMA and the window/weight is exactly known\n\n" +
-            "Best reconstruction stability when true tablet smoothing algorithm is unknown, but harder to determine exact window/weight\n\n" +
+            "99.999~% reconstruction accuracy when the tablet smoothing algorithm is EMA and the weight is exactly known\n\n" +
+            "Great reconstruction stability when true tablet smoothing algorithm is unknown, but harder to determine exact weight\n\n" +
             "Not entirely 100% accurate due to decimal errors in the order of 1x10^-15, which is extremely small"
         )]
         public bool ReverseEMA
         {
             set
             {
-                if (value == true)
+                if (value)
                     mode = ReconstructionAlg.ReverseEMA;
+            }
+        }
+
+        [BooleanProperty("Reverse MCMA", "Set to True if the tablet is using MCMA algorithm for smoothing/noise reduction")]
+        [ToolTip
+        (
+            "99.999~% reconstruction accuracy when the tablet smoothing algorithm is CMA and the weight is exactly known\n\n" +
+            "Best reconstruction stability when true tablet smoothing algorithm is unknown, but harder to determine exact weight\n\n" +
+            "Not entirely 100% accurate due to decimal errors in the order of 1x10^-15, which is extremely small\n\n" +
+            "This is the same as CMA, but instead of \"window\" it uses weights (CMA 3 is equivalent to MCMA 1/3)\n" +
+            "As a sidenote, MCMA can reverse hawku's smoothing algorithm"
+        )]
+        public bool ReverseMCMA
+        {
+            set
+            {
+                if (value)
+                    mode = ReconstructionAlg.ReverseMCMA;
             }
         }
 
@@ -109,10 +138,10 @@ namespace VoiDPlugins
         [Property("Window"), ToolTip
         (
             "Default: 3\n\n" +
-            "ReverseMA/ReverseCMA:\n" +
-            "    Defines in integers how strong the smoothing of the tablet is. [Range: 2 - n]\n\n" +
-            "ReverseEMA:\n" +
-            "    Defines the weight of the latest sample against previous one. [Range: 0.0 - 1.0]"
+            "MA/CMA:\n" +
+            "    Defines in integers how many samples is considered. [Range: 2 - n]\n\n" +
+            "EMA/MCMA:\n" +
+            "    Defines the weight of the latest sample against previous ones [Range: 0.0 - 1.0]"
         )]
         public float Window
         {

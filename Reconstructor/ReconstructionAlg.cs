@@ -4,6 +4,7 @@ namespace VoiDPlugins
     {
         ReverseMA,
         ReverseCMA,
-        ReverseEMA
+        ReverseEMA,
+        ReverseMCMA
     }
 }
