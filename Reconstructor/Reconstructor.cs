@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
@@ -10,38 +11,33 @@ namespace VoiDPlugins
     {
         private RingBuffer<Vector2> truePoints;
         private Vector2? lastAvg;
+        private ReconstructionAlg mode;
+
         public Vector2 Filter(Vector2 point)
         {
-            if (ReverseCMA)
+            switch (mode)
             {
-                if (lastAvg.HasValue)
+                case ReconstructionAlg.ReverseMA:
                 {
-                    var truePoint = ReverseCMAFunc(point, lastAvg.Value, Window);
-                    lastAvg = point;
-                    return truePoint;
-                }
-                else
-                {
-                    lastAvg = point;
-                    return point;
-                }
-            }
-            else if (ReverseMA)
-            {
-                if (truePoints.IsFilled)
-                {
-                    var truePoint = ReverseMAFunc(truePoints, point, Window);
+                    var truePoint = truePoints.IsFilled ? ReverseMAFunc(truePoints, point, (int)Math.Round(Window)) : point;
                     truePoints.Insert(truePoint);
                     return truePoint;
                 }
-                else
+                case ReconstructionAlg.ReverseCMA:
                 {
-                    truePoints.Insert(point);
-                    return point;
+                    var truePoint = lastAvg.HasValue ? ReverseCMAFunc(point, lastAvg.Value, (int)Math.Round(Window)) : point;
+                    lastAvg = point;
+                    return truePoint;
                 }
+                case ReconstructionAlg.ReverseEMA:
+                {
+                    var truePoint = lastAvg.HasValue ? ReverseEMAFunc(point, lastAvg.Value, Window) : point;
+                    lastAvg = point;
+                    return truePoint;
+                }
+                default:
+                    return point;
             }
-            else
-                return point;
         }
 
         private static Vector2 ReverseMAFunc(IEnumerable<Vector2> trueHistory, Vector2 input, int window)
@@ -53,40 +49,80 @@ namespace VoiDPlugins
             return (input * window) - sum;
         }
 
-        private static Vector2 ReverseCMAFunc(Vector2 avgCurrent, Vector2 avgLast, int window)
+        private static Vector2 ReverseCMAFunc(Vector2 currentCMA, Vector2 lastCMA, int window)
         {
-            return (window * (avgCurrent - avgLast)) + avgLast;
+            return (window * (currentCMA - lastCMA)) + lastCMA;
         }
 
-        [BooleanProperty("Reverse MA", "Set to True if the tablet is using MA algorithm for noise reduction")]
+        private static Vector2 ReverseEMAFunc(Vector2 currentEMA, Vector2 lastEMA, float weight)
+        {
+            return (currentEMA - (lastEMA * (1 - weight))) / weight;
+        }
+
+        [BooleanProperty("Reverse MA", "Set to True if the tablet is using MA algorithm for smoothing/noise reduction")]
         [ToolTip(
             "100% reconstruction accuracy when the tablet smoothing algorithm is MA and the window is exactly known\n\n" +
             "Despite its perfect reconstruction accuracy, Reverse MA completely fails when tablet is not using MA + specified window"
         )]
-        public bool ReverseMA { get; set; }
+        public bool ReverseMA
+        {
+            set
+            {
+                if (value == true)
+                    mode = ReconstructionAlg.ReverseMA;
+            }
+        }
 
-        [BooleanProperty("Reverse CMA", "Set to True if the tablet is using CMA algorithm for noise reduction")]
+        [BooleanProperty("Reverse CMA", "Set to True if the tablet is using CMA algorithm for smoothing/noise reduction")]
         [ToolTip
         (
             "99.999~% reconstruction accuracy when the tablet smoothing algorithm is CMA and the window is exactly known\n\n" +
             "Better stability and reconstruction accuracy when true tablet smoothing algorithm is unknown\n\n" +
             "Not entirely 100% accurate due to decimal errors in the order of 1x10^-15, which is extremely small."
         )]
-        public bool ReverseCMA { get; set; }
+        public bool ReverseCMA
+        {
+            set
+            {
+                if (value == true)
+                    mode = ReconstructionAlg.ReverseCMA;
+            }
+        }
 
-        private int window;
-        [Property("Window"), ToolTip("Default: 3\n\nDefines in integers how strong the smoothing of the tablet is")]
-        public int Window
+        [BooleanProperty("Reverse EMA", "Set to True if the tablet is using EMA algorithm for smoothing/noise reduction")]
+        [ToolTip
+        (
+            "Untested"
+        )]
+        public bool ReverseEMA
+        {
+            set
+            {
+                if (value == true)
+                    mode = ReconstructionAlg.ReverseEMA;
+            }
+        }
+
+        private float window;
+        [Property("Window"), ToolTip
+        (
+            "Default: 3\n\n" +
+            "ReverseMA/ReverseCMA:\n" +
+            "    Defines in integers how strong the smoothing of the tablet is. [Range: 2 - n]\n\n" +
+            "ReverseEMA:\n" +
+            "    Defines the weight of the latest sample against previous one. [Range: 0.0 - 1.0]"
+        )]
+        public float Window
         {
             set
             {
                 window = value;
-                truePoints = new RingBuffer<Vector2>(value - 1);
+                if (window > 1)
+                    truePoints = new RingBuffer<Vector2>((int)(Math.Round(value) - 1));
             }
             get => window;
         }
 
         public FilterStage FilterStage => FilterStage.PreTranspose;
-
     }
 }
