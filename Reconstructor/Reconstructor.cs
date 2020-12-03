@@ -78,7 +78,7 @@ namespace VoiDPlugins
         (
             "99.999~% reconstruction accuracy when the tablet smoothing algorithm is CMA and the window is exactly known\n\n" +
             "Better stability and reconstruction accuracy when true tablet smoothing algorithm is unknown\n\n" +
-            "Not entirely 100% accurate due to decimal errors in the order of 1x10^-15, which is extremely small."
+            "Not entirely 100% accurate due to decimal errors in the order of 1x10^-15, which is extremely small"
         )]
         public bool ReverseCMA
         {
@@ -92,7 +92,9 @@ namespace VoiDPlugins
         [BooleanProperty("Reverse EMA", "Set to True if the tablet is using EMA algorithm for smoothing/noise reduction")]
         [ToolTip
         (
-            "Untested"
+            "99.999~% reconstruction accuracy when the tablet smoothing algorithm is EMA and the window is exactly known\n\n" +
+            "Best reconstruction stability but harder to determine exact window/smoothing factor\n\n" +
+            "Not entirely 100% accurate due to decimal errors in the order of 1x10^-15, which is extremely small"
         )]
         public bool ReverseEMA
         {
