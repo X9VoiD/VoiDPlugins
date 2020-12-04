@@ -43,9 +43,9 @@ namespace VoiDPlugins
             return (input * window) - sum;
         }
 
-        private static Vector2 ReverseEMAFunc(Vector2 currentMCMA, Vector2 lastMCMA, float weight)
+        private static Vector2 ReverseEMAFunc(Vector2 currentEMA, Vector2 lastEMA, float weight)
         {
-            return ((currentMCMA - lastMCMA) / weight) + lastMCMA;
+            return ((currentEMA - lastEMA) / weight) + lastEMA;
         }
 
         [BooleanProperty("Reverse MA", "Set to True if the tablet is using MA algorithm for smoothing/noise reduction")]
