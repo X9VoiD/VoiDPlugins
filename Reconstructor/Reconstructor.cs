@@ -19,25 +19,13 @@ namespace VoiDPlugins
             {
                 case ReconstructionAlg.ReverseMA:
                 {
-                    var truePoint = truePoints.IsFilled ? ReverseMAFunc(truePoints, point, (int)Math.Round(Window)) : point;
+                    var truePoint = truePoints.IsFilled ? ReverseMAFunc(truePoints, point, MAWindow) : point;
                     truePoints.Insert(truePoint);
-                    return truePoint;
-                }
-                case ReconstructionAlg.ReverseCMA:
-                {
-                    var truePoint = lastAvg.HasValue ? ReverseCMAFunc(point, lastAvg.Value, (int)Math.Round(Window)) : point;
-                    lastAvg = point;
                     return truePoint;
                 }
                 case ReconstructionAlg.ReverseEMA:
                 {
-                    var truePoint = lastAvg.HasValue ? ReverseEMAFunc(point, lastAvg.Value, Window) : point;
-                    lastAvg = point;
-                    return truePoint;
-                }
-                case ReconstructionAlg.ReverseMCMA:
-                {
-                    var truePoint = lastAvg.HasValue ? ReverseMCMAFunc(point, lastAvg.Value, Window) : point;
+                    var truePoint = lastAvg.HasValue ? ReverseEMAFunc(point, lastAvg.Value, (float)EMAWeight) : point;
                     lastAvg = point;
                     return truePoint;
                 }
@@ -55,17 +43,7 @@ namespace VoiDPlugins
             return (input * window) - sum;
         }
 
-        private static Vector2 ReverseCMAFunc(Vector2 currentCMA, Vector2 lastCMA, int window)
-        {
-            return (window * (currentCMA - lastCMA)) + lastCMA;
-        }
-
-        private static Vector2 ReverseEMAFunc(Vector2 currentEMA, Vector2 lastEMA, float weight)
-        {
-            return (currentEMA - (lastEMA * (1 - weight))) / weight;
-        }
-
-        private static Vector2 ReverseMCMAFunc(Vector2 currentMCMA, Vector2 lastMCMA, float weight)
+        private static Vector2 ReverseEMAFunc(Vector2 currentMCMA, Vector2 lastMCMA, float weight)
         {
             return ((currentMCMA - lastMCMA) / weight) + lastMCMA;
         }
@@ -73,7 +51,7 @@ namespace VoiDPlugins
         [BooleanProperty("Reverse MA", "Set to True if the tablet is using MA algorithm for smoothing/noise reduction")]
         [ToolTip(
             "100% reconstruction accuracy when the tablet smoothing algorithm is MA and the window is exactly known\n\n" +
-            "Despite its perfect reconstruction accuracy, Reverse MA completely fails when tablet is not using MA + specified window"
+            "Warning: Reverse MA completely fails when tablet is not using MA + specified window"
         )]
         public bool ReverseMA
         {
@@ -84,28 +62,12 @@ namespace VoiDPlugins
             }
         }
 
-        [BooleanProperty("Reverse CMA", "Set to True if the tablet is using CMA algorithm for smoothing/noise reduction")]
-        [ToolTip
-        (
-            "99.999~% reconstruction accuracy when the tablet smoothing algorithm is CMA and the window is exactly known\n\n" +
-            "Good reconstruction stability when true tablet smoothing algorithm is unknown\n\n" +
-            "Not entirely 100% accurate due to decimal errors in the order of 1x10^-15, which is extremely small"
-        )]
-        public bool ReverseCMA
-        {
-            set
-            {
-                if (value)
-                    mode = ReconstructionAlg.ReverseCMA;
-            }
-        }
-
         [BooleanProperty("Reverse EMA", "Set to True if the tablet is using EMA algorithm for smoothing/noise reduction")]
         [ToolTip
         (
-            "99.999~% reconstruction accuracy when the tablet smoothing algorithm is EMA and the weight is exactly known\n\n" +
-            "Great reconstruction stability when true tablet smoothing algorithm is unknown, but harder to determine exact weight\n\n" +
-            "Not entirely 100% accurate due to decimal errors in the order of 1x10^-15, which is extremely small"
+            "100% reconstruction accuracy when the tablet smoothing algorithm is EMA and the weight is exactly known\n\n" +
+            "Great reconstruction stability when true tablet smoothing algorithm is unknown, but determining exact weight is hard\n\n" +
+            "As a sidenote, hawku uses EMA for his smoothing filter"
         )]
         public bool ReverseEMA
         {
@@ -116,43 +78,38 @@ namespace VoiDPlugins
             }
         }
 
-        [BooleanProperty("Reverse MCMA", "Set to True if the tablet is using MCMA algorithm for smoothing/noise reduction")]
-        [ToolTip
-        (
-            "99.999~% reconstruction accuracy when the tablet smoothing algorithm is CMA and the weight is exactly known\n\n" +
-            "Best reconstruction stability when true tablet smoothing algorithm is unknown, but harder to determine exact weight\n\n" +
-            "Not entirely 100% accurate due to decimal errors in the order of 1x10^-15, which is extremely small\n\n" +
-            "This is the same as CMA, but instead of \"window\" it uses weights (CMA 3 is equivalent to MCMA 1/3)\n" +
-            "As a sidenote, MCMA can reverse hawku's smoothing algorithm"
-        )]
-        public bool ReverseMCMA
-        {
-            set
-            {
-                if (value)
-                    mode = ReconstructionAlg.ReverseMCMA;
-            }
-        }
-
-        private float window;
-        [Property("Window"), ToolTip
+        [Property("MA Window"), ToolTip
         (
             "Default: 3\n\n" +
-            "MA/CMA:\n" +
-            "    Defines in integers how many samples is considered. [Range: 2 - n]\n\n" +
-            "EMA/MCMA:\n" +
-            "    Defines the weight of the latest sample against previous ones [Range: 0.0 - 1.0]"
+            "Defines in integers how many samples is considered. [Range: 2 - n]"
         )]
-        public float Window
+        public int MAWindow
         {
             set
             {
                 window = value;
                 if (window > 1)
-                    truePoints = new RingBuffer<Vector2>((int)(Math.Round(value) - 1));
+                    truePoints = new RingBuffer<Vector2>(value - 1);
             }
             get => window;
         }
+
+        [Property("EMA Weight"), ToolTip
+        (
+            "Default: 0.35\n\n" +
+            "Defines the weight of the latest sample against previous ones [Range: 0.0 - 1.0]"
+        )]
+        public double EMAWeight
+        {
+            set
+            {
+                weight = Math.Clamp(value, 0, 1);
+            }
+            get => weight;
+        }
+
+        private int window;
+        private double weight;
 
         public FilterStage FilterStage => FilterStage.PreTranspose;
     }
