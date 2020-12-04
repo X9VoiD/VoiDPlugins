@@ -24,7 +24,7 @@ Select and Download plugins from [Latest Release](https://github.com/X9VoiD/VoiD
 
       Restores original data from smoothed data with 100% accuracy
           when the smoothing algorithm along its parameters is perfectly known
-      Mathematically a perfect "anti-hardware-smoothing"
+      A mathematically perfect "anti-hardware-smoothing"
 
 ## Filters
 
