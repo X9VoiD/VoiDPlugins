@@ -20,6 +20,12 @@ Select and Download plugins from [Latest Release](https://github.com/X9VoiD/VoiD
 
       Machine Learning Plugin
 
+### [Reconstructor](https://github.com/X9VoiD/VoiDPlugins/wiki/Reconstructor)
+
+      Restores original data from smoothed data with 100% accuracy
+          when the smoothing algorithm along its parameters is perfectly known
+      Mathematically a perfect "anti-hardware-smoothing"
+
 ## Filters
 
 ### [PrecisionControl](https://github.com/X9VoiD/VoiDPlugins/wiki/PrecisionControl)
