@@ -55,3 +55,7 @@ Select and Download plugins from [Latest Release](https://github.com/X9VoiD/VoiD
 ### [OemKill](https://github.com/X9VoiD/VoiDPlugins/wiki/OemKill)
 
       Automatically kill OEM Tablet Driver processes
+
+### [ScriptRunner](https://github.com/X9VoiD/VoiDPlugins/wiki/ScriptRunner)
+
+      Bind scripts or programs to OTD
