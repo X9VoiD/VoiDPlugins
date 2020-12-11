@@ -25,13 +25,14 @@ namespace VoiDPlugins.WindowsInk
         public override IRelativePointer Pointer => InkHandler;
     }
 
-    public class InkHandler : IAbsolutePointer, IRelativePointer, IVirtualTablet, IVirtualMouse
+    [SupportedPlatform(PluginPlatform.Windows)]
+    public class InkHandler : IAbsolutePointer, IRelativePointer, IVirtualTablet
     {
         private readonly IVirtualScreen VirtualScreen = (Info.Driver as IVirtualDisplayDriver).VirtualScreen;
-        private readonly HidStream VMultiDev;
-        private InkReport InkReport;
+        internal static HidStream VMultiDev;
+        internal static InkReport InkReport;
         private Vector2 LastPos;
-        private bool EraserState;
+        internal static bool EraserState;
         private readonly Vector2 ScreenMax, ScreenToVMulti;
 
         public InkHandler()
@@ -61,54 +62,9 @@ namespace VoiDPlugins.WindowsInk
                 Log.Write("WindowsInk", "Install VMulti driver here: https://github.com/X9VoiD/vmulti-bin/releases/latest");
             }
 
-            ScreenMax = new Vector2(VirtualScreen.Width, VirtualScreen.Height) * 32767;
+            ScreenMax = new Vector2(VirtualScreen.Width, VirtualScreen.Height);
             ScreenToVMulti = ScreenMax / 32767;
             EraserState = false;
-        }
-
-        public void MouseDown(MouseButton button)
-        {
-            switch (button)
-            {
-                case MouseButton.Left:
-                    if (!EraserState)
-                    {
-                        EnableBit(ButtonMask.Press);
-                    }
-                    else
-                    {
-                        EnableBit(ButtonMask.Eraser);
-                    }
-                    break;
-                case MouseButton.Right:
-                    EnableBit(ButtonMask.Barrel);
-                    break;
-                case MouseButton.Middle:
-                    EnableBit(ButtonMask.Invert);
-                    DisableBit(ButtonMask.Press);
-                    EraserState = true;
-                    StateChange();
-                    break;
-            }
-        }
-
-        public void MouseUp(MouseButton button)
-        {
-            switch (button)
-            {
-                case MouseButton.Left:
-                    DisableBit(ButtonMask.Press);
-                    DisableBit(ButtonMask.Eraser);
-                    break;
-                case MouseButton.Right:
-                    DisableBit(ButtonMask.Barrel);
-                    break;
-                case MouseButton.Middle:
-                    DisableBit(ButtonMask.Invert);
-                    EraserState = false;
-                    StateChange();
-                    break;
-            }
         }
 
         public void SetPosition(Vector2 pos)
@@ -135,17 +91,17 @@ namespace VoiDPlugins.WindowsInk
             InkReport.Pressure = (ushort)(percentage * 8191);
         }
 
-        private void EnableBit(ButtonMask mask)
+        internal static void EnableBit(ButtonMask mask)
         {
             InkReport.Buttons = (byte)(InkReport.Buttons | (int)mask);
         }
 
-        private void DisableBit(ButtonMask mask)
+        internal static void DisableBit(ButtonMask mask)
         {
             InkReport.Buttons = (byte)(InkReport.Buttons & ~(int)mask);
         }
 
-        private void StateChange()
+        internal static void StateChange()
         {
             var prevState = InkReport.Buttons;
             var prevPressure = InkReport.Pressure;
@@ -155,5 +111,80 @@ namespace VoiDPlugins.WindowsInk
             InkReport.Buttons = prevState;
             InkReport.Pressure = prevPressure;
         }
+    }
+
+    [PluginName("Windows Ink"), SupportedPlatform(PluginPlatform.Windows)]
+    public class InkBinding : IBinding, IValidateBinding
+    {
+        [Property("Property")]
+        public string Property { get; set; }
+
+        public Action Press => () =>
+        {
+            switch (Property)
+            {
+                case "Pen Tip":
+                    if (!InkHandler.EraserState)
+                    {
+                        InkHandler.EnableBit(ButtonMask.Press);
+                    }
+                    else
+                    {
+                        InkHandler.EnableBit(ButtonMask.Eraser);
+                    }
+                    break;
+                case "Barrel Button":
+                    InkHandler.EnableBit(ButtonMask.Barrel);
+                    break;
+                case "Eraser (Hold)":
+                    InkHandler.EnableBit(ButtonMask.Invert);
+                    InkHandler.DisableBit(ButtonMask.Press);
+                    InkHandler.EraserState = true;
+                    InkHandler.StateChange();
+                    break;
+                case "Eraser (Toggle)":
+                    if (InkHandler.EraserState)
+                    {
+                        InkHandler.DisableBit(ButtonMask.Invert);
+                        InkHandler.EraserState = false;
+                        InkHandler.StateChange();
+                    }
+                    else
+                    {
+                        InkHandler.EnableBit(ButtonMask.Invert);
+                        InkHandler.DisableBit(ButtonMask.Press);
+                        InkHandler.EraserState = true;
+                        InkHandler.StateChange();
+                    }
+                    break;
+            }
+        };
+
+        public Action Release => () =>
+        {
+            switch (Property)
+            {
+                case "Pen Tip":
+                    InkHandler.DisableBit(ButtonMask.Press);
+                    InkHandler.DisableBit(ButtonMask.Eraser);
+                    break;
+                case "Barrel Button":
+                    InkHandler.DisableBit(ButtonMask.Barrel);
+                    break;
+                case "Eraser (Hold)":
+                    InkHandler.DisableBit(ButtonMask.Invert);
+                    InkHandler.EraserState = false;
+                    InkHandler.StateChange();
+                    break;
+            }
+        };
+
+        public string[] ValidProperties => new string[]
+        {
+            "Pen Tip",
+            "Eraser (Toggle)",
+            "Eraser (Hold)",
+            "Barrel Button"
+        };
     }
 }
