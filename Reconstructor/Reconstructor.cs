@@ -111,6 +111,6 @@ namespace VoiDPlugins
         private int window;
         private double weight;
 
-        public FilterStage FilterStage => FilterStage.PreTranspose;
+        public FilterStage FilterStage => FilterStage.PreInterpolate;
     }
 }
