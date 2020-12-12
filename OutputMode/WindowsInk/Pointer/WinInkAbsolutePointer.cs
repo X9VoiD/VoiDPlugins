@@ -9,7 +9,8 @@ namespace VoiDPlugins.OutputMode
     {
         public WinInkAbsolutePointer() : base(0x05, "WindowsInk")
         {
-            ButtonHandler.SetReport(Report);
+            WinInkButtonHandler.SetReport(Report);
+            WinInkButtonHandler.SetDevice(Device);
         }
 
         public override void SetPosition(Vector2 pos)

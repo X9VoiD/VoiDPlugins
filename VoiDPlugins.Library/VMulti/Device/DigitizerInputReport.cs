@@ -9,7 +9,7 @@ namespace VoiDPlugins.Library.VMulti.Device
         public byte YTilt;          // Y tilt of the pen from -127 to 127
         public override byte[] ToBytes()
         {
-            var bytes = new byte[10];
+            var bytes = new byte[Size];
             bytes[0] = VMultiID;
             bytes[1] = ReportLength;
             bytes[2] = ReportID;

@@ -10,12 +10,12 @@ namespace VoiDPlugins.Library.VMulti
     [PluginIgnore]
     public abstract class ButtonHandler : IBinding, IValidateBinding
     {
-        private static Report Report;
+        protected static Report Report;
         public abstract Dictionary<string, int> Bindings { get; }
 
         [Property("Property")]
         public string Property { get; set; }
-        public string[] ValidProperties => Bindings.Keys.ToArray();
+        public virtual string[] ValidProperties => Bindings.Keys.ToArray();
 
         Action IBinding.Press => () => Press(Property);
         Action IBinding.Release => () => Release(Property);
