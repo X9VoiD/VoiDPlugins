@@ -9,10 +9,10 @@ using System.Threading;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 
-namespace VoiDPlugins.OemKill
+namespace VoiDPlugins.Tool
 {
     [PluginName("OEM Kill"), SupportedPlatform(PluginPlatform.Windows)]
-    public class OemKillTool : ITool
+    public class OemKill : ITool
     {
         public bool Initialize()
         {

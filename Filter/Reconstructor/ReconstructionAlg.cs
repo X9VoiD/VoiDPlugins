@@ -1,4 +1,4 @@
-namespace VoiDPlugins
+namespace VoiDPlugins.Filter
 {
     enum ReconstructionAlg
     {

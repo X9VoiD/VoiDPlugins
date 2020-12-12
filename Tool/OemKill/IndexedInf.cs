@@ -1,4 +1,4 @@
-namespace VoiDPlugins.OemKill
+namespace VoiDPlugins.Tool
 {
     class IndexedInf
     {

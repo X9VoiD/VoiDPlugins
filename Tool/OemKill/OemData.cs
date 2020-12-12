@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace VoiDPlugins.OemKill
+namespace VoiDPlugins.Tool
 {
     internal static class OemData
     {

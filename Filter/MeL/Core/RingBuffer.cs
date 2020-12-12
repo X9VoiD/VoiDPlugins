@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace VoiDPlugins.MeL.Core
+namespace VoiDPlugins.Filter.MeL.Core
 {
     internal class RingBuffer<T> : IEnumerable<T>
     {

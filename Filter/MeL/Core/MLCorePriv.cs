@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using MathNet.Numerics;
 
-namespace VoiDPlugins.MeL.Core
+namespace VoiDPlugins.Filter.MeL.Core
 {
     partial class MLCore
     {

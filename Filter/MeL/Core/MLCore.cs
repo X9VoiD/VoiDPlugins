@@ -4,7 +4,7 @@ using System.Numerics;
 using MathNet.Numerics;
 using OpenTabletDriver.Plugin;
 
-namespace VoiDPlugins.MeL.Core
+namespace VoiDPlugins.Filter.MeL.Core
 {
     internal partial class MLCore
     {

@@ -3,16 +3,15 @@ using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Attributes;
 using System;
 using System.Numerics;
-using OpenTabletDriver.Plugin.Output;
 
-namespace PrecisionControl
+namespace VoiDPlugins.Filter
 {
     [PluginName("Precision Control")]
     public class PrecisionControl: IBinding, IValidateBinding, IFilter
     {
-        public static Vector2 StartingPoint;
-        public static bool IsActive { set; get; }
-        public static bool SetPosition { set; get; }
+        private static Vector2 StartingPoint;
+        private static bool IsActive { set; get; }
+        private static bool SetPosition { set; get; }
         public string Property { set; get; }
 
         public Action Press => () =>
@@ -42,16 +41,8 @@ namespace PrecisionControl
 
             if (IsActive)
             {
-                switch (Info.Driver.OutputMode)
-                {
-                    case AbsoluteOutputMode _:
-                        var delta = (OriginalPoint - StartingPoint) * Scale;
-                        return StartingPoint + delta;
-                    case RelativeOutputMode _:
-                        return OriginalPoint * Scale;
-                    default:
-                        return OriginalPoint;
-                }
+                var delta = (OriginalPoint - StartingPoint) * Scale;
+                return StartingPoint + delta;
             }
             else
             {

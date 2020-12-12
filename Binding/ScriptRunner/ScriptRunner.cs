@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Tablet;
 using OpenTabletDriver.Plugin.Attributes;
-using System.Collections;
 
-namespace ScriptRunner
+namespace VoiDPlugins.Binding.ScriptRunner
 {
     internal static class ScriptRunnerHelper
     {
@@ -32,7 +30,7 @@ namespace ScriptRunner
         }
         public string Property { set; get; }
         public Action Press => (Action)(() => RunScript(ScriptPathList[Int32.Parse(Property)]));
-        private void RunScript(string path)
+        private static void RunScript(string path)
         {
             try
             {

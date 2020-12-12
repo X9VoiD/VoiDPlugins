@@ -1,4 +1,4 @@
-namespace VoiDPlugins.MeL.Core
+namespace VoiDPlugins.Filter.MeL.Core
 {
     internal enum Axis
     {

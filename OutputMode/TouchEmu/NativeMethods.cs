@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace VoiDPlugins.TouchEmu
+namespace VoiDPlugins.OutputMode
 {
     using HANDLE = IntPtr;
     using HWND = IntPtr;

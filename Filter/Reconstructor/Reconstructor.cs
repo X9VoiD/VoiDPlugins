@@ -4,7 +4,7 @@ using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet;
 
-namespace VoiDPlugins
+namespace VoiDPlugins.Filter
 {
     [PluginName("Reconstructor")]
     public class Reconstructor : IFilter
