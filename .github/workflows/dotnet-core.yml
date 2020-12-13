@@ -1,13 +1,21 @@
 name: .NET Core
 
-on: [push, pull_request, workflow_dispatch]
+on: [push, pull_request]
 
 jobs:
 
-  build:
+  Build:
     strategy:
       matrix:
-        plugin: [MeL, OemKill, PrecisionControl, Reconstructor, ScriptRunner, TouchEmu, VMultiMode, WindowsInk]
+        include:
+          - { path: Binding, plugin: ScriptRunner }
+          - { path: Filter, plugin: MeL }
+          - { path: Filter, plugin: PrecisionControl }
+          - { path: Filter, plugin: Reconstructor }
+          - { path: OutputMode, plugin: TouchEmu }
+          - { path: OutputMode, plugin: VMultiMode }
+          - { path: OutputMode, plugin: WindowsInk }
+          - { path: Tool, plugin: OemKill }
 
     runs-on: ubuntu-latest
 
@@ -23,11 +31,11 @@ jobs:
 
     - name: Build
       env:
+        path: ${{ matrix.path }} 
         plugin: ${{ matrix.plugin }}
-      run: dotnet publish $plugin --configuration Release --framework net5 -o ./build/$plugin
+      run: dotnet publish $path/$plugin --configuration Release --framework net5 -o ./build/$plugin
 
-    - name: Upload ${{ matrix.plugin }}
-      uses: actions/upload-artifact@main
+    - uses: actions/upload-artifact@main
       with:
         name: ${{ matrix.plugin }}
         path: |
