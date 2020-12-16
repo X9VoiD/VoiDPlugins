@@ -28,6 +28,8 @@ namespace VoiDPlugins.Binding.ScriptRunner
                 return Properties;
             }
         }
+
+        [Property("Property")]
         public string Property { set; get; }
         public Action Press => (Action)(() => RunScript(ScriptPathList[Int32.Parse(Property)]));
         private static void RunScript(string path)
