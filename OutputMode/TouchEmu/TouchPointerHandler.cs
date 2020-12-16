@@ -15,16 +15,6 @@ namespace VoiDPlugins.OutputMode
             _lastContact = false;
         }
 
-        public void MouseDown(MouseButton button)
-        {
-            return;
-        }
-
-        public void MouseUp(MouseButton button)
-        {
-            return;
-        }
-
         public void SetPosition(Vector2 pos)
         {
             Touch.SetPosition(new POINT((int)pos.X, (int)pos.Y));
