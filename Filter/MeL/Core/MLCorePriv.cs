@@ -1,6 +1,7 @@
 using System;
 using System.Numerics;
 using MathNet.Numerics;
+using VoiDPlugins.Library;
 
 namespace VoiDPlugins.Filter.MeL.Core
 {
@@ -13,7 +14,7 @@ namespace VoiDPlugins.Filter.MeL.Core
         private bool AddTimeSeriesPoint(Vector2 point, DateTime time)
         {
             this.timeSeriesPoints.Insert(new TimeSeriesPoint(point, time));
-            return this.timeSeriesPoints.Filled;
+            return this.timeSeriesPoints.IsFilled;
         }
 
         private double[] ConstructTimeDesignMatrix()

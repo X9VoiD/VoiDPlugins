@@ -10,9 +10,4 @@
     <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="../../.modules/OpenTabletDriver/OpenTabletDriver.Plugin/OpenTabletDriver.Plugin.csproj" />
-    <ProjectReference Include="../../VoiDPlugins.Library/VoiD/VoiD.csproj" />
-  </ItemGroup>
-
 </Project>

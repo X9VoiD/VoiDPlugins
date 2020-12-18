@@ -2,12 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace VoiDPlugins.Filter.MeL.Core
+namespace VoiDPlugins.Library
 {
-    internal class RingBuffer<T> : IEnumerable<T>
+    public class RingBuffer<T> : IEnumerable<T>
     {
         public int Size { private set; get; }
-        public bool Filled { private set; get; }
+        public bool IsFilled { private set; get; }
 
         private T[] dataStream;
         private int head;
@@ -24,7 +24,7 @@ namespace VoiDPlugins.Filter.MeL.Core
             if (this.head == this.Size)
             {
                 this.head = 0;
-                this.Filled = true;
+                this.IsFilled = true;
             }
         }
 
@@ -46,7 +46,7 @@ namespace VoiDPlugins.Filter.MeL.Core
             this.head = 0;
         }
 
-        public IEnumerator<T> GetEnumerator()
+        IEnumerator<T> RingGetEnumerator()
         {
             if (this.head == 0)
             {
@@ -66,6 +66,14 @@ namespace VoiDPlugins.Filter.MeL.Core
                     yield return item;
                 }
             }
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            if (!this.IsFilled)
+                return (IEnumerator<T>)dataStream.GetEnumerator();
+            else
+                return RingGetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

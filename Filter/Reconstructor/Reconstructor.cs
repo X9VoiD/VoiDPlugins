@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet;
+using VoiDPlugins.Library;
 
 namespace VoiDPlugins.Filter
 {
