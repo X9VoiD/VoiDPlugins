@@ -1,4 +1,3 @@
-using System;
 using System.Numerics;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
@@ -15,7 +14,7 @@ namespace VoiDPlugins.Filter.MeL
             Core.Add(point);
             try
             {
-                var a = Core.IsReady ? Core.Predict(DateTime.UtcNow, Offset) : point;
+                var a = Core.IsReady ? Core.Predict(Offset) : point;
                 rateLimit = false;
                 return a;
             }

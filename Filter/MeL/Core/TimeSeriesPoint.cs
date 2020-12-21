@@ -1,18 +1,17 @@
-using System;
 using System.Numerics;
 
 namespace VoiDPlugins.Filter.MeL.Core
 {
     public class TimeSeriesPoint
     {
-        public TimeSeriesPoint(Vector2 point, DateTime date)
+        public TimeSeriesPoint(Vector2 point, double elapsed)
         {
             Point = point;
-            Date = date;
+            Elapsed = elapsed;
         }
 
         public Vector2 Point { get; }
-        public DateTime Date { get; }
+        public double Elapsed { get; }
 
     }
 }

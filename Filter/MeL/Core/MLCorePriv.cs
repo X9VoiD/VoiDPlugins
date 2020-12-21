@@ -1,4 +1,4 @@
-using System;
+using System.Diagnostics;
 using System.Numerics;
 using MathNet.Numerics;
 using VoiDPlugins.Library;
@@ -10,20 +10,21 @@ namespace VoiDPlugins.Filter.MeL.Core
         private double[] weights;
         private Polynomial xCoeff, yCoeff;
         private RingBuffer<TimeSeriesPoint> timeSeriesPoints;
+        private readonly Stopwatch watch = new();
 
-        private bool AddTimeSeriesPoint(Vector2 point, DateTime time)
+        private bool AddTimeSeriesPoint(Vector2 point, double elapsed)
         {
-            this.timeSeriesPoints.Insert(new TimeSeriesPoint(point, time));
+            this.timeSeriesPoints.Insert(new TimeSeriesPoint(point, elapsed));
             return this.timeSeriesPoints.IsFilled;
         }
 
         private double[] ConstructTimeDesignMatrix()
         {
-            var baseTime = this.timeSeriesPoints.PeekFirst().Date;
+            var baseTime = this.timeSeriesPoints.PeekFirst().Elapsed;
             var data = new double[Samples];
             var index = 0;
             foreach (var timePoint in this.timeSeriesPoints)
-                data[index++] = (timePoint.Date - baseTime).TotalMilliseconds;
+                data[index++] = timePoint.Elapsed - baseTime;
 
             return data;
         }

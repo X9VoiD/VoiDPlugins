@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Numerics;
 using MathNet.Numerics;
@@ -12,16 +11,22 @@ namespace VoiDPlugins.Filter.MeL.Core
         public MLCore()
         {
             Weight = 1.4f;
+            watch.Start();
+        }
+
+        ~MLCore()
+        {
+            watch.Stop();
         }
 
         public void Add(Vector2 point)
         {
-            Add(point, MLCore.TimeNow);
+            Add(point, TimeNow);
         }
 
-        public void Add(Vector2 point, DateTime time)
+        public void Add(Vector2 point, double elapsed)
         {
-            if (AddTimeSeriesPoint(point, time))
+            if (AddTimeSeriesPoint(point, elapsed))
             {
                 IsReady = true;
                 var timeMatrix = ConstructTimeDesignMatrix();
@@ -40,11 +45,11 @@ namespace VoiDPlugins.Filter.MeL.Core
             }
         }
 
-        public Vector2 Predict(DateTime now, float offset)
+        public Vector2 Predict(double offset = 0)
         {
             var predicted = new Vector2();
             double predictAhead;
-            predictAhead = (now - this.timeSeriesPoints.PeekFirst().Date).TotalMilliseconds + offset;
+            predictAhead = TimeNow - this.timeSeriesPoints.PeekFirst().Elapsed + offset;
 
             predicted.X = (float)this.xCoeff.Evaluate(predictAhead);
             predicted.Y = (float)this.yCoeff.Evaluate(predictAhead);
@@ -67,6 +72,6 @@ namespace VoiDPlugins.Filter.MeL.Core
 
         public int Complexity { set; get; } = 2;
         public float Weight { set => this.weights = CalcWeight(value).ToArray(); }
-        public static DateTime TimeNow { get => DateTime.UtcNow; }
+        public double TimeNow { get => watch.Elapsed.TotalMilliseconds; }
     }
 }

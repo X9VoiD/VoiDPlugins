@@ -33,7 +33,7 @@ namespace VoiDPlugins.Filter.MeL
             {
                 try
                 {
-                    SyntheticReport.Position = Core.Predict(MLCore.TimeNow, 0);
+                    SyntheticReport.Position = Core.Predict();
                 }
                 catch
                 {
