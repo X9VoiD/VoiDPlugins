@@ -2,16 +2,6 @@
 
 VoiDPlugins is a collection of extensions for [OpenTabletDriver](https://github.com/InfinityGhost/OpenTabletDriver).
 
-## Installation
-
-Select and Download plugins from [Latest Release](https://github.com/X9VoiD/VoiDPlugins/releases/latest), then unpack to these directories below.
-
-| Platform | Path |
-| :-- | :-- |
-| Windows | `%localappdata%\OpenTabletDriver\Plugins` |
-| Linux | `~/.config/OpenTabletDriver/Plugins` |
-| MacOS | `$HOME/Library/Application Support/OpenTabletDriver/Plugins` |
-
 # Plugins
 
 ## Experimental
@@ -22,9 +12,7 @@ Select and Download plugins from [Latest Release](https://github.com/X9VoiD/VoiD
 
 ### [Reconstructor](https://github.com/X9VoiD/VoiDPlugins/wiki/Reconstructor)
 
-      Restores original data from smoothed data with 100% accuracy
-          when the smoothing algorithm along its parameters is perfectly known
-      A mathematically perfect "anti-hardware-smoothing"
+      Mathematically perfect "anti-hardware-smoothing"
 
 ## Filters
 
@@ -43,7 +31,6 @@ Select and Download plugins from [Latest Release](https://github.com/X9VoiD/VoiD
 ### [VMultiMode](https://github.com/X9VoiD/VoiDPlugins/wiki/VMultiMode)
 
       Classic VMulti input emulation
-      Supports both absolute and relative modes
 
 ### [TouchEmu](https://github.com/X9VoiD/VoiDPlugins/wiki/TouchEmu)
 
@@ -58,4 +45,4 @@ Select and Download plugins from [Latest Release](https://github.com/X9VoiD/VoiD
 
 ### [ScriptRunner](https://github.com/X9VoiD/VoiDPlugins/wiki/ScriptRunner)
 
-      Bind scripts or programs to OTD
+      Bind shell commands, scripts or programs to OTD
