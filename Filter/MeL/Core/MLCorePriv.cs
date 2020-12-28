@@ -20,7 +20,7 @@ namespace VoiDPlugins.Filter.MeL.Core
 
         private double[] ConstructTimeDesignMatrix()
         {
-            var baseTime = this.timeSeriesPoints.PeekFirst().Elapsed;
+            var baseTime = this.timeSeriesPoints[0].Elapsed;
             var data = new double[Samples];
             var index = 0;
             foreach (var timePoint in this.timeSeriesPoints)

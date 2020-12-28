@@ -49,7 +49,7 @@ namespace VoiDPlugins.Filter.MeL.Core
         {
             var predicted = new Vector2();
             double predictAhead;
-            predictAhead = TimeNow - this.timeSeriesPoints.PeekFirst().Elapsed + offset;
+            predictAhead = TimeNow - this.timeSeriesPoints[0].Elapsed + offset;
 
             predicted.X = (float)this.xCoeff.Evaluate(predictAhead);
             predicted.Y = (float)this.yCoeff.Evaluate(predictAhead);

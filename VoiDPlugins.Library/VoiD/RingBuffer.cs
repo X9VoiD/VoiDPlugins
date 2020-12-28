@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace VoiDPlugins.Library
 {
@@ -28,22 +29,15 @@ namespace VoiDPlugins.Library
             }
         }
 
-        public T PeekFirst()
-        {
-            var currentPosition = this.head;
-            return this.dataStream[currentPosition];
-        }
-
-        public T PeekLast()
-        {
-            var last = Math.Abs(this.head - 1);
-            return this.dataStream[last];
-        }
-
         public void Clear()
         {
             this.dataStream = new T[this.Size];
             this.head = 0;
+        }
+
+        private int Wrap(int index)
+        {
+            return (index + this.Size) % this.Size;
         }
 
         IEnumerator<T> RingGetEnumerator()
@@ -68,6 +62,18 @@ namespace VoiDPlugins.Library
             }
         }
 
+        public T this[int index]
+        {
+            get => this.dataStream[Wrap(index + this.head)];
+            set => this.dataStream[Wrap(index + this.head)] = value;
+        }
+
+        public T this[Index index]
+        {
+            get => this.dataStream[Wrap(index.IsFromEnd ? Wrap(this.head - index.Value) : Wrap(index.Value + this.head))];
+            set => this.dataStream[Wrap(index.IsFromEnd ? Wrap(this.head - index.Value) : Wrap(index.Value + this.head))] = value;
+        }
+
         public IEnumerator<T> GetEnumerator()
         {
             if (!this.IsFilled)
@@ -79,6 +85,16 @@ namespace VoiDPlugins.Library
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public override string ToString()
+        {
+            string a = "";
+            foreach (var item in this.SkipLast(1))
+                a += $"{item}, ";
+
+            a += this[^1];
+            return a;
         }
     }
 }
