@@ -33,6 +33,7 @@ namespace VoiDPlugins.Library
         {
             this.dataStream = new T[this.Size];
             this.head = 0;
+            this.IsFilled = false;
         }
 
         private int Wrap(int index)
@@ -42,7 +43,7 @@ namespace VoiDPlugins.Library
 
         IEnumerator<T> RingGetEnumerator()
         {
-            if (this.head == 0)
+            if (this.head == 0 || !this.IsFilled)
             {
                 foreach (var item in this.dataStream)
                 {
