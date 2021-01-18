@@ -12,6 +12,8 @@ namespace VoiDPlugins.Filter
         private static Vector2 StartingPoint;
         private static bool IsActive { set; get; }
         private static bool SetPosition { set; get; }
+
+        [Property("Property")]
         public string Property { set; get; }
 
         public Action Press => () =>
@@ -50,8 +52,8 @@ namespace VoiDPlugins.Filter
             }
         }
 
-        [SliderProperty("Precision Multiplier", 0.0f, 10f, 0.3f)]
-        public float Scale { get; set; } = 0.3f;
+        [SliderProperty("Precision Multiplier", 0.0f, 10f, 0.3f), DefaultPropertyValue(0.3f)]
+        public float Scale { get; set; }
 
         public FilterStage FilterStage => FilterStage.PostTranspose;
     }

@@ -31,16 +31,16 @@ namespace VoiDPlugins.Filter.MeL
 
         public FilterStage FilterStage => FilterStage.PostTranspose;
 
-        [Property("Offset"), Unit("ms")]
+        [Property("Offset"), Unit("ms"), DefaultPropertyValue(0)]
         public float Offset { set; get; }
 
-        [Property("Samples")]
+        [Property("Samples"), DefaultPropertyValue(20)]
         public int Samples { set => Core.Samples = value; }
 
-        [Property("Complexity")]
+        [Property("Complexity"), DefaultPropertyValue(2)]
         public int Complexity { set => Core.Complexity = value; }
 
-        [Property("Weight")]
+        [Property("Weight"), DefaultPropertyValue(1.4f)]
         public float Weight { set => Core.Weight = value; }
 
         private readonly MLCore Core = new MLCore();

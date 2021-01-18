@@ -43,18 +43,18 @@ namespace VoiDPlugins.Filter.MeL
             return SyntheticReport;
         }
 
-        [Property("Samples")]
+        [Property("Samples"), DefaultPropertyValue(20)]
         public int Samples { set => Core.Samples = value; }
 
-        [Property("Complexity")]
+        [Property("Complexity"), DefaultPropertyValue(2)]
         public int Complexity { set => Core.Complexity = value; }
 
-        [Property("Weight")]
+        [Property("Weight"), DefaultPropertyValue(1.4f)]
         public float Weight { set => Core.Weight = value; }
 
         private readonly MLCore Core = new MLCore();
         private SyntheticTabletReport SyntheticReport;
-        private new DateTime lastTime;
+        private DateTime lastTime;
         private new double reportMsAvg = 4.0;
     }
 }
