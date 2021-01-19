@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace VoiDPlugins.Library.VMulti.Device
 {
     public class RelativeInputReport : Report
@@ -17,6 +19,12 @@ namespace VoiDPlugins.Library.VMulti.Device
             bytes[5] = Y;
             bytes[6] = WheelPos;
             return bytes;
+        }
+
+        public override void SetCoordinates(Vector2 coordinates)
+        {
+            X = (byte)coordinates.X;
+            Y = (byte)coordinates.Y;
         }
 
         public override byte Size => 7;

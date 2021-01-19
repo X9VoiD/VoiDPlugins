@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace VoiDPlugins.Library.VMulti.Device
 {
     public class AbsoluteInputReport : Report
@@ -20,6 +22,12 @@ namespace VoiDPlugins.Library.VMulti.Device
             bytes[8] = (byte)(Pressure & 0xFF);
             bytes[9] = (byte)((Pressure & 0xFF00) >> 8);
             return bytes;
+        }
+
+        public override void SetCoordinates(Vector2 coordinates)
+        {
+            X = (ushort)coordinates.X;
+            Y = (ushort)coordinates.Y;
         }
 
         public override byte Size => 10;

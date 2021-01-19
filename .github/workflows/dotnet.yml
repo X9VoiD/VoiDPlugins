@@ -1,4 +1,4 @@
-name: .NET Core
+name: .NET
 
 on: [push, pull_request]
 
@@ -27,7 +27,7 @@ jobs:
     - name: Setup NET 5
       uses: actions/setup-dotnet@main
       with:
-        dotnet-version: '5.0.100'
+        dotnet-version: 5.0.x
 
     - name: Build
       env:

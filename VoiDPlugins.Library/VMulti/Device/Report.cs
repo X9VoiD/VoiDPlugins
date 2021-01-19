@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace VoiDPlugins.Library.VMulti.Device
 {
     public abstract class Report
@@ -8,5 +10,6 @@ namespace VoiDPlugins.Library.VMulti.Device
         public byte ReportLength => (byte)(Size - 1);
         public abstract byte Size { get; }
         public abstract byte[] ToBytes();
+        public abstract void SetCoordinates(Vector2 coordinates);
     }
 }

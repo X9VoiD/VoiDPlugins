@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace VoiDPlugins.Library.VMulti.Device
 {
     public class DigitizerInputReport : Report
@@ -23,6 +25,12 @@ namespace VoiDPlugins.Library.VMulti.Device
             bytes[10] = XTilt;
             bytes[11] = YTilt;
             return bytes;
+        }
+
+        public override void SetCoordinates(Vector2 coordinates)
+        {
+            X = (ushort)coordinates.X;
+            Y = (ushort)coordinates.Y;
         }
 
         public override byte Size => 12;

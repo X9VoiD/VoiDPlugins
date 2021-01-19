@@ -1,4 +1,3 @@
-using System;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using VoiDPlugins.Library.VMulti;
@@ -8,31 +7,27 @@ namespace VoiDPlugins.OutputMode
 {
     public class WinInkRelativePointer : BasePointer<DigitizerInputReport>, IVirtualTablet
     {
+        private Vector2 nullPoint = new(0, 0);
+        private Vector2 maxPoint;
+        private Vector2 currentPoint;
+
         public WinInkRelativePointer() : base(0x05, "WindowsInk")
         {
             WinInkButtonHandler.SetReport(Report);
             WinInkButtonHandler.SetDevice(Device);
-        }
-
-        private Vector2 lastPos;
-        private DateTime lastTime = DateTime.UtcNow;
-        public override void SetPosition(Vector2 pos)
-        {
-            var now = DateTime.UtcNow;
-            if ((now - lastTime).TotalMilliseconds > 100)
-            {
-                var newPos = Convert(lastPos - pos);
-                Report.X = (byte)newPos.X;
-                Report.Y = (byte)newPos.Y;
-                Device.Write(Report.ToBytes());
-            }
-            lastPos = pos;
-            lastTime = now;
+            maxPoint = new Vector2(VirtualScreen.Width, VirtualScreen.Height);
+            currentPoint = maxPoint / 2;
         }
 
         public void SetPressure(float percentage)
         {
             Report.Pressure = (ushort)(percentage * 8191);
+        }
+
+        public override void Translate(Vector2 delta)
+        {
+            currentPoint = Vector2.Clamp(currentPoint + delta, nullPoint, maxPoint);
+            base.SetPosition(currentPoint);
         }
     }
 }

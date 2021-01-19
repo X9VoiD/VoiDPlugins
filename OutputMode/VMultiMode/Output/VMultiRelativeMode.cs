@@ -5,9 +5,9 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 namespace VoiDPlugins.OutputMode
 {
     [PluginName("VMulti Relative Mode")]
-    public class VMultiRelativeMode : AbsoluteOutputMode
+    public class VMultiRelativeMode : RelativeOutputMode
     {
-        private readonly VMultiRelativePointer pointer = new VMultiRelativePointer();
-        public override IAbsolutePointer Pointer => pointer;
+        private readonly VMultiRelativePointer pointer = new();
+        public override IRelativePointer Pointer => pointer;
     }
 }
