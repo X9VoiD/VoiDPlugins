@@ -7,11 +7,11 @@ using System.Numerics;
 namespace VoiDPlugins.Filter
 {
     [PluginName("Precision Control")]
-    public class PrecisionControl: IBinding, IValidateBinding, IFilter
+    public class PrecisionControlBinding: IBinding, IValidateBinding
     {
-        private static Vector2 StartingPoint;
-        private static bool IsActive { set; get; }
-        private static bool SetPosition { set; get; }
+        internal static Vector2 StartingPoint;
+        internal static bool IsActive { set; get; }
+        internal static bool SetPosition { set; get; }
 
         [Property("Property")]
         public string Property { set; get; }
@@ -32,19 +32,23 @@ namespace VoiDPlugins.Filter
         };
 
         public string[] ValidProperties => new[] { "Toggle", "Hold" };
+    }
 
+    [PluginName("Precision Control")]
+    public class PrecisionControl : IFilter
+    {
         public Vector2 Filter(Vector2 OriginalPoint)
         {
-            if (SetPosition)
+            if (PrecisionControlBinding.SetPosition)
             {
-                StartingPoint = OriginalPoint;
-                SetPosition = false;
+                PrecisionControlBinding.StartingPoint = OriginalPoint;
+                PrecisionControlBinding.SetPosition = false;
             }
 
-            if (IsActive)
+            if (PrecisionControlBinding.IsActive)
             {
-                var delta = (OriginalPoint - StartingPoint) * Scale;
-                return StartingPoint + delta;
+                var delta = (OriginalPoint - PrecisionControlBinding.StartingPoint) * Scale;
+                return PrecisionControlBinding.StartingPoint + delta;
             }
             else
             {
