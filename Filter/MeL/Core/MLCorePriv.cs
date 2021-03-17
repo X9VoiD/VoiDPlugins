@@ -5,7 +5,7 @@ using VoiDPlugins.Library;
 
 namespace VoiDPlugins.Filter.MeL.Core
 {
-    partial class MLCore
+    internal partial class MLCore
     {
         private double[] weights;
         private Polynomial xCoeff, yCoeff;

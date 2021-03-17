@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace VoiDPlugins.Filter.MeL.Core
+namespace VoiDPlugins.Library
 {
     public class TimeSeriesPoint
     {
@@ -12,6 +12,5 @@ namespace VoiDPlugins.Filter.MeL.Core
 
         public Vector2 Point { get; }
         public double Elapsed { get; }
-
     }
 }

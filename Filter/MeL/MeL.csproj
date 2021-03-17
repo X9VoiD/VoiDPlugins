@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MathNet.Numerics" Version="4.11.0" />
+    <PackageReference Include="MathNet.Numerics" Version="4.15.0" />
     <ProjectReference Include="../../.modules/OpenTabletDriver/OpenTabletDriver.Plugin/OpenTabletDriver.Plugin.csproj" />
     <ProjectReference Include="../../VoiDPlugins.Library/VoiD/VoiD.csproj" />
   </ItemGroup>
