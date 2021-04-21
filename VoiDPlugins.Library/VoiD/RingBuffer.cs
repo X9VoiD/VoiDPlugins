@@ -78,7 +78,7 @@ namespace VoiDPlugins.Library
         public IEnumerator<T> GetEnumerator()
         {
             if (!this.IsFilled)
-                return (IEnumerator<T>)dataStream.GetEnumerator();
+                return ((IEnumerable<T>)dataStream).GetEnumerator();
             else
                 return RingGetEnumerator();
         }
