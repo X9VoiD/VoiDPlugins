@@ -38,40 +38,35 @@ namespace VoiDPlugins.OutputMode
             switch (input)
             {
                 case "Pen Tip":
-                {
                     EnableBit((int)(EraserState ? Button.Eraser : Button.Press));
                     break;
-                }
+
                 case "Pen Button":
-                {
                     EnableBit((int)Button.Barrel);
                     break;
-                }
+
                 case "Eraser (Toggle)":
-                {
                     if (EraserState)
                     {
                         DisableBit((int)Button.Invert);
                         EraserState = false;
-                        StateChange();
+                        EraserStateTransition();
                     }
                     else
                     {
-                        EnableBit((int)Button.Invert);
+                        // EnableBit((int)Button.Invert);
                         DisableBit((int)Button.Press);
                         EraserState = true;
-                        StateChange();
+                        EraserStateTransition();
                     }
                     break;
-                }
+
                 case "Eraser (Hold)":
-                {
-                    EnableBit((int)Button.Invert);
+                    // EnableBit((int)Button.Invert);
                     DisableBit((int)Button.Press);
                     EraserState = true;
-                    StateChange();
+                    EraserStateTransition();
                     break;
-                }
             }
         }
 
@@ -80,33 +75,46 @@ namespace VoiDPlugins.OutputMode
             switch (input)
             {
                 case "Pen Tip":
-                {
                     DisableBit((int)Button.Press);
                     DisableBit((int)Button.Eraser);
                     break;
-                }
+
                 case "Pen Button":
-                {
                     DisableBit((int)Button.Barrel);
                     break;
-                }
+
                 case "Eraser (Hold)":
-                {
-                    DisableBit((int)Button.Invert);
+                    // DisableBit((int)Button.Invert);
                     EraserState = false;
-                    StateChange();
+                    EraserStateTransition();
                     break;
-                }
+
             }
         }
 
-        private static void StateChange()
+        private void EraserStateTransition()
         {
             var buttons = Report.Buttons;
             var pressure = Report.Pressure;
-            Report.Buttons = 0;
+
+            // Send In-Range but no tips
+            DisableBit((int)Button.Press);
+            DisableBit((int)Button.Eraser);
             Report.Pressure = 0;
             Device.Write(Report.ToBytes());
+
+            // Send Out-Of-Range
+            Report.Buttons = 0;
+            Device.Write(Report.ToBytes());
+
+            // Send In-Range but no tips
+            EnableBit((int)Button.InRange);
+            if (EraserState)
+                EnableBit((int)Button.Invert);
+
+            Device.Write(Report.ToBytes());
+
+            // Send Proper Report
             Report.Buttons = buttons;
             Report.Pressure = pressure;
         }

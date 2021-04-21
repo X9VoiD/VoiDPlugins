@@ -7,7 +7,6 @@ namespace VoiDPlugins.OutputMode
     [PluginName("Windows Ink Absolute Mode")]
     public class WinInkAbsoluteMode : AbsoluteOutputMode
     {
-        private readonly WinInkAbsolutePointer pointer = new();
-        public override IAbsolutePointer Pointer => pointer;
+        public override IAbsolutePointer Pointer { get; set; } = new WinInkAbsolutePointer();
     }
 }

@@ -7,7 +7,6 @@ namespace VoiDPlugins.OutputMode
     [PluginName("VMulti Relative Mode")]
     public class VMultiRelativeMode : RelativeOutputMode
     {
-        private readonly VMultiRelativePointer pointer = new();
-        public override IRelativePointer Pointer => pointer;
+        public override IRelativePointer Pointer { get; set; } = new VMultiRelativePointer();
     }
 }

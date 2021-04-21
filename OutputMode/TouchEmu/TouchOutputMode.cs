@@ -8,7 +8,6 @@ namespace VoiDPlugins.OutputMode
     [PluginName("Touch Emu"), SupportedPlatform(PluginPlatform.Windows)]
     public class TouchOutputMode : AbsoluteOutputMode
     {
-        private readonly IAbsolutePointer TouchPointer = new TouchPointerHandler();
-        public override IAbsolutePointer Pointer => TouchPointer;
+        public override IAbsolutePointer Pointer { get; set; } = new TouchPointerHandler();
     }
 }

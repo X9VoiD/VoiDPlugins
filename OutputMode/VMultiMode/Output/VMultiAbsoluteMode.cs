@@ -7,7 +7,6 @@ namespace VoiDPlugins.OutputMode
     [PluginName("VMulti Absolute Mode")]
     public class VMultiAbsoluteMode : AbsoluteOutputMode
     {
-        private readonly VMultiAbsolutePointer pointer = new();
-        public override IAbsolutePointer Pointer => pointer;
+        public override IAbsolutePointer Pointer { get; set; } = new VMultiAbsolutePointer();
     }
 }

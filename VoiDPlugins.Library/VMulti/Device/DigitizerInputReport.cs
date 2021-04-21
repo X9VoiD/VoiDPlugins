@@ -1,29 +1,29 @@
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace VoiDPlugins.Library.VMulti.Device
 {
-    public class DigitizerInputReport : Report
+    public sealed class DigitizerInputReport : Report
     {
         public ushort X;            // X position of the pen from 0 to 32767
         public ushort Y;            // Y position of the pen from 0 to 32767
         public ushort Pressure;     // Pressure level from 0 to 8191
         public byte XTilt;          // X tilt of the pen from -127 to 127
         public byte YTilt;          // Y tilt of the pen from -127 to 127
+
+        private byte[] bytes = new byte[12];
+
         public override byte[] ToBytes()
         {
-            var bytes = new byte[Size];
-            bytes[0] = VMultiID;
-            bytes[1] = ReportLength;
-            bytes[2] = ReportID;
-            bytes[3] = Buttons;
-            bytes[4] = (byte)(X & 0xFF);
-            bytes[5] = (byte)((X & 0xFF00) >> 8);
-            bytes[6] = (byte)(Y & 0xFF);
-            bytes[7] = (byte)((Y & 0xFF00) >> 8);
-            bytes[8] = (byte)(Pressure & 0xFF);
-            bytes[9] = (byte)((Pressure & 0xFF00) >> 8);
-            bytes[10] = XTilt;
-            bytes[11] = YTilt;
+            Unsafe.WriteUnaligned(ref bytes[0], VMultiID);
+            Unsafe.WriteUnaligned(ref bytes[1], ReportLength);
+            Unsafe.WriteUnaligned(ref bytes[2], ReportID);
+            Unsafe.WriteUnaligned(ref bytes[3], Buttons);
+            Unsafe.WriteUnaligned(ref bytes[4], X);
+            Unsafe.WriteUnaligned(ref bytes[6], Y);
+            Unsafe.WriteUnaligned(ref bytes[8], Pressure);
+            Unsafe.WriteUnaligned(ref bytes[10], XTilt);
+            Unsafe.WriteUnaligned(ref bytes[11], YTilt);
             return bytes;
         }
 

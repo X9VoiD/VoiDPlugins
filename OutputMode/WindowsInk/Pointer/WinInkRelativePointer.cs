@@ -7,7 +7,6 @@ namespace VoiDPlugins.OutputMode
 {
     public class WinInkRelativePointer : BasePointer<DigitizerInputReport>, IVirtualTablet
     {
-        private Vector2 nullPoint = new(0, 0);
         private Vector2 maxPoint;
         private Vector2 currentPoint;
 
@@ -26,7 +25,7 @@ namespace VoiDPlugins.OutputMode
 
         public override void Translate(Vector2 delta)
         {
-            currentPoint = Vector2.Clamp(currentPoint + delta, nullPoint, maxPoint);
+            currentPoint = Vector2.Clamp(currentPoint + delta, Vector2.Zero, maxPoint);
             base.SetPosition(currentPoint);
         }
     }

@@ -7,7 +7,6 @@ namespace VoiDPlugins.OutputMode
     [PluginName("Windows Ink Relative Mode")]
     public class WinInkRelativeMode : RelativeOutputMode
     {
-        private readonly WinInkRelativePointer pointer = new();
-        public override IRelativePointer Pointer => pointer;
+        public override IRelativePointer Pointer { get; set; } = new WinInkRelativePointer();
     }
 }
