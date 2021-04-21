@@ -34,11 +34,11 @@ namespace VoiDPlugins.Filter.MeL
             if (value is ITabletReport report)
             {
                 Core.Add(report.Position);
+
                 try
                 {
                     report.Position = Core.IsReady ? Core.Predict(Offset) : report.Position;
                     rateLimit = false;
-                    Emit?.Invoke(report);
                 }
                 catch
                 {
@@ -47,9 +47,12 @@ namespace VoiDPlugins.Filter.MeL
                         Log.Write("MeLFilter", "Unknown error in MeLCore", LogLevel.Error);
                         rateLimit = true;
                     }
-                    Emit?.Invoke(report);
                 }
+
+                value = report;
             }
+
+            Emit?.Invoke(value);
         }
     }
 }
