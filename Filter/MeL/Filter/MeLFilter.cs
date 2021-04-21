@@ -1,35 +1,21 @@
-using System.Numerics;
+using System;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using VoiDPlugins.Filter.MeL.Core;
 
 namespace VoiDPlugins.Filter.MeL
 {
     [PluginName("MeL")]
-    public class MeLFilter : IFilter
+    public class MeLFilter : IPositionedPipelineElement<IDeviceReport>
     {
-        public Vector2 Filter(Vector2 point)
-        {
-            Core.Add(point);
-            try
-            {
-                var a = Core.IsReady ? Core.Predict(Offset) : point;
-                rateLimit = false;
-                return a;
-            }
-            catch
-            {
-                if (!rateLimit)
-                {
-                    Log.Write("MeLFilter", "Unknown error in MeLCore", LogLevel.Error);
-                    rateLimit = true;
-                }
-                return point;
-            }
-        }
+        private readonly MLCore Core = new MLCore();
+        private bool rateLimit;
 
-        public FilterStage FilterStage => FilterStage.PostTranspose;
+        public event Action<IDeviceReport> Emit;
+
+        public PipelinePosition Position => PipelinePosition.PostTransform;
 
         [Property("Offset"), Unit("ms"), DefaultPropertyValue(0)]
         public float Offset { set; get; }
@@ -43,7 +29,27 @@ namespace VoiDPlugins.Filter.MeL
         [Property("Weight"), DefaultPropertyValue(1.4f)]
         public float Weight { set => Core.Weight = value; }
 
-        private readonly MLCore Core = new MLCore();
-        private bool rateLimit;
+        public void Consume(IDeviceReport value)
+        {
+            if (value is ITabletReport report)
+            {
+                Core.Add(report.Position);
+                try
+                {
+                    report.Position = Core.IsReady ? Core.Predict(Offset) : report.Position;
+                    rateLimit = false;
+                    Emit?.Invoke(report);
+                }
+                catch
+                {
+                    if (!rateLimit)
+                    {
+                        Log.Write("MeLFilter", "Unknown error in MeLCore", LogLevel.Error);
+                        rateLimit = true;
+                    }
+                    Emit?.Invoke(report);
+                }
+            }
+        }
     }
 }

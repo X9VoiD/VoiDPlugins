@@ -1,47 +1,20 @@
-using System;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Tablet.Interpolator;
-using OpenTabletDriver.Plugin.Timers;
+using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver.Plugin.Timing;
 using VoiDPlugins.Filter.MeL.Core;
 
 namespace VoiDPlugins.Filter.MeL
 {
     [PluginName("MeL")]
-    public class MeLInterp : Interpolator
+    public class MeLInterp : AsyncPositionedPipelineElement<IDeviceReport>
     {
-        public MeLInterp(ITimer scheduler) : base(scheduler)
-        {
-        }
+        private readonly MLCore Core = new MLCore();
+        private readonly HPETDeltaStopwatch watch = new HPETDeltaStopwatch();
+        private float? reportMsAvg;
 
-        public override void UpdateState(SyntheticTabletReport report)
-        {
-            var now = DateTime.UtcNow;
-            var reportMs = (now - lastTime).TotalMilliseconds;
-            reportMsAvg += (reportMs - reportMsAvg) / 50.0;
-            lastTime = now;
-            SyntheticReport = new SyntheticTabletReport(report);
-            if (reportMs > 100)
-                reportMsAvg = 4;
-            if (reportMs >= reportMsAvg * 0.75)
-                Core.Add(report.Position);
-        }
-
-        public override SyntheticTabletReport Interpolate()
-        {
-            if (Core.IsReady)
-            {
-                try
-                {
-                    SyntheticReport.Position = Core.Predict();
-                }
-                catch
-                {
-                    Log.Write("MeLInterp", "Unknown error in MeLCore");
-                }
-            }
-            return SyntheticReport;
-        }
+        public override PipelinePosition Position => PipelinePosition.PostTransform;
 
         [Property("Samples"), DefaultPropertyValue(20)]
         public int Samples { set => Core.Samples = value; }
@@ -52,9 +25,39 @@ namespace VoiDPlugins.Filter.MeL
         [Property("Weight"), DefaultPropertyValue(1.4f)]
         public float Weight { set => Core.Weight = value; }
 
-        private readonly MLCore Core = new MLCore();
-        private SyntheticTabletReport SyntheticReport;
-        private DateTime lastTime;
-        private new double reportMsAvg = 4.0;
+        protected override void ConsumeState()
+        {
+            if (State is ITabletReport report)
+            {
+                var reportMs = (float)watch.Restart().TotalMilliseconds;
+
+                if (reportMs < 50f)
+                    reportMsAvg = (reportMsAvg + ((reportMs - reportMsAvg) / 50.0f)) ?? reportMs;
+
+                if (reportMs >= reportMsAvg * 0.75f)
+                    Core.Add(report.Position);
+            }
+        }
+
+        protected override void UpdateState()
+        {
+            if (State is ITabletReport report && Core.IsReady)
+            {
+                try
+                {
+                    report.Position = Core.Predict();
+                    State = report;
+                }
+                catch
+                {
+                    Log.Write("MeLInterp", "Unknown error in MeLCore");
+                }
+            }
+
+            if (PenIsInRange() || State is not ITabletReport)
+            {
+                OnEmit();
+            }
+        }
     }
 }
