@@ -17,7 +17,7 @@ namespace VoiDPlugins.Filter.MeL
 
         public PipelinePosition Position => PipelinePosition.PostTransform;
 
-        [Property("Offset"), Unit("ms"), DefaultPropertyValue(0)]
+        [Property("Offset"), Unit("ms"), DefaultPropertyValue(0f)]
         public float Offset { set; get; }
 
         [Property("Samples"), DefaultPropertyValue(20)]
