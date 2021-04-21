@@ -7,8 +7,8 @@ using VoiDPlugins.Filter.MeL.Core;
 
 namespace VoiDPlugins.Filter.MeL
 {
-    [PluginName("MeL")]
-    public class MeLInterp : AsyncPositionedPipelineElement<IDeviceReport>
+    [PluginName("MeL Async")]
+    public class MeLAsync : AsyncPositionedPipelineElement<IDeviceReport>
     {
         private readonly MLCore Core = new MLCore();
         private readonly HPETDeltaStopwatch watch = new HPETDeltaStopwatch();

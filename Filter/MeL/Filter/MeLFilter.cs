@@ -7,7 +7,7 @@ using VoiDPlugins.Filter.MeL.Core;
 
 namespace VoiDPlugins.Filter.MeL
 {
-    [PluginName("MeL")]
+    [PluginName("MeL Filter")]
     public class MeLFilter : IPositionedPipelineElement<IDeviceReport>
     {
         private readonly MLCore Core = new MLCore();
