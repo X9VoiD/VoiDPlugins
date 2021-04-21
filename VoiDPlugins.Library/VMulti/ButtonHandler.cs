@@ -13,18 +13,18 @@ namespace VoiDPlugins.Library.VMulti
         protected static Report Report;
         public abstract Dictionary<string, int> Bindings { get; }
 
-        [Property("Property"), PropertyValidated(nameof(ValidProperties))]
-        public string Property { get; set; }
-        public virtual string[] ValidProperties => Bindings.Keys.ToArray();
+        [Property("Button"), PropertyValidated(nameof(ValidButtons))]
+        public string Button { get; set; }
+        public virtual string[] ValidButtons => Bindings.Keys.ToArray();
 
         public virtual void Press(IDeviceReport report)
         {
-            EnableBit(Bindings[Property]);
+            EnableBit(Bindings[Button]);
         }
 
         public virtual void Release(IDeviceReport report)
         {
-            DisableBit(Bindings[Property]);
+            DisableBit(Bindings[Button]);
         }
 
         public static void SetReport(Report report)

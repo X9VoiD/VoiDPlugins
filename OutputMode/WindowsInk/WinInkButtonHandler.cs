@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using HidSharp;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Tablet;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
 
@@ -10,7 +11,8 @@ namespace VoiDPlugins.OutputMode
     public class WinInkButtonHandler : ButtonHandler
     {
         public override Dictionary<string, int> Bindings => null;
-        public readonly static string[] validProperties = new string[]
+
+        public override string[] ValidButtons { get; } = new string[]
         {
             "Pen Tip",
             "Pen Button",
@@ -18,9 +20,7 @@ namespace VoiDPlugins.OutputMode
             "Eraser (Hold)"
         };
 
-        public override string[] ValidProperties => validProperties;
-
-        private enum Button : int
+        private enum ButtonBits : int
         {
             Press = 1,
             Barrel = 2,
@@ -33,29 +33,29 @@ namespace VoiDPlugins.OutputMode
         private static HidStream Device;
         private static new DigitizerInputReport Report;
 
-        public override void Press(string input)
+        public override void Press(IDeviceReport report)
         {
-            switch (input)
+            switch (Button)
             {
                 case "Pen Tip":
-                    EnableBit((int)(EraserState ? Button.Eraser : Button.Press));
+                    EnableBit((int)(EraserState ? ButtonBits.Eraser : ButtonBits.Press));
                     break;
 
                 case "Pen Button":
-                    EnableBit((int)Button.Barrel);
+                    EnableBit((int)ButtonBits.Barrel);
                     break;
 
                 case "Eraser (Toggle)":
                     if (EraserState)
                     {
-                        DisableBit((int)Button.Invert);
+                        DisableBit((int)ButtonBits.Invert);
                         EraserState = false;
                         EraserStateTransition();
                     }
                     else
                     {
                         // EnableBit((int)Button.Invert);
-                        DisableBit((int)Button.Press);
+                        DisableBit((int)ButtonBits.Press);
                         EraserState = true;
                         EraserStateTransition();
                     }
@@ -63,24 +63,24 @@ namespace VoiDPlugins.OutputMode
 
                 case "Eraser (Hold)":
                     // EnableBit((int)Button.Invert);
-                    DisableBit((int)Button.Press);
+                    DisableBit((int)ButtonBits.Press);
                     EraserState = true;
                     EraserStateTransition();
                     break;
             }
         }
 
-        public override void Release(string input)
+        public override void Release(IDeviceReport report)
         {
-            switch (input)
+            switch (Button)
             {
                 case "Pen Tip":
-                    DisableBit((int)Button.Press);
-                    DisableBit((int)Button.Eraser);
+                    DisableBit((int)ButtonBits.Press);
+                    DisableBit((int)ButtonBits.Eraser);
                     break;
 
                 case "Pen Button":
-                    DisableBit((int)Button.Barrel);
+                    DisableBit((int)ButtonBits.Barrel);
                     break;
 
                 case "Eraser (Hold)":
@@ -98,8 +98,8 @@ namespace VoiDPlugins.OutputMode
             var pressure = Report.Pressure;
 
             // Send In-Range but no tips
-            DisableBit((int)Button.Press);
-            DisableBit((int)Button.Eraser);
+            DisableBit((int)ButtonBits.Press);
+            DisableBit((int)ButtonBits.Eraser);
             Report.Pressure = 0;
             Device.Write(Report.ToBytes());
 
@@ -108,9 +108,9 @@ namespace VoiDPlugins.OutputMode
             Device.Write(Report.ToBytes());
 
             // Send In-Range but no tips
-            EnableBit((int)Button.InRange);
+            EnableBit((int)ButtonBits.InRange);
             if (EraserState)
-                EnableBit((int)Button.Invert);
+                EnableBit((int)ButtonBits.Invert);
 
             Device.Write(Report.ToBytes());
 
@@ -123,7 +123,7 @@ namespace VoiDPlugins.OutputMode
         {
             ButtonHandler.SetReport(Report);
             WinInkButtonHandler.Report = Report;
-            EnableBit((int)Button.InRange);
+            EnableBit((int)ButtonBits.InRange);
         }
 
         public static void SetDevice(HidStream device)
