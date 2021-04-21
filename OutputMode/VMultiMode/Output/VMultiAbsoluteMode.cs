@@ -13,7 +13,7 @@ namespace VoiDPlugins.OutputMode
         [Resolved]
         public IServiceProvider ServiceProvider
         {
-            set => Pointer = new VMultiRelativePointer((IVirtualScreen)value.GetService(typeof(IVirtualScreen)));
+            set => Pointer = new VMultiAbsolutePointer((IVirtualScreen)value.GetService(typeof(IVirtualScreen)));
         }
 
         public override IAbsolutePointer Pointer { get; set; }
