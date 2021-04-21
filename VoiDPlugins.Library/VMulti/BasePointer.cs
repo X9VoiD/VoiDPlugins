@@ -13,19 +13,19 @@ namespace VoiDPlugins.Library.VMulti
     {
         public T Report;
         protected readonly HidStream Device;
-        [Resolved]
         protected IVirtualScreen VirtualScreen;
 
         private Vector2 ScreenToVMulti;
         private Vector2 error;
 
-        public BasePointer(byte ReportID, string Name)
+        public BasePointer(IVirtualScreen screen, byte ReportID, string Name)
         {
             Report = new T
             {
                 ReportID = ReportID
             };
 
+            VirtualScreen = screen;
             Device = VMultiDevice.Retrieve(Name);
 
             ScreenToVMulti = new Vector2(VirtualScreen.Width, VirtualScreen.Height) / 32767;
