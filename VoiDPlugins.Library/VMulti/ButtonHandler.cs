@@ -1,31 +1,12 @@
-using System.Collections.Generic;
-using System.Linq;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Tablet;
 using VoiDPlugins.Library.VMulti.Device;
 
 namespace VoiDPlugins.Library.VMulti
 {
     [PluginIgnore]
-    public abstract class ButtonHandler : IBinding
+    public class ButtonHandler
     {
         protected static Report Report;
-        public abstract Dictionary<string, int> Bindings { get; }
-
-        [Property("Button"), PropertyValidated(nameof(ValidButtons))]
-        public string Button { get; set; }
-        public virtual string[] ValidButtons => Bindings.Keys.ToArray();
-
-        public virtual void Press(IDeviceReport report)
-        {
-            EnableBit(Bindings[Button]);
-        }
-
-        public virtual void Release(IDeviceReport report)
-        {
-            DisableBit(Bindings[Button]);
-        }
 
         public static void SetReport(Report report)
         {

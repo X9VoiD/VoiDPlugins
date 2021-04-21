@@ -14,10 +14,10 @@ namespace VoiDPlugins.Filter
         internal static bool IsActive { set; get; }
         internal static bool SetPosition { set; get; }
 
+        public static string[] ValidModes => new[] { "Toggle", "Hold" };
+
         [Property("Mode"), PropertyValidated(nameof(ValidModes))]
         public string Mode { set; get; }
-
-        public string[] ValidModes => new[] { "Toggle", "Hold" };
 
         public void Press(IDeviceReport report)
         {

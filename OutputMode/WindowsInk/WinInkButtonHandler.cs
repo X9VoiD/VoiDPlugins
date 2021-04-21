@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using HidSharp;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet;
 using VoiDPlugins.Library.VMulti;
@@ -8,17 +8,18 @@ using VoiDPlugins.Library.VMulti.Device;
 namespace VoiDPlugins.OutputMode
 {
     [PluginName("Windows Ink")]
-    public class WinInkButtonHandler : ButtonHandler
+    public class WinInkButtonHandler : ButtonHandler, IBinding
     {
-        public override Dictionary<string, int> Bindings => null;
-
-        public override string[] ValidButtons { get; } = new string[]
+        public static string[] ValidButtons { get; } = new string[]
         {
             "Pen Tip",
             "Pen Button",
             "Eraser (Toggle)",
             "Eraser (Hold)"
         };
+
+        [Property("Button"), PropertyValidated(nameof(ValidButtons))]
+        public string Button { get; set; }
 
         private enum ButtonBits : int
         {
@@ -33,7 +34,7 @@ namespace VoiDPlugins.OutputMode
         private static HidStream Device;
         private static new DigitizerInputReport Report;
 
-        public override void Press(IDeviceReport report)
+        public void Press(IDeviceReport report)
         {
             switch (Button)
             {
@@ -70,7 +71,7 @@ namespace VoiDPlugins.OutputMode
             }
         }
 
-        public override void Release(IDeviceReport report)
+        public void Release(IDeviceReport report)
         {
             switch (Button)
             {

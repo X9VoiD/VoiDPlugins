@@ -10,9 +10,9 @@ namespace VoiDPlugins.Binding.ScriptRunner
     [PluginName("Script Runner")]
     public class ScriptRunner : IBinding
     {
-        private List<string> ScriptPathList = new List<string>(10);
+        public static string[] ValidIndexes = Enumerable.Range(0, 10).Select(i => i.ToString()).ToArray();
 
-        public string[] ValidIndexes = Enumerable.Range(0, 10).Select(i => i.ToString()).ToArray();
+        private List<string> ScriptPathList = new List<string>(10);
 
         [Property("Script Index"), PropertyValidated(nameof(ValidIndexes))]
         public string ScriptIndex { set; get; }
