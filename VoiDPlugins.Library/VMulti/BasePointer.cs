@@ -1,7 +1,7 @@
 using System.Numerics;
 using HidSharp;
-using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using VoiDPlugins.Library.VMulti.Device;
@@ -13,7 +13,8 @@ namespace VoiDPlugins.Library.VMulti
     {
         public T Report;
         protected readonly HidStream Device;
-        protected readonly IVirtualScreen VirtualScreen = (Info.Driver as IVirtualDisplayDriver).VirtualScreen;
+        [Resolved]
+        protected IVirtualScreen VirtualScreen;
 
         private Vector2 ScreenToVMulti;
         private Vector2 error;
