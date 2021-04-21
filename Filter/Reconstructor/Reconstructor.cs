@@ -1,26 +1,16 @@
 using System;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace VoiDPlugins.Filter
 {
     [PluginName("Reconstructor")]
-    public class Reconstructor : IFilter
+    public class Reconstructor : IPositionedPipelineElement<IDeviceReport>
     {
         private Vector2? lastAvg;
-
-        public Vector2 Filter(Vector2 point)
-        {
-            var truePoint = lastAvg.HasValue ? ReverseEMAFunc(point, lastAvg.Value, (float)EMAWeight) : point;
-            lastAvg = point;
-            return truePoint;
-        }
-
-        private static Vector2 ReverseEMAFunc(Vector2 currentEMA, Vector2 lastEMA, float weight)
-        {
-            return ((currentEMA - lastEMA) / weight) + lastEMA;
-        }
+        private float weight;
 
         [Property("EMA Weight"), DefaultPropertyValue(0.5f), ToolTip
         (
@@ -31,14 +21,30 @@ namespace VoiDPlugins.Filter
         )]
         public float EMAWeight
         {
-            set
-            {
-                weight = Math.Clamp(value, 0, 1);
-            }
+            set => weight = Math.Clamp(value, 0, 1);
             get => weight;
         }
-        private float weight;
 
-        public FilterStage FilterStage => FilterStage.PreInterpolate;
+        public event Action<IDeviceReport> Emit;
+
+        public PipelinePosition Position => PipelinePosition.PreTransform;
+
+        public void Consume(IDeviceReport value)
+        {
+            if (value is ITabletReport report)
+            {
+                var truePoint = lastAvg.HasValue ? ReverseEMAFunc(report.Position, lastAvg.Value, (float)EMAWeight) : report.Position;
+                lastAvg = report.Position;
+                report.Position = truePoint;
+                value = report;
+            }
+
+            Emit?.Invoke(value);
+        }
+
+        private static Vector2 ReverseEMAFunc(Vector2 currentEMA, Vector2 lastEMA, float weight)
+        {
+            return ((currentEMA - lastEMA) / weight) + lastEMA;
+        }
     }
 }
