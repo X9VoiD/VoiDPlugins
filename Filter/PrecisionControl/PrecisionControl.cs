@@ -1,64 +1,70 @@
-﻿using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Attributes;
-using System;
+﻿using System;
 using System.Numerics;
+using OpenTabletDriver.Plugin;
+using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin.Output;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace VoiDPlugins.Filter
 {
     [PluginName("Precision Control")]
-    public class PrecisionControlBinding: IBinding, IValidateBinding
+    public class PrecisionControlBinding : IBinding
     {
         internal static Vector2 StartingPoint;
         internal static bool IsActive { set; get; }
         internal static bool SetPosition { set; get; }
 
-        [Property("Property")]
-        public string Property { set; get; }
+        [Property("Mode"), PropertyValidated(nameof(ValidModes))]
+        public string Mode { set; get; }
 
-        public Action Press => () =>
+        public string[] ValidModes => new[] { "Toggle", "Hold" };
+
+        public void Press(IDeviceReport report)
         {
-            if (Property == "Toggle")
+            if (Mode == "Toggle")
                 IsActive = !IsActive;
-            else if (Property == "Hold")
+            else if (Mode == "Hold")
                 IsActive = true;
+
             SetPosition = true;
-        };
+        }
 
-        public Action Release => () =>
+        public void Release(IDeviceReport report)
         {
-            if (Property == "Hold")
+            if (Mode == "Hold")
                 IsActive = false;
-        };
-
-        public string[] ValidProperties => new[] { "Toggle", "Hold" };
+        }
     }
 
     [PluginName("Precision Control")]
-    public class PrecisionControl : IFilter
+    public class PrecisionControl : IPositionedPipelineElement<IDeviceReport>
     {
-        public Vector2 Filter(Vector2 OriginalPoint)
-        {
-            if (PrecisionControlBinding.SetPosition)
-            {
-                PrecisionControlBinding.StartingPoint = OriginalPoint;
-                PrecisionControlBinding.SetPosition = false;
-            }
-
-            if (PrecisionControlBinding.IsActive)
-            {
-                var delta = (OriginalPoint - PrecisionControlBinding.StartingPoint) * Scale;
-                return PrecisionControlBinding.StartingPoint + delta;
-            }
-            else
-            {
-                return OriginalPoint;
-            }
-        }
+        public event Action<IDeviceReport> Emit;
 
         [SliderProperty("Precision Multiplier", 0.0f, 10f, 0.3f), DefaultPropertyValue(0.3f)]
         public float Scale { get; set; }
 
-        public FilterStage FilterStage => FilterStage.PostTranspose;
+        public PipelinePosition Position => PipelinePosition.PostTransform;
+
+        public void Consume(IDeviceReport value)
+        {
+            if (value is ITabletReport report)
+            {
+                if (PrecisionControlBinding.SetPosition)
+                {
+                    PrecisionControlBinding.StartingPoint = report.Position;
+                    PrecisionControlBinding.SetPosition = false;
+                }
+
+                if (PrecisionControlBinding.IsActive)
+                {
+                    var delta = (report.Position - PrecisionControlBinding.StartingPoint) * Scale;
+                    report.Position = PrecisionControlBinding.StartingPoint + delta;
+                }
+                value = report;
+            }
+
+            Emit?.Invoke(value);
+        }
     }
 }
