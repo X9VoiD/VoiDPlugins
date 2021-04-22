@@ -30,7 +30,7 @@ namespace VoiDPlugins.OutputMode
             InRange = 16
         }
 
-        private bool EraserState;
+        private static bool EraserState;
         private static HidStream Device;
         private static new DigitizerInputReport Report;
 
