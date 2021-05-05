@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../.modules/OpenTabletDriver/OpenTabletDriver.Plugin/OpenTabletDriver.Plugin.csproj" />
-    <PackageReference Include="HidSharpCore" Version="1.1.0" />
+    <PackageReference Include="HidSharpCore" Version="1.2.1.1" />
   </ItemGroup>
 
 </Project>
