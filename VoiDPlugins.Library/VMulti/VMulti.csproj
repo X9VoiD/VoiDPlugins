@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net5</TargetFrameworks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">

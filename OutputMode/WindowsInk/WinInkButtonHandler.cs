@@ -8,7 +8,7 @@ using VoiDPlugins.Library.VMulti.Device;
 namespace VoiDPlugins.OutputMode
 {
     [PluginName("Windows Ink")]
-    public class WinInkButtonHandler : ButtonHandler, IBinding
+    public unsafe class WinInkButtonHandler : ButtonHandler, IBinding
     {
         public static string[] ValidButtons { get; } = new string[]
         {
@@ -32,7 +32,6 @@ namespace VoiDPlugins.OutputMode
 
         private bool EraserState;
         private static HidStream Device;
-        private static new DigitizerInputReport Report;
 
         public void Press(IDeviceReport report)
         {
@@ -95,35 +94,35 @@ namespace VoiDPlugins.OutputMode
 
         private void EraserStateTransition()
         {
-            var buttons = Report.Buttons;
-            var pressure = Report.Pressure;
+            var Report = (DigitizerInputReport*)ReportPointer;
+            var buttons = Report->Header.Buttons;
+            var pressure = Report->Pressure;
 
             // Send In-Range but no tips
             DisableBit((int)ButtonBits.Press);
             DisableBit((int)ButtonBits.Eraser);
-            Report.Pressure = 0;
-            Device.Write(Report.ToBytes());
+            Report->Pressure = 0;
+            Device.Write(ReportBuffer);
 
             // Send Out-Of-Range
-            Report.Buttons = 0;
-            Device.Write(Report.ToBytes());
+            Report->Header.Buttons = 0;
+            Device.Write(ReportBuffer);
 
             // Send In-Range but no tips
             EnableBit((int)ButtonBits.InRange);
             if (EraserState)
                 EnableBit((int)ButtonBits.Invert);
 
-            Device.Write(Report.ToBytes());
+            Device.Write(ReportBuffer);
 
             // Send Proper Report
-            Report.Buttons = buttons;
-            Report.Pressure = pressure;
+            Report->Header.Buttons = buttons;
+            Report->Pressure = pressure;
         }
 
-        public static void SetReport(DigitizerInputReport Report)
+        public static void SetReport(DigitizerInputReport* report, byte[] reportBuffer)
         {
-            ButtonHandler.SetReport(Report);
-            WinInkButtonHandler.Report = Report;
+            ButtonHandler.SetReport((VMultiReportHeader*)report, reportBuffer);
             EnableBit((int)ButtonBits.InRange);
         }
 

@@ -17,9 +17,10 @@ namespace VoiDPlugins.OutputMode
             { "Middle", 4 }
         };
 
+        public static string[] ValidButtons { get; } = Bindings.Keys.ToArray();
+
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
         public string Button { get; set; }
-        public static string[] ValidButtons => Bindings.Keys.ToArray();
 
         public void Press(IDeviceReport report)
         {

@@ -4,23 +4,25 @@ using VoiDPlugins.Library.VMulti.Device;
 namespace VoiDPlugins.Library.VMulti
 {
     [PluginIgnore]
-    public class ButtonHandler
+    public unsafe class ButtonHandler
     {
-        protected static Report Report;
+        protected static byte[] ReportBuffer;
+        protected static VMultiReportHeader* ReportPointer;
 
-        public static void SetReport(Report report)
+        public static void SetReport(VMultiReportHeader* report, byte[] reportBuffer)
         {
-            Report = report;
+            ReportBuffer = reportBuffer;
+            ReportPointer = report;
         }
 
         public static void EnableBit(int bit)
         {
-            Report.Buttons = (byte)(Report.Buttons | bit);
+            ReportPointer->Buttons = (byte)(ReportPointer->Buttons | bit);
         }
 
         public static void DisableBit(int bit)
         {
-            Report.Buttons = (byte)(Report.Buttons & ~bit);
+            ReportPointer->Buttons = (byte)(ReportPointer->Buttons & ~bit);
         }
     }
 }

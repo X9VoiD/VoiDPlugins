@@ -1,35 +1,22 @@
-using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace VoiDPlugins.Library.VMulti.Device
 {
-    public class AbsoluteInputReport : Report
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct AbsoluteInputReport
     {
+        public AbsoluteInputReport(byte reportID)
+        {
+            Header = new VMultiReportHeader(Unsafe.SizeOf<AbsoluteInputReport>(), reportID);
+            X = 0;
+            Y = 0;
+            Pressure = 0;
+        }
+
+        public VMultiReportHeader Header;
         public ushort X;            // X position of the mouse from 0 to 32767
         public ushort Y;            // Y position of the mouse from 0 to 32767
         public ushort Pressure;     // Pressure of the mouse? from 0 to 8191
-
-        public override byte[] ToBytes()
-        {
-            var bytes = new byte[Size];
-            bytes[0] = VMultiID;
-            bytes[1] = ReportLength;
-            bytes[2] = ReportID;
-            bytes[3] = Buttons;
-            bytes[4] = (byte)(X & 0xFF);
-            bytes[5] = (byte)((X & 0xFF00) >> 8);
-            bytes[6] = (byte)(Y & 0xFF);
-            bytes[7] = (byte)((Y & 0xFF00) >> 8);
-            bytes[8] = (byte)(Pressure & 0xFF);
-            bytes[9] = (byte)((Pressure & 0xFF00) >> 8);
-            return bytes;
-        }
-
-        public override void SetCoordinates(Vector2 coordinates)
-        {
-            X = (ushort)coordinates.X;
-            Y = (ushort)coordinates.Y;
-        }
-
-        public override byte Size => 10;
     }
 }
