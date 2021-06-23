@@ -19,9 +19,19 @@ namespace VoiDPlugins.OutputMode
             currentPoint = maxPoint / 2;
         }
 
-        public void SetPressure(float percentage)
+        public void SetPressure(float percentage, bool isEraser)
         {
             ReportPointer->Pressure = (ushort)(percentage * 8191);
+            if (!WinInkButtonHandler.IsManuallySet)
+            {
+                WinInkButtonHandler.EraserStateTransition(isEraser);
+            }
+        }
+
+        public void SetTilt(Vector2 tilt)
+        {
+            ReportPointer->XTilt = (byte)tilt.X;
+            ReportPointer->YTilt = (byte)tilt.Y;
         }
 
         public override void Translate(Vector2 delta)

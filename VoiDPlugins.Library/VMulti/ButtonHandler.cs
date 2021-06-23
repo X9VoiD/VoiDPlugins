@@ -24,5 +24,15 @@ namespace VoiDPlugins.Library.VMulti
         {
             ReportPointer->Buttons = (byte)(ReportPointer->Buttons & ~bit);
         }
+
+        public static bool HasBit(int bit)
+        {
+            return (ReportPointer->Buttons & bit) != 0;
+        }
+
+        public static bool HasBit(byte buttons, int bit)
+        {
+            return (buttons & bit) != 0;
+        }
     }
 }

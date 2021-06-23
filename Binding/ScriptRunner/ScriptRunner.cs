@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Tablet;
 namespace VoiDPlugins.Binding.ScriptRunner
 {
     [PluginName("Script Runner")]
-    public class ScriptRunner : IBinding
+    public class ScriptRunner : IStateBinding
     {
         public static string[] ValidIndexes = Enumerable.Range(0, 10).Select(i => i.ToString()).ToArray();
 
@@ -87,7 +87,7 @@ namespace VoiDPlugins.Binding.ScriptRunner
             set => ScriptPathList[9] = value;
         }
 
-        public void Press(IDeviceReport report)
+        public void Press(TabletReference tablet, IDeviceReport report)
         {
             try
             {
@@ -103,7 +103,7 @@ namespace VoiDPlugins.Binding.ScriptRunner
             catch { }
         }
 
-        public void Release(IDeviceReport report)
+        public void Release(TabletReference tablet, IDeviceReport report)
         {
             return;
         }

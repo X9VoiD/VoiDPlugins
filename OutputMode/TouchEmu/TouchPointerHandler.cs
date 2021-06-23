@@ -41,7 +41,7 @@ namespace VoiDPlugins.OutputMode
             Touch.Inject();
         }
 
-        public void SetPressure(float percentage)
+        public void SetPressure(float percentage, bool isEraser)
         {
             var pressure = (uint)(percentage * 1024);
             if (pressure > 0)
@@ -56,6 +56,11 @@ namespace VoiDPlugins.OutputMode
                 Touch.UnsetPointerFlags(POINTER_FLAGS.INCONTACT | POINTER_FLAGS.FIRSTBUTTON);
                 _inContact = false;
             }
+        }
+
+        public void SetTilt(Vector2 tilt)
+        {
+            return;
         }
     }
 }

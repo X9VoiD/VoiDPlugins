@@ -8,7 +8,7 @@ using VoiDPlugins.Library.VMulti;
 namespace VoiDPlugins.OutputMode
 {
     [PluginName("VMulti Mode")]
-    public class VMultiButtonHandler : ButtonHandler, IBinding
+    public class VMultiButtonHandler : ButtonHandler, IStateBinding
     {
         public static Dictionary<string, int> Bindings { get; } = new()
         {
@@ -22,12 +22,12 @@ namespace VoiDPlugins.OutputMode
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
         public string Button { get; set; }
 
-        public void Press(IDeviceReport report)
+        public void Press(TabletReference tablet, IDeviceReport report)
         {
             EnableBit(Bindings[Button]);
         }
 
-        public void Release(IDeviceReport report)
+        public void Release(TabletReference tablet, IDeviceReport report)
         {
             DisableBit(Bindings[Button]);
         }

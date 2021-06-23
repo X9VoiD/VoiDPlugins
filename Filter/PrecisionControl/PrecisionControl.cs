@@ -8,7 +8,7 @@ using OpenTabletDriver.Plugin.Tablet;
 namespace VoiDPlugins.Filter
 {
     [PluginName("Precision Control")]
-    public class PrecisionControlBinding : IBinding
+    public class PrecisionControlBinding : IStateBinding
     {
         internal static Vector2 StartingPoint;
         internal static bool IsActive { set; get; }
@@ -19,7 +19,7 @@ namespace VoiDPlugins.Filter
         [Property("Mode"), PropertyValidated(nameof(ValidModes))]
         public string Mode { set; get; }
 
-        public void Press(IDeviceReport report)
+        public void Press(TabletReference tablet, IDeviceReport report)
         {
             if (Mode == "Toggle")
                 IsActive = !IsActive;
@@ -29,7 +29,7 @@ namespace VoiDPlugins.Filter
             SetPosition = true;
         }
 
-        public void Release(IDeviceReport report)
+        public void Release(TabletReference tablet, IDeviceReport report)
         {
             if (Mode == "Hold")
                 IsActive = false;
