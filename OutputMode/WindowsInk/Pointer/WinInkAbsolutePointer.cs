@@ -14,13 +14,27 @@ namespace VoiDPlugins.OutputMode
             WinInkButtonHandler.SetDevice(Device);
         }
 
-        public void SetPressure(float percentage, bool isEraser)
+        public void SetButtonState(uint button, bool active)
         {
-            ReportPointer->Pressure = (ushort)(percentage * 8191);
+            throw new System.NotImplementedException();
+        }
+
+        public void SetEraser(bool isEraser)
+        {
             if (!WinInkButtonHandler.IsManuallySet)
             {
                 WinInkButtonHandler.EraserStateTransition(isEraser);
             }
+        }
+
+        public void SetPressure(float percentage)
+        {
+            ReportPointer->Pressure = (ushort)(percentage * 8191);
+        }
+
+        public void SetProximity(bool proximity, uint distance)
+        {
+            return;
         }
 
         public void SetTilt(Vector2 tilt)

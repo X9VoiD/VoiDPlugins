@@ -15,6 +15,16 @@ namespace VoiDPlugins.OutputMode
             _lastContact = false;
         }
 
+        public void SetButtonState(uint button, bool active)
+        {
+            return;
+        }
+
+        public void SetEraser(bool isEraser)
+        {
+            return;
+        }
+
         public void SetPosition(Vector2 pos)
         {
             Touch.SetPosition(new POINT((int)pos.X, (int)pos.Y));
@@ -41,7 +51,7 @@ namespace VoiDPlugins.OutputMode
             Touch.Inject();
         }
 
-        public void SetPressure(float percentage, bool isEraser)
+        public void SetPressure(float percentage)
         {
             var pressure = (uint)(percentage * 1024);
             if (pressure > 0)
@@ -56,6 +66,11 @@ namespace VoiDPlugins.OutputMode
                 Touch.UnsetPointerFlags(POINTER_FLAGS.INCONTACT | POINTER_FLAGS.FIRSTBUTTON);
                 _inContact = false;
             }
+        }
+
+        public void SetProximity(bool proximity, uint distance)
+        {
+            return;
         }
 
         public void SetTilt(Vector2 tilt)
