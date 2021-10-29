@@ -15,7 +15,6 @@ jobs:
           - { path: OutputMode, plugin: TouchEmu }
           - { path: OutputMode, plugin: VMultiMode }
           - { path: OutputMode, plugin: WindowsInk }
-          - { path: Tool, plugin: OemKill }
 
     runs-on: ubuntu-latest
 

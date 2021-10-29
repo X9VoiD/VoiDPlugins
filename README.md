@@ -37,11 +37,7 @@ VoiDPlugins is a collection of extensions for [OpenTabletDriver](https://github.
       Touch input emulation (RawInput incompatible)
       Natural Scrolling everywhere
 
-## Tools
-
-### [OemKill](https://github.com/X9VoiD/VoiDPlugins/wiki/OemKill)
-
-      Automatically kill OEM Tablet Driver processes
+## Bindings
 
 ### [ScriptRunner](https://github.com/X9VoiD/VoiDPlugins/wiki/ScriptRunner)
 
