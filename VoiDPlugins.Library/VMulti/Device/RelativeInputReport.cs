@@ -1,7 +1,9 @@
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace VoiDPlugins.Library.VMulti.Device
 {
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct RelativeInputReport
     {
         public RelativeInputReport(byte reportID)
