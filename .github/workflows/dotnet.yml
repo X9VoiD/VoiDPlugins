@@ -23,16 +23,16 @@ jobs:
       with:
         submodules: recursive
 
-    - name: Setup NET 5
+    - name: Setup .NET
       uses: actions/setup-dotnet@main
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: '6.0'
 
     - name: Build
       env:
         path: ${{ matrix.path }} 
         plugin: ${{ matrix.plugin }}
-      run: dotnet publish $path/$plugin --configuration Release --framework net5 -o ./build/$plugin
+      run: dotnet publish $path/$plugin --configuration Release --framework net6.0 -o ./build/$plugin
 
     - uses: actions/upload-artifact@main
       with:
