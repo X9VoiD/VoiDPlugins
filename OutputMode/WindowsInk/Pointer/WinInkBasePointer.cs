@@ -1,6 +1,7 @@
 using System.Numerics;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
+using VoiDPlugins.Library;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
 using static VoiDPlugins.OutputMode.WindowsInkConstants;
@@ -16,14 +17,14 @@ namespace VoiDPlugins.OutputMode
         {
             Instance = VMultiInstanceManager.RetrieveVMultiInstance("WindowsInk", tabletReference, () => new DigitizerInputReport());
             Instance.InitializeData(POINTER, this);
-            Instance.InitializeData(ERASER_STATE, false);
-            Instance.InitializeData(MANUAL_ERASER, false);
+            Instance.InitializeData(ERASER_STATE, new Boxed<bool>(false));
+            Instance.InitializeData(MANUAL_ERASER, new Boxed<bool>(false));
             RawPointer = Instance.Pointer;
         }
 
         public void SetEraser(bool isEraser)
         {
-            if (!Instance!.GetData<bool>(MANUAL_ERASER))
+            if (!Instance!.GetData<Boxed<bool>>(MANUAL_ERASER).Value)
             {
                 WinInkButtonHandler.EraserStateTransition(Instance, ref GetEraser(), isEraser);
             }
@@ -49,9 +50,9 @@ namespace VoiDPlugins.OutputMode
             Instance!.Write();
         }
 
-        private ref bool GetEraser()
+        private ref Boxed<bool> GetEraser()
         {
-            return ref Instance!.GetData<bool>(ERASER_STATE);
+            return ref Instance!.GetData<Boxed<bool>>(ERASER_STATE);
         }
     }
 }

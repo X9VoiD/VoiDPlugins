@@ -33,7 +33,7 @@ namespace VoiDPlugins.Library.VMulti
             _data[i] = data!;
         }
 
-        public unsafe ref T GetData<T>(int i)
+        public unsafe ref T GetData<T>(int i) where T : class
         {
             return ref Unsafe.AsRef<T>(Unsafe.AsPointer(ref _data[i]));
         }

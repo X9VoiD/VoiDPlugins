@@ -2,6 +2,7 @@ using System;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet;
+using VoiDPlugins.Library;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
 using static VoiDPlugins.OutputMode.WindowsInkConstants;
@@ -50,7 +51,7 @@ namespace VoiDPlugins.OutputMode
             switch (Button)
             {
                 case "Pen Tip":
-                    _instance!.EnableButtonBit((int)(eraserState ? ButtonBits.Eraser : ButtonBits.Press));
+                    _instance!.EnableButtonBit((int)(eraserState.Value ? ButtonBits.Eraser : ButtonBits.Press));
                     break;
 
                 case "Pen Button":
@@ -59,7 +60,7 @@ namespace VoiDPlugins.OutputMode
 
                 case "Eraser (Toggle)":
                     IsManuallySet = true;
-                    EraserStateTransition(_instance!, ref eraserState, !eraserState);
+                    EraserStateTransition(_instance!, ref eraserState, !eraserState.Value);
                     break;
 
                 case "Eraser (Hold)":
@@ -87,11 +88,11 @@ namespace VoiDPlugins.OutputMode
             }
         }
 
-        public static void EraserStateTransition(VMultiInstance instance, ref bool eraserState, bool isEraser)
+        public static void EraserStateTransition(VMultiInstance instance, ref Boxed<bool> eraserState, bool isEraser)
         {
-            if (eraserState != isEraser)
+            if (eraserState.Value != isEraser)
             {
-                eraserState = isEraser;
+                eraserState.Value = isEraser;
                 var report = (DigitizerInputReport*)instance.Header;
                 var buttons = report->Header.Buttons;
                 var pressure = report->Pressure;
@@ -107,21 +108,21 @@ namespace VoiDPlugins.OutputMode
 
                 // Send In-Range but no tips
                 instance.EnableButtonBit((int)ButtonBits.InRange);
-                if (eraserState)
+                if (eraserState.Value)
                     instance.EnableButtonBit((int)ButtonBits.Invert);
 
                 instance.Write();
 
                 // Set Proper Report
                 if (VMultiInstance.HasBit(buttons, (int)(ButtonBits.Press | ButtonBits.Eraser)))
-                    instance.EnableButtonBit((int)(eraserState ? ButtonBits.Eraser : ButtonBits.Press));
+                    instance.EnableButtonBit((int)(eraserState.Value ? ButtonBits.Eraser : ButtonBits.Press));
                 report->Pressure = pressure;
             }
         }
 
-        private ref bool GetEraser()
+        private ref Boxed<bool> GetEraser()
         {
-            return ref _instance!.GetData<bool>(ERASER_STATE);
+            return ref _instance!.GetData<Boxed<bool>>(ERASER_STATE);
         }
     }
 }
