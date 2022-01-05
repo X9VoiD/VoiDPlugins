@@ -25,7 +25,7 @@ namespace VoiDPlugins.Filter
             get => weight;
         }
 
-        public event Action<IDeviceReport> Emit;
+        public event Action<IDeviceReport>? Emit;
 
         public PipelinePosition Position => PipelinePosition.PreTransform;
 

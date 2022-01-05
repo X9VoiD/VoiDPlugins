@@ -1,8 +1,6 @@
-using System;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace VoiDPlugins.OutputMode
@@ -10,12 +8,19 @@ namespace VoiDPlugins.OutputMode
     [PluginName("VMulti Relative Mode")]
     public class VMultiRelativeMode : RelativeOutputMode
     {
-        [Resolved]
-        public IServiceProvider ServiceProvider
+        private VMultiRelativePointer? _pointer;
+
+        [OnDependencyLoad]
+        public void Initialize()
         {
-            set => Pointer = new VMultiRelativePointer((IVirtualScreen)value.GetService(typeof(IVirtualScreen)));
+            _pointer = new VMultiRelativePointer();
+            _pointer!.Initialize(TabletReference);
         }
 
-        public override IRelativePointer Pointer { get; set; }
+        public override IRelativePointer Pointer
+        {
+            get => _pointer!;
+            set { }
+        }
     }
 }

@@ -1,16 +1,18 @@
 using System;
-using HidSharp;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
+using static VoiDPlugins.OutputMode.WindowsInkConstants;
 
 namespace VoiDPlugins.OutputMode
 {
     [PluginName("Windows Ink")]
-    public unsafe class WinInkButtonHandler : ButtonHandler, IStateBinding
+    public unsafe class WinInkButtonHandler : IStateBinding
     {
+        private VMultiInstance? _instance;
+
         public static string[] ValidButtons { get; } = new string[]
         {
             "Pen Tip",
@@ -20,7 +22,7 @@ namespace VoiDPlugins.OutputMode
         };
 
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
-        public string Button { get; set; }
+        public string? Button { get; set; }
 
         [Flags]
         private enum ButtonBits : byte
@@ -32,30 +34,37 @@ namespace VoiDPlugins.OutputMode
             InRange = 16
         }
 
-        public static bool IsManuallySet { get; set; }
-        private static bool EraserState;
-        private static HidStream Device;
+        public bool IsManuallySet { get; set; }
+
+        [TabletReference]
+        public TabletReference Reference { set => Initialize(value); }
+
+        private void Initialize(TabletReference tabletReference)
+        {
+            _instance = VMultiInstanceManager.RetrieveVMultiInstance(tabletReference);
+        }
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
+            ref var eraserState = ref GetEraser();
             switch (Button)
             {
                 case "Pen Tip":
-                    EnableBit((int)(EraserState ? ButtonBits.Eraser : ButtonBits.Press));
+                    _instance!.EnableButtonBit((int)(eraserState ? ButtonBits.Eraser : ButtonBits.Press));
                     break;
 
                 case "Pen Button":
-                    EnableBit((int)ButtonBits.Barrel);
+                    _instance!.EnableButtonBit((int)ButtonBits.Barrel);
                     break;
 
                 case "Eraser (Toggle)":
                     IsManuallySet = true;
-                    EraserStateTransition(!EraserState);
+                    EraserStateTransition(_instance!, ref eraserState, !eraserState);
                     break;
 
                 case "Eraser (Hold)":
                     IsManuallySet = true;
-                    EraserStateTransition(true);
+                    EraserStateTransition(_instance!, ref eraserState, true);
                     break;
             }
         }
@@ -65,60 +74,54 @@ namespace VoiDPlugins.OutputMode
             switch (Button)
             {
                 case "Pen Tip":
-                    DisableBit((int)(ButtonBits.Press | ButtonBits.Eraser));
+                    _instance!.DisableButtonBit((int)(ButtonBits.Press | ButtonBits.Eraser));
                     break;
 
                 case "Pen Button":
-                    DisableBit((int)ButtonBits.Barrel);
+                    _instance!.DisableButtonBit((int)ButtonBits.Barrel);
                     break;
 
                 case "Eraser (Hold)":
-                    EraserStateTransition(false);
+                    EraserStateTransition(_instance!, ref GetEraser(), false);
                     break;
             }
         }
 
-        public static void EraserStateTransition(bool isEraser)
+        public static void EraserStateTransition(VMultiInstance instance, ref bool eraserState, bool isEraser)
         {
-            if (EraserState != isEraser)
+            if (eraserState != isEraser)
             {
-                EraserState = isEraser;
-                var report = (DigitizerInputReport*)ReportPointer;
+                eraserState = isEraser;
+                var report = (DigitizerInputReport*)instance.Header;
                 var buttons = report->Header.Buttons;
                 var pressure = report->Pressure;
 
                 // Send In-Range but no tips
-                DisableBit((int)(ButtonBits.Press | ButtonBits.Eraser));
+                instance.DisableButtonBit((int)(ButtonBits.Press | ButtonBits.Eraser));
                 report->Pressure = 0;
-                Device.Write(ReportBuffer);
+                instance.Write();
 
                 // Send Out-Of-Range
                 report->Header.Buttons = 0;
-                Device.Write(ReportBuffer);
+                instance.Write();
 
                 // Send In-Range but no tips
-                EnableBit((int)ButtonBits.InRange);
-                if (EraserState)
-                    EnableBit((int)ButtonBits.Invert);
+                instance.EnableButtonBit((int)ButtonBits.InRange);
+                if (eraserState)
+                    instance.EnableButtonBit((int)ButtonBits.Invert);
 
-                Device.Write(ReportBuffer);
+                instance.Write();
 
                 // Set Proper Report
-                if (HasBit(buttons, (int)(ButtonBits.Press | ButtonBits.Eraser)))
-                    EnableBit((int)(EraserState ? ButtonBits.Eraser : ButtonBits.Press));
+                if (VMultiInstance.HasBit(buttons, (int)(ButtonBits.Press | ButtonBits.Eraser)))
+                    instance.EnableButtonBit((int)(eraserState ? ButtonBits.Eraser : ButtonBits.Press));
                 report->Pressure = pressure;
             }
         }
 
-        public static void SetReport(DigitizerInputReport* report, byte[] reportBuffer)
+        private ref bool GetEraser()
         {
-            SetReport((VMultiReportHeader*)report, reportBuffer);
-            EnableBit((int)ButtonBits.InRange);
-        }
-
-        public static void SetDevice(HidStream device)
-        {
-            Device = device;
+            return ref _instance!.GetData<bool>(ERASER_STATE);
         }
     }
 }

@@ -1,0 +1,7 @@
+<Project>
+  <ItemGroup>
+    <ProjectReference Condition="'$(NotPluginProject)' != 'true'" Include="$(MSBuildThisFileDirectory)/.modules/OpenTabletDriver/OpenTabletDriver.Plugin/OpenTabletDriver.Plugin.csproj" />
+    <ProjectReference Condition="'$(VMultiLibrary)' == 'true'" Include="$(MSBuildThisFileDirectory)/VoiDPlugins.Library/VMulti/VMulti.csproj" />
+    <ProjectReference Condition="'$(VoiDLibrary)' == 'true'" Include="$(MSBuildThisFileDirectory)/VoiDPlugins.Library/VoiD/VoiD.csproj" />
+  </ItemGroup>
+</Project>

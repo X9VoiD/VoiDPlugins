@@ -1,33 +1,38 @@
 using System.Numerics;
-using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Plugin.Tablet;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
 
 namespace VoiDPlugins.OutputMode
 {
-    public unsafe class VMultiRelativePointer : BasePointer<RelativeInputReport>, IRelativePointer
+    public unsafe class VMultiRelativePointer : IRelativePointer, ISynchronousPointer
     {
-        public VMultiRelativePointer(IVirtualScreen screen) : base(screen, "VMultiRel")
+        private RelativeInputReport* _rawPointer;
+        private VMultiInstance<RelativeInputReport>? _instance;
+        private Vector2 _error;
+
+        public void Initialize(TabletReference tabletReference)
         {
-            ButtonHandler.SetReport((VMultiReportHeader*)ReportPointer, ReportBuffer);
+            _instance = VMultiInstanceManager.RetrieveVMultiInstance("VMultiRel", tabletReference, () => new RelativeInputReport());
+            _rawPointer = _instance.Pointer;
         }
 
-        protected override RelativeInputReport CreateReport()
+        public void SetPosition(Vector2 delta)
         {
-            return new RelativeInputReport(0x04);
+            delta += _error;
+            _error = new Vector2(delta.X % 1, delta.Y % 1);
+            _rawPointer->X = (byte)delta.X;
+            _rawPointer->Y = (byte)delta.Y;
         }
 
-        public override void SetPosition(Vector2 pos)
+        public void Reset()
         {
-            SetCoordinates(pos);
-            Device.Write(ReportBuffer);
         }
 
-        protected override void SetCoordinates(Vector2 pos)
+        public void Flush()
         {
-            ReportPointer->X = (byte)pos.X;
-            ReportPointer->Y = (byte)pos.Y;
+            _instance!.Write();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace VoiDPlugins.Filter
         public static string[] ValidModes => new[] { "Toggle", "Hold" };
 
         [Property("Mode"), PropertyValidated(nameof(ValidModes))]
-        public string Mode { set; get; }
+        public string? Mode { set; get; }
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
@@ -39,7 +39,7 @@ namespace VoiDPlugins.Filter
     [PluginName("Precision Control")]
     public class PrecisionControl : IPositionedPipelineElement<IDeviceReport>
     {
-        public event Action<IDeviceReport> Emit;
+        public event Action<IDeviceReport>? Emit;
 
         [SliderProperty("Precision Multiplier", 0.0f, 10f, 0.3f), DefaultPropertyValue(0.3f)]
         public float Scale { get; set; }

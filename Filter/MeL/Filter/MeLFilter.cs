@@ -10,10 +10,10 @@ namespace VoiDPlugins.Filter.MeL
     [PluginName("MeL Filter")]
     public class MeLFilter : IPositionedPipelineElement<IDeviceReport>
     {
-        private readonly MLCore Core = new MLCore();
+        private readonly MLCore Core = new();
         private bool rateLimit;
 
-        public event Action<IDeviceReport> Emit;
+        public event Action<IDeviceReport>? Emit;
 
         public PipelinePosition Position => PipelinePosition.PostTransform;
 

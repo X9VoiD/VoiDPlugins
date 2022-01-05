@@ -3,7 +3,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace VoiDPlugins.OutputMode
 {
-    public class TouchPointerHandler : IAbsolutePointer, IVirtualTablet
+    public class TouchPointerHandler : IAbsolutePointer, IPressureHandler
     {
         private bool _inContact;
         private bool _lastContact;
@@ -13,16 +13,6 @@ namespace VoiDPlugins.OutputMode
             Touch.Init();
             _inContact = false;
             _lastContact = false;
-        }
-
-        public void SetButtonState(uint button, bool active)
-        {
-            return;
-        }
-
-        public void SetEraser(bool isEraser)
-        {
-            return;
         }
 
         public void SetPosition(Vector2 pos)
@@ -66,16 +56,6 @@ namespace VoiDPlugins.OutputMode
                 Touch.UnsetPointerFlags(POINTER_FLAGS.INCONTACT | POINTER_FLAGS.FIRSTBUTTON);
                 _inContact = false;
             }
-        }
-
-        public void SetProximity(bool proximity, uint distance)
-        {
-            return;
-        }
-
-        public void SetTilt(Vector2 tilt)
-        {
-            return;
         }
     }
 }

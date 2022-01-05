@@ -10,12 +10,24 @@ namespace VoiDPlugins.OutputMode
     [PluginName("Windows Ink Absolute Mode")]
     public class WinInkAbsoluteMode : AbsoluteOutputMode
     {
+        private WinInkAbsolutePointer? _pointer;
+
         [Resolved]
         public IServiceProvider ServiceProvider
         {
-            set => Pointer = new WinInkAbsolutePointer((IVirtualScreen)value.GetService(typeof(IVirtualScreen)));
+            set => _pointer = new WinInkAbsolutePointer((IVirtualScreen)value.GetService(typeof(IVirtualScreen))!);
         }
 
-        public override IAbsolutePointer Pointer { get; set; }
+        [OnDependencyLoad]
+        public void Initialize()
+        {
+            _pointer!.Initialize(TabletReference);
+        }
+
+        public override IAbsolutePointer Pointer
+        {
+            get => _pointer!;
+            set { }
+        }
     }
 }

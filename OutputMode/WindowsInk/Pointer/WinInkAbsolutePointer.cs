@@ -1,57 +1,23 @@
 using System.Numerics;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
-using VoiDPlugins.Library.VMulti;
-using VoiDPlugins.Library.VMulti.Device;
 
 namespace VoiDPlugins.OutputMode
 {
-    public unsafe class WinInkAbsolutePointer : BasePointer<DigitizerInputReport>, IVirtualTablet
+    public unsafe class WinInkAbsolutePointer : WinInkBasePointer, IAbsolutePointer
     {
-        public WinInkAbsolutePointer(IVirtualScreen screen) : base(screen, "WindowsInk")
+        private readonly Vector2 _conversionFactor;
+
+        public WinInkAbsolutePointer(IVirtualScreen screen)
         {
-            WinInkButtonHandler.SetReport(ReportPointer, ReportBuffer);
-            WinInkButtonHandler.SetDevice(Device);
+            _conversionFactor = new Vector2(screen.Width, screen.Height) / (1 / 32767);
         }
 
-        public void SetButtonState(uint button, bool active)
+        public void SetPosition(Vector2 pos)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetEraser(bool isEraser)
-        {
-            if (!WinInkButtonHandler.IsManuallySet)
-            {
-                WinInkButtonHandler.EraserStateTransition(isEraser);
-            }
-        }
-
-        public void SetPressure(float percentage)
-        {
-            ReportPointer->Pressure = (ushort)(percentage * 8191);
-        }
-
-        public void SetProximity(bool proximity, uint distance)
-        {
-            return;
-        }
-
-        public void SetTilt(Vector2 tilt)
-        {
-            ReportPointer->XTilt = (byte)tilt.X;
-            ReportPointer->YTilt = (byte)tilt.Y;
-        }
-
-        protected override DigitizerInputReport CreateReport()
-        {
-            return new DigitizerInputReport(0x05);
-        }
-
-        protected override void SetCoordinates(Vector2 pos)
-        {
-            ReportPointer->X = (ushort)pos.X;
-            ReportPointer->Y = (ushort)pos.Y;
+            pos *= _conversionFactor;
+            RawPointer->X = (ushort)pos.X;
+            RawPointer->Y = (ushort)pos.Y;
         }
     }
 }

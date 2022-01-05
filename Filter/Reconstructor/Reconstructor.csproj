@@ -1,18 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFrameworks>net5</TargetFrameworks>
+    <VoiDLibrary>true</VoiDLibrary>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="../../.modules/OpenTabletDriver/OpenTabletDriver.Plugin/OpenTabletDriver.Plugin.csproj" />
-    <ProjectReference Include="../../VoiDPlugins.Library/VoiD/VoiD.csproj" />
-  </ItemGroup>
-
 </Project>

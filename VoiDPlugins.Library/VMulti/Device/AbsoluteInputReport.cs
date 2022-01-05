@@ -6,9 +6,9 @@ namespace VoiDPlugins.Library.VMulti.Device
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct AbsoluteInputReport
     {
-        public AbsoluteInputReport(byte reportID)
+        public AbsoluteInputReport()
         {
-            Header = new VMultiReportHeader(Unsafe.SizeOf<AbsoluteInputReport>(), reportID);
+            Header = new VMultiReportHeader(Unsafe.SizeOf<AbsoluteInputReport>(), 0x09);
             X = 0;
             Y = 0;
             Pressure = 0;

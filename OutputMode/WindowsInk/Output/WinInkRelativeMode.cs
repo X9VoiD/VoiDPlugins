@@ -10,12 +10,24 @@ namespace VoiDPlugins.OutputMode
     [PluginName("Windows Ink Relative Mode")]
     public class WinInkRelativeMode : RelativeOutputMode
     {
+        private WinInkRelativePointer? _pointer;
+
         [Resolved]
         public IServiceProvider ServiceProvider
         {
-            set => Pointer = new WinInkRelativePointer((IVirtualScreen)value.GetService(typeof(IVirtualScreen)));
+            set => _pointer = new WinInkRelativePointer((IVirtualScreen)value.GetService(typeof(IVirtualScreen))!);
         }
 
-        public override IRelativePointer Pointer { get; set; }
+        [OnDependencyLoad]
+        public void Initialize()
+        {
+            _pointer!.Initialize(TabletReference);
+        }
+
+        public override IRelativePointer Pointer
+        {
+            get => _pointer!;
+            set { }
+        }
     }
 }

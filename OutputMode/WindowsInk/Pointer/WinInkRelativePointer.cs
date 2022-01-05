@@ -1,68 +1,29 @@
 using System.Numerics;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
-using VoiDPlugins.Library.VMulti;
-using VoiDPlugins.Library.VMulti.Device;
 
 namespace VoiDPlugins.OutputMode
 {
-    public unsafe class WinInkRelativePointer : BasePointer<DigitizerInputReport>, IVirtualTablet
+    public unsafe class WinInkRelativePointer : WinInkBasePointer, IRelativePointer
     {
-        private Vector2 maxPoint;
-        private Vector2 currentPoint;
+        private Vector2 _maxPoint;
+        private Vector2 _currentPoint;
+        private Vector2 _error;
 
-        public WinInkRelativePointer(IVirtualScreen screen) : base(screen, "WindowsInk")
+        public WinInkRelativePointer(IVirtualScreen screen)
         {
-            WinInkButtonHandler.SetReport(ReportPointer, ReportBuffer);
-            WinInkButtonHandler.SetDevice(Device);
-            maxPoint = new Vector2(VirtualScreen.Width, VirtualScreen.Height);
-            currentPoint = maxPoint / 2;
+            _maxPoint = new Vector2(screen.Width, screen.Height);
+            _currentPoint = _maxPoint / 2;
         }
 
-        public void SetButtonState(uint button, bool active)
+        public void SetPosition(Vector2 delta)
         {
-            return;
-        }
+            delta += _error;
+            _error = new Vector2(delta.X % 1, delta.Y % 1);
 
-        public void SetEraser(bool isEraser)
-        {
-            if (!WinInkButtonHandler.IsManuallySet)
-            {
-                WinInkButtonHandler.EraserStateTransition(isEraser);
-            }
-        }
-
-        public void SetPressure(float percentage)
-        {
-            ReportPointer->Pressure = (ushort)(percentage * 8191);
-        }
-
-        public void SetProximity(bool proximity, uint distance)
-        {
-            return;
-        }
-
-        public void SetTilt(Vector2 tilt)
-        {
-            ReportPointer->XTilt = (byte)tilt.X;
-            ReportPointer->YTilt = (byte)tilt.Y;
-        }
-
-        public override void Translate(Vector2 delta)
-        {
-            currentPoint = Vector2.Clamp(currentPoint + delta, Vector2.Zero, maxPoint);
-            base.SetPosition(currentPoint);
-        }
-
-        protected override DigitizerInputReport CreateReport()
-        {
-            return new DigitizerInputReport(0x05);
-        }
-
-        protected override void SetCoordinates(Vector2 pos)
-        {
-            ReportPointer->X = (ushort)pos.X;
-            ReportPointer->Y = (ushort)pos.Y;
+            _currentPoint = Vector2.Clamp(_currentPoint + delta, Vector2.Zero, _maxPoint);
+            RawPointer->X = (ushort)_currentPoint.X;
+            RawPointer->Y = (ushort)_currentPoint.Y;
         }
     }
 }

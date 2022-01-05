@@ -1,27 +1,43 @@
 using System.Numerics;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Plugin.Tablet;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
 
 namespace VoiDPlugins.OutputMode
 {
-    public unsafe class VMultiAbsolutePointer : BasePointer<AbsoluteInputReport>, IAbsolutePointer
+    public unsafe class VMultiAbsolutePointer : IAbsolutePointer, ISynchronousPointer
     {
-        public VMultiAbsolutePointer(IVirtualScreen screen) : base(screen, "VMultiAbs")
+        private AbsoluteInputReport* _rawPointer;
+        private VMultiInstance<AbsoluteInputReport>? _instance;
+        private Vector2 _conversionFactor;
+
+        public VMultiAbsolutePointer(IVirtualScreen virtualScreen)
         {
-            ButtonHandler.SetReport((VMultiReportHeader*)ReportPointer, ReportBuffer);
+            _conversionFactor = new Vector2(virtualScreen.Width, virtualScreen.Height) / (1 / 32767);
         }
 
-        protected override AbsoluteInputReport CreateReport()
+        public void Initialize(TabletReference tabletReference)
         {
-            return new AbsoluteInputReport(0x09);
+            _instance = VMultiInstanceManager.RetrieveVMultiInstance("VMultiAbs", tabletReference, () => new AbsoluteInputReport());
+            _rawPointer = _instance.Pointer;
         }
 
-        protected override void SetCoordinates(Vector2 pos)
+        public void SetPosition(Vector2 pos)
         {
-            ReportPointer->X = (ushort)pos.X;
-            ReportPointer->Y = (ushort)pos.Y;
+            pos *= _conversionFactor;
+            _rawPointer->X = (ushort)pos.X;
+            _rawPointer->Y = (ushort)pos.Y;
+        }
+
+        public void Reset()
+        {
+        }
+
+        public void Flush()
+        {
+            _instance!.Write();
         }
     }
 }

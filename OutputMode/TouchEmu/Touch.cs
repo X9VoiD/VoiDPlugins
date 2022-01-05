@@ -6,7 +6,7 @@ namespace VoiDPlugins.OutputMode
     public static class Touch
     {
         private static IntPtr _penHandle;
-        private static POINTER_TYPE_INFO[] pointer;
+        private static POINTER_TYPE_INFO[]? pointer;
         private static uint _pointerId;
         private static IntPtr _sourceDevice;
 
@@ -79,7 +79,7 @@ namespace VoiDPlugins.OutputMode
 
         public static void Inject()
         {
-            if (!NativeMethods.InjectSyntheticPointerInput(_penHandle, pointer, 1))
+            if (!NativeMethods.InjectSyntheticPointerInput(_penHandle, pointer!, 1))
             {
                 throw new Exception($"Input injection failed. Reason: {Marshal.GetLastWin32Error()}");
             }
@@ -87,38 +87,38 @@ namespace VoiDPlugins.OutputMode
 
         public static void SetTarget()
         {
-            pointer[0].penInfo.pointerInfo.hwndTarget = NativeMethods.GetForegroundWindow();
+            pointer![0].penInfo.pointerInfo.hwndTarget = NativeMethods.GetForegroundWindow();
         }
 
         public static void SetPosition(POINT point)
         {
-            pointer[0].penInfo.pointerInfo.ptPixelLocation = point;
+            pointer![0].penInfo.pointerInfo.ptPixelLocation = point;
             pointer[0].penInfo.pointerInfo.ptPixelLocationRaw = point;
         }
 
         public static void SetPressure(uint pressure)
         {
-            pointer[0].penInfo.pressure = pressure;
+            pointer![0].penInfo.pressure = pressure;
         }
 
         public static void SetPointerFlags(POINTER_FLAGS flags)
         {
-            pointer[0].penInfo.pointerInfo.pointerFlags |= flags;
+            pointer![0].penInfo.pointerInfo.pointerFlags |= flags;
         }
 
         public static void UnsetPointerFlags(POINTER_FLAGS flags)
         {
-            pointer[0].penInfo.pointerInfo.pointerFlags &= ~flags;
+            pointer![0].penInfo.pointerInfo.pointerFlags &= ~flags;
         }
 
         public static void ClearPointerFlags()
         {
-            pointer[0].penInfo.pointerInfo.pointerFlags = 0;
+            pointer![0].penInfo.pointerInfo.pointerFlags = 0;
         }
 
         public static void ClearPointerFlags(POINTER_FLAGS flags)
         {
-            pointer[0].penInfo.pointerInfo.pointerFlags = flags;
+            pointer![0].penInfo.pointerInfo.pointerFlags = flags;
         }
     }
 }

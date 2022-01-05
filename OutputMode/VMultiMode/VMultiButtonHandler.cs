@@ -8,8 +8,10 @@ using VoiDPlugins.Library.VMulti;
 namespace VoiDPlugins.OutputMode
 {
     [PluginName("VMulti Mode")]
-    public class VMultiButtonHandler : ButtonHandler, IStateBinding
+    public class VMultiButtonHandler : IStateBinding
     {
+        private VMultiInstance? _instance;
+
         public static Dictionary<string, int> Bindings { get; } = new()
         {
             { "Left", 1 },
@@ -20,16 +22,24 @@ namespace VoiDPlugins.OutputMode
         public static string[] ValidButtons { get; } = Bindings.Keys.ToArray();
 
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
-        public string Button { get; set; }
+        public string? Button { get; set; }
+
+        [TabletReference]
+        public TabletReference Reference { set => Initialize(value); }
+
+        private void Initialize(TabletReference tabletReference)
+        {
+            _instance = VMultiInstanceManager.RetrieveVMultiInstance(tabletReference);
+        }
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
-            EnableBit(Bindings[Button]);
+            _instance!.EnableButtonBit(Bindings[Button!]);
         }
 
         public void Release(TabletReference tablet, IDeviceReport report)
         {
-            DisableBit(Bindings[Button]);
+            _instance!.DisableButtonBit(Bindings[Button!]);
         }
     }
 }

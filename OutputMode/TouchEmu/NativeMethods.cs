@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace VoiDPlugins.OutputMode
@@ -165,7 +166,7 @@ namespace VoiDPlugins.OutputMode
 
         [DllImport("user32.dll", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static unsafe extern bool GetPointerDevices(out uint deviceCount, [In, Out, MarshalAs(UnmanagedType.LPArray)] POINTER_DEVICE_INFO[] pointerDevices);
+        public static unsafe extern bool GetPointerDevices(out uint deviceCount, [In, Out, MarshalAs(UnmanagedType.LPArray), AllowNull] POINTER_DEVICE_INFO[] pointerDevices);
 
         [DllImport("user32.dll", SetLastError = true, CallingConvention = CallingConvention.StdCall)]
         public static extern IntPtr GetForegroundWindow();
