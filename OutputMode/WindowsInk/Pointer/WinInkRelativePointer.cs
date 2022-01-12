@@ -1,6 +1,7 @@
 using System.Numerics;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace VoiDPlugins.OutputMode
 {
@@ -10,7 +11,7 @@ namespace VoiDPlugins.OutputMode
         private Vector2 _currentPoint;
         private Vector2 _error;
 
-        public WinInkRelativePointer(IVirtualScreen screen)
+        public WinInkRelativePointer(TabletReference tabletReference, IVirtualScreen screen) : base(tabletReference)
         {
             _maxPoint = new Vector2(screen.Width, screen.Height);
             _currentPoint = _maxPoint / 2;
@@ -18,6 +19,7 @@ namespace VoiDPlugins.OutputMode
 
         public void SetPosition(Vector2 delta)
         {
+            Instance!.EnableButtonBit((int)WindowsInkButtonFlags.InRange);
             delta += _error;
             _error = new Vector2(delta.X % 1, delta.Y % 1);
 

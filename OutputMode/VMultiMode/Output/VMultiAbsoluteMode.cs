@@ -11,17 +11,18 @@ namespace VoiDPlugins.OutputMode
     public class VMultiAbsoluteMode : AbsoluteOutputMode
     {
         private VMultiAbsolutePointer? _pointer;
+        private IVirtualScreen? _virtualScreen;
 
         [Resolved]
         public IServiceProvider ServiceProvider
         {
-            set => _pointer = new VMultiAbsolutePointer((IVirtualScreen)value.GetService(typeof(IVirtualScreen))!);
+            set => _virtualScreen = (IVirtualScreen)value.GetService(typeof(IVirtualScreen))!;
         }
 
         [OnDependencyLoad]
         public void Initialize()
         {
-            _pointer!.Initialize(TabletReference);
+            _pointer = new VMultiAbsolutePointer(TabletReference, _virtualScreen!);
         }
 
         public override IAbsolutePointer Pointer

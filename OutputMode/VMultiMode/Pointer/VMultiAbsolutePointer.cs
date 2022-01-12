@@ -9,19 +9,15 @@ namespace VoiDPlugins.OutputMode
 {
     public unsafe class VMultiAbsolutePointer : IAbsolutePointer, ISynchronousPointer
     {
-        private AbsoluteInputReport* _rawPointer;
-        private VMultiInstance<AbsoluteInputReport>? _instance;
+        private readonly AbsoluteInputReport* _rawPointer;
+        private readonly VMultiInstance<AbsoluteInputReport>? _instance;
         private Vector2 _conversionFactor;
 
-        public VMultiAbsolutePointer(IVirtualScreen virtualScreen)
-        {
-            _conversionFactor = new Vector2(virtualScreen.Width, virtualScreen.Height) / (1 / 32767);
-        }
-
-        public void Initialize(TabletReference tabletReference)
+        public VMultiAbsolutePointer(TabletReference tabletReference, IVirtualScreen virtualScreen)
         {
             _instance = VMultiInstanceManager.RetrieveVMultiInstance("VMultiAbs", tabletReference, () => new AbsoluteInputReport());
             _rawPointer = _instance.Pointer;
+            _conversionFactor = new Vector2(32767, 32767) / new Vector2(virtualScreen.Width, virtualScreen.Height);
         }
 
         public void SetPosition(Vector2 pos)

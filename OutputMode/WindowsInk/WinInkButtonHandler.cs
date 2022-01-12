@@ -1,4 +1,3 @@
-using System;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet;
@@ -10,7 +9,7 @@ using static VoiDPlugins.OutputMode.WindowsInkConstants;
 namespace VoiDPlugins.OutputMode
 {
     [PluginName("Windows Ink")]
-    public unsafe class WinInkButtonHandler : IStateBinding
+    public unsafe partial class WindowsInkButtonHandler : IStateBinding
     {
         private VMultiInstance? _instance;
 
@@ -24,16 +23,6 @@ namespace VoiDPlugins.OutputMode
 
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
         public string? Button { get; set; }
-
-        [Flags]
-        private enum ButtonBits : byte
-        {
-            Press = 1,
-            Barrel = 2,
-            Eraser = 4,
-            Invert = 8,
-            InRange = 16
-        }
 
         public bool IsManuallySet { get; set; }
 
@@ -51,11 +40,11 @@ namespace VoiDPlugins.OutputMode
             switch (Button)
             {
                 case "Pen Tip":
-                    _instance!.EnableButtonBit((int)(eraserState.Value ? ButtonBits.Eraser : ButtonBits.Press));
+                    _instance!.EnableButtonBit((int)(eraserState.Value ? WindowsInkButtonFlags.Eraser : WindowsInkButtonFlags.Press));
                     break;
 
                 case "Pen Button":
-                    _instance!.EnableButtonBit((int)ButtonBits.Barrel);
+                    _instance!.EnableButtonBit((int)WindowsInkButtonFlags.Barrel);
                     break;
 
                 case "Eraser (Toggle)":
@@ -75,11 +64,11 @@ namespace VoiDPlugins.OutputMode
             switch (Button)
             {
                 case "Pen Tip":
-                    _instance!.DisableButtonBit((int)(ButtonBits.Press | ButtonBits.Eraser));
+                    _instance!.DisableButtonBit((int)(WindowsInkButtonFlags.Press | WindowsInkButtonFlags.Eraser));
                     break;
 
                 case "Pen Button":
-                    _instance!.DisableButtonBit((int)ButtonBits.Barrel);
+                    _instance!.DisableButtonBit((int)WindowsInkButtonFlags.Barrel);
                     break;
 
                 case "Eraser (Hold)":
@@ -98,7 +87,7 @@ namespace VoiDPlugins.OutputMode
                 var pressure = report->Pressure;
 
                 // Send In-Range but no tips
-                instance.DisableButtonBit((int)(ButtonBits.Press | ButtonBits.Eraser));
+                instance.DisableButtonBit((int)(WindowsInkButtonFlags.Press | WindowsInkButtonFlags.Eraser));
                 report->Pressure = 0;
                 instance.Write();
 
@@ -107,15 +96,15 @@ namespace VoiDPlugins.OutputMode
                 instance.Write();
 
                 // Send In-Range but no tips
-                instance.EnableButtonBit((int)ButtonBits.InRange);
+                instance.EnableButtonBit((int)WindowsInkButtonFlags.InRange);
                 if (eraserState.Value)
-                    instance.EnableButtonBit((int)ButtonBits.Invert);
+                    instance.EnableButtonBit((int)WindowsInkButtonFlags.Invert);
 
                 instance.Write();
 
                 // Set Proper Report
-                if (VMultiInstance.HasBit(buttons, (int)(ButtonBits.Press | ButtonBits.Eraser)))
-                    instance.EnableButtonBit((int)(eraserState.Value ? ButtonBits.Eraser : ButtonBits.Press));
+                if (VMultiInstance.HasBit(buttons, (int)(WindowsInkButtonFlags.Press | WindowsInkButtonFlags.Eraser)))
+                    instance.EnableButtonBit((int)(eraserState.Value ? WindowsInkButtonFlags.Eraser : WindowsInkButtonFlags.Press));
                 report->Pressure = pressure;
             }
         }

@@ -8,11 +8,11 @@ namespace VoiDPlugins.OutputMode
 {
     public unsafe class VMultiRelativePointer : IRelativePointer, ISynchronousPointer
     {
-        private RelativeInputReport* _rawPointer;
-        private VMultiInstance<RelativeInputReport>? _instance;
+        private readonly RelativeInputReport* _rawPointer;
+        private readonly VMultiInstance<RelativeInputReport>? _instance;
         private Vector2 _error;
 
-        public void Initialize(TabletReference tabletReference)
+        public VMultiRelativePointer(TabletReference tabletReference)
         {
             _instance = VMultiInstanceManager.RetrieveVMultiInstance("VMultiRel", tabletReference, () => new RelativeInputReport());
             _rawPointer = _instance.Pointer;

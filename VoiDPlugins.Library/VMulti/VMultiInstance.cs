@@ -19,7 +19,7 @@ namespace VoiDPlugins.Library.VMulti
             Buffer = GC.AllocateArray<byte>(size, true);
             Header = (VMultiReportHeader*)Unsafe.AsPointer(ref Buffer[0]);
             _device = Retrieve(name);
-            _data = GC.AllocateArray<object>(32, true);
+            _data = new object[32];
         }
 
         public void Write()
@@ -29,7 +29,6 @@ namespace VoiDPlugins.Library.VMulti
 
         public void InitializeData<T>(int i, T data)
         {
-            Check<T>();
             _data[i] = data!;
         }
 
@@ -78,13 +77,6 @@ namespace VoiDPlugins.Library.VMulti
             }
 
             return VMultiDev;
-        }
-
-        [Conditional("DEBUG")]
-        private void Check<T>()
-        {
-            if (Unsafe.SizeOf<T>() > IntPtr.Size)
-                throw new InvalidOperationException();
         }
     }
 

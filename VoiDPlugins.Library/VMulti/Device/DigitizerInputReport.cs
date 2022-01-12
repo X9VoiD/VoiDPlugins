@@ -6,9 +6,9 @@ namespace VoiDPlugins.Library.VMulti.Device
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DigitizerInputReport
     {
-        public DigitizerInputReport(byte reportID)
+        public DigitizerInputReport()
         {
-            Header = new VMultiReportHeader(Unsafe.SizeOf<DigitizerInputReport>(), reportID);
+            Header = new VMultiReportHeader(Unsafe.SizeOf<DigitizerInputReport>(), 0x05);
             X = 0;
             Y = 0;
             Pressure = 0;

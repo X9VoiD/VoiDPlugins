@@ -10,10 +10,10 @@ namespace VoiDPlugins.OutputMode
 {
     public unsafe abstract class WinInkBasePointer : IPressureHandler, ITiltHandler, IEraserHandler, ISynchronousPointer
     {
-        protected DigitizerInputReport* RawPointer { get; private set; }
-        protected VMultiInstance<DigitizerInputReport>? Instance { get; private set; }
+        protected DigitizerInputReport* RawPointer { get; }
+        protected VMultiInstance<DigitizerInputReport>? Instance { get; }
 
-        public void Initialize(TabletReference tabletReference)
+        public WinInkBasePointer(TabletReference tabletReference)
         {
             Instance = VMultiInstanceManager.RetrieveVMultiInstance("WindowsInk", tabletReference, () => new DigitizerInputReport());
             Instance.InitializeData(POINTER, this);
@@ -26,7 +26,7 @@ namespace VoiDPlugins.OutputMode
         {
             if (!Instance!.GetData<Boxed<bool>>(MANUAL_ERASER).Value)
             {
-                WinInkButtonHandler.EraserStateTransition(Instance, ref GetEraser(), isEraser);
+                WindowsInkButtonHandler.EraserStateTransition(Instance, ref GetEraser(), isEraser);
             }
         }
 
@@ -43,6 +43,7 @@ namespace VoiDPlugins.OutputMode
 
         public void Reset()
         {
+            Instance!.DisableButtonBit((int)WindowsInkButtonFlags.InRange);
         }
 
         public void Flush()
