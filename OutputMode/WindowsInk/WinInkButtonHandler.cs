@@ -4,6 +4,7 @@ using OpenTabletDriver.Plugin.Tablet;
 using VoiDPlugins.Library;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
+using VoiDPlugins.Library.VoiD;
 using static VoiDPlugins.OutputMode.WindowsInkConstants;
 
 namespace VoiDPlugins.OutputMode
@@ -12,6 +13,7 @@ namespace VoiDPlugins.OutputMode
     public unsafe partial class WindowsInkButtonHandler : IStateBinding
     {
         private VMultiInstance? _instance;
+        private SharedStore? _sharedStore;
 
         public static string[] ValidButtons { get; } = new string[]
         {
@@ -24,14 +26,13 @@ namespace VoiDPlugins.OutputMode
         [Property("Button"), PropertyValidated(nameof(ValidButtons))]
         public string? Button { get; set; }
 
-        public bool IsManuallySet { get; set; }
-
         [TabletReference]
         public TabletReference Reference { set => Initialize(value); }
 
         private void Initialize(TabletReference tabletReference)
         {
-            _instance = VMultiInstanceManager.RetrieveVMultiInstance(tabletReference);
+            _sharedStore = GlobalStore<SharedStore>.Get(tabletReference);
+            _instance = _sharedStore.GetData<VMultiInstance>(INSTANCE);
         }
 
         public void Press(TabletReference tablet, IDeviceReport report)
@@ -48,12 +49,12 @@ namespace VoiDPlugins.OutputMode
                     break;
 
                 case "Eraser (Toggle)":
-                    IsManuallySet = true;
+                    _sharedStore!.GetData<Boxed<bool>>(MANUAL_ERASER).Value = !eraserState.Value;
                     EraserStateTransition(_instance!, ref eraserState, !eraserState.Value);
                     break;
 
                 case "Eraser (Hold)":
-                    IsManuallySet = true;
+                    _sharedStore!.GetData<Boxed<bool>>(MANUAL_ERASER).Value = true;
                     EraserStateTransition(_instance!, ref eraserState, true);
                     break;
             }
@@ -72,6 +73,7 @@ namespace VoiDPlugins.OutputMode
                     break;
 
                 case "Eraser (Hold)":
+                    _sharedStore!.GetData<Boxed<bool>>(MANUAL_ERASER).Value = false;
                     EraserStateTransition(_instance!, ref GetEraser(), false);
                     break;
             }
@@ -111,7 +113,7 @@ namespace VoiDPlugins.OutputMode
 
         private ref Boxed<bool> GetEraser()
         {
-            return ref _instance!.GetData<Boxed<bool>>(ERASER_STATE);
+            return ref _sharedStore!.GetData<Boxed<bool>>(ERASER_STATE);
         }
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using HidSharp;
 using OpenTabletDriver.Plugin;
@@ -9,32 +8,20 @@ namespace VoiDPlugins.Library.VMulti
 {
     public class VMultiInstance
     {
-        private readonly object[] _data;
         private readonly HidStream _device;
         protected readonly byte[] Buffer;
         public unsafe VMultiReportHeader* Header { get; }
 
-        internal unsafe VMultiInstance(string name, int size)
+        public unsafe VMultiInstance(string name, int size)
         {
             Buffer = GC.AllocateArray<byte>(size, true);
             Header = (VMultiReportHeader*)Unsafe.AsPointer(ref Buffer[0]);
             _device = Retrieve(name);
-            _data = new object[32];
         }
 
         public void Write()
         {
             _device.Write(Buffer);
-        }
-
-        public void InitializeData<T>(int i, T data)
-        {
-            _data[i] = data!;
-        }
-
-        public unsafe ref T GetData<T>(int i) where T : class
-        {
-            return ref Unsafe.AsRef<T>(Unsafe.AsPointer(ref _data[i]));
         }
 
         public unsafe void EnableButtonBit(int bit)
@@ -84,10 +71,10 @@ namespace VoiDPlugins.Library.VMulti
     {
         public unsafe T* Pointer { get; }
 
-        internal unsafe VMultiInstance(string name, Func<T> initialValue) : base(name, Unsafe.SizeOf<T>())
+        public unsafe VMultiInstance(string name, T initialValue) : base(name, Unsafe.SizeOf<T>())
         {
             Pointer = (T*)Unsafe.AsPointer(ref Buffer[0]);
-            *Pointer = initialValue();
+            *Pointer = initialValue;
         }
     }
 }

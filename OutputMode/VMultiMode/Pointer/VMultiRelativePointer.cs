@@ -3,6 +3,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
+using VoiDPlugins.Library.VoiD;
 
 namespace VoiDPlugins.OutputMode
 {
@@ -14,7 +15,7 @@ namespace VoiDPlugins.OutputMode
 
         public VMultiRelativePointer(TabletReference tabletReference)
         {
-            _instance = VMultiInstanceManager.RetrieveVMultiInstance("VMultiRel", tabletReference, () => new RelativeInputReport());
+            _instance = GlobalStore<VMultiInstance>.GetOrInitialize(tabletReference, () => new VMultiInstance<RelativeInputReport>("VMultiAbs", new RelativeInputReport()));
             _rawPointer = _instance.Pointer;
         }
 

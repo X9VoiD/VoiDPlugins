@@ -9,7 +9,7 @@ namespace VoiDPlugins.OutputMode
     {
         private readonly Vector2 _conversionFactor;
 
-        public WinInkAbsolutePointer(TabletReference tabletReference, IVirtualScreen screen) : base(tabletReference)
+        public WinInkAbsolutePointer(TabletReference tabletReference, IVirtualScreen screen) : base("Windows Ink", tabletReference)
         {
             _conversionFactor = new Vector2(32767, 32767) / new Vector2(screen.Width, screen.Height);
         }

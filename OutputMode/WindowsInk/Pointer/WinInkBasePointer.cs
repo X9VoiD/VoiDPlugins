@@ -4,6 +4,7 @@ using OpenTabletDriver.Plugin.Tablet;
 using VoiDPlugins.Library;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
+using VoiDPlugins.Library.VoiD;
 using static VoiDPlugins.OutputMode.WindowsInkConstants;
 
 namespace VoiDPlugins.OutputMode
@@ -12,21 +13,24 @@ namespace VoiDPlugins.OutputMode
     {
         protected DigitizerInputReport* RawPointer { get; }
         protected VMultiInstance<DigitizerInputReport>? Instance { get; }
+        protected SharedStore? SharedStore { get; }
 
-        public WinInkBasePointer(TabletReference tabletReference)
+        public WinInkBasePointer(string name, TabletReference tabletReference)
         {
-            Instance = VMultiInstanceManager.RetrieveVMultiInstance("WindowsInk", tabletReference, () => new DigitizerInputReport());
-            Instance.InitializeData(POINTER, this);
-            Instance.InitializeData(ERASER_STATE, new Boxed<bool>(false));
-            Instance.InitializeData(MANUAL_ERASER, new Boxed<bool>(false));
+            Instance = new VMultiInstance<DigitizerInputReport>(name, new DigitizerInputReport());
+            SharedStore = GlobalStore<SharedStore>.GetOrInitialize(tabletReference, () => new SharedStore());
+            SharedStore.InitializeData(INSTANCE, Instance);
+            SharedStore.InitializeData(POINTER, this);
+            SharedStore.InitializeData(ERASER_STATE, new Boxed<bool>(false));
+            SharedStore.InitializeData(MANUAL_ERASER, new Boxed<bool>(false));
             RawPointer = Instance.Pointer;
         }
 
         public void SetEraser(bool isEraser)
         {
-            if (!Instance!.GetData<Boxed<bool>>(MANUAL_ERASER).Value)
+            if (!SharedStore!.GetData<Boxed<bool>>(MANUAL_ERASER).Value)
             {
-                WindowsInkButtonHandler.EraserStateTransition(Instance, ref GetEraser(), isEraser);
+                WindowsInkButtonHandler.EraserStateTransition(Instance!, ref GetEraser(), isEraser);
             }
         }
 
@@ -43,7 +47,6 @@ namespace VoiDPlugins.OutputMode
 
         public void Reset()
         {
-            Instance!.DisableButtonBit((int)WindowsInkButtonFlags.InRange);
         }
 
         public void Flush()
@@ -53,7 +56,7 @@ namespace VoiDPlugins.OutputMode
 
         private ref Boxed<bool> GetEraser()
         {
-            return ref Instance!.GetData<Boxed<bool>>(ERASER_STATE);
+            return ref SharedStore!.GetData<Boxed<bool>>(ERASER_STATE);
         }
     }
 }

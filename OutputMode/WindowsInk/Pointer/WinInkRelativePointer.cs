@@ -11,7 +11,7 @@ namespace VoiDPlugins.OutputMode
         private Vector2 _currentPoint;
         private Vector2 _error;
 
-        public WinInkRelativePointer(TabletReference tabletReference, IVirtualScreen screen) : base(tabletReference)
+        public WinInkRelativePointer(TabletReference tabletReference, IVirtualScreen screen) : base("Windows Ink", tabletReference)
         {
             _maxPoint = new Vector2(screen.Width, screen.Height);
             _currentPoint = _maxPoint / 2;

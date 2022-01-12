@@ -1,5 +1,2 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <NotPluginProject>true</NotPluginProject>
-  </PropertyGroup>
 </Project>

@@ -4,6 +4,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
+using VoiDPlugins.Library.VoiD;
 
 namespace VoiDPlugins.OutputMode
 {
@@ -15,7 +16,7 @@ namespace VoiDPlugins.OutputMode
 
         public VMultiAbsolutePointer(TabletReference tabletReference, IVirtualScreen virtualScreen)
         {
-            _instance = VMultiInstanceManager.RetrieveVMultiInstance("VMultiAbs", tabletReference, () => new AbsoluteInputReport());
+            _instance = GlobalStore<VMultiInstance>.GetOrInitialize(tabletReference, () => new VMultiInstance<AbsoluteInputReport>("VMultiAbs", new AbsoluteInputReport()));
             _rawPointer = _instance.Pointer;
             _conversionFactor = new Vector2(32767, 32767) / new Vector2(virtualScreen.Width, virtualScreen.Height);
         }
