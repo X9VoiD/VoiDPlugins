@@ -74,7 +74,7 @@ namespace VoiDPlugins.OutputMode
             Inject();
 
             // Back to normal state
-            ClearPointerFlags(POINTER_FLAGS.INRANGE | POINTER_FLAGS.PRIMARY);
+            ClearPointerFlags(POINTER_FLAGS.PRIMARY);
         }
 
         public void Inject()
