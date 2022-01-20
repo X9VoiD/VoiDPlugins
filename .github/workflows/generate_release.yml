@@ -1,0 +1,37 @@
+name: Generate Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'The tag to create for the release'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Generate Release
+    env:
+      TAG: ${{ github.event.inputs.tag }}
+    steps:
+    - uses: actions/checkout@master
+      with:
+        submodules: recursive
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@main
+      with:
+        dotnet-version: '6.0'
+
+    - name: Build
+      run: ./build.sh
+
+    - name: Create Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        declare -a files
+        for file in $(ls ./build); do
+          files+=("-a" "./build/$file")
+        done
+        hub release create -d -m "VoiDPlugins v$TAG" "$TAG" "${files[@]}"

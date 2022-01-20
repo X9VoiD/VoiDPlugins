@@ -32,7 +32,7 @@ jobs:
       env:
         path: ${{ matrix.path }} 
         plugin: ${{ matrix.plugin }}
-      run: dotnet publish $path/$plugin --configuration Release --framework net6.0 -o ./build/$plugin
+      run: dotnet publish ./src/$path/$plugin --configuration Release --framework net6.0 -o ./build/$plugin
 
     - uses: actions/upload-artifact@main
       with:
