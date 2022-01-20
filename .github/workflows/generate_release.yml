@@ -24,7 +24,7 @@ jobs:
         dotnet-version: '6.0'
 
     - name: Build
-      run: ./build.sh
+      run: bash ./build.sh
 
     - name: Create Release
       env:
