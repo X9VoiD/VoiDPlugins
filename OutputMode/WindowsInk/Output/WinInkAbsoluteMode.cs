@@ -22,7 +22,7 @@ namespace VoiDPlugins.OutputMode
         [OnDependencyLoad]
         public void Initialize()
         {
-            _pointer = new WinInkAbsolutePointer(TabletReference, _virtualScreen!);
+            _pointer = new WinInkAbsolutePointer(Tablet, _virtualScreen!);
         }
 
         public override IAbsolutePointer Pointer

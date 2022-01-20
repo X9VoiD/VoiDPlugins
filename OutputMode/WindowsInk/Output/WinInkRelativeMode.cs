@@ -22,7 +22,7 @@ namespace VoiDPlugins.OutputMode
         [OnDependencyLoad]
         public void Initialize()
         {
-            _pointer = new WinInkRelativePointer(TabletReference, _virtualScreen!);
+            _pointer = new WinInkRelativePointer(Tablet, _virtualScreen!);
         }
 
         public override IRelativePointer Pointer

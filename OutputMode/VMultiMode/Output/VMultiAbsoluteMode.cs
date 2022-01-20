@@ -22,7 +22,7 @@ namespace VoiDPlugins.OutputMode
         [OnDependencyLoad]
         public void Initialize()
         {
-            _pointer = new VMultiAbsolutePointer(TabletReference, _virtualScreen!);
+            _pointer = new VMultiAbsolutePointer(Tablet, _virtualScreen!);
         }
 
         public override IAbsolutePointer Pointer

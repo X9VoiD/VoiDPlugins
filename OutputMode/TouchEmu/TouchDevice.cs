@@ -3,14 +3,14 @@ using System.Runtime.InteropServices;
 
 namespace VoiDPlugins.OutputMode
 {
-    public static class Touch
+    public class TouchDevice
     {
-        private static IntPtr _penHandle;
-        private static POINTER_TYPE_INFO[]? pointer;
-        private static uint _pointerId;
-        private static IntPtr _sourceDevice;
+        private readonly IntPtr _penHandle;
+        private readonly POINTER_TYPE_INFO[]? pointer;
+        private readonly uint _pointerId;
+        private readonly IntPtr _sourceDevice;
 
-        public static unsafe void Init()
+        public unsafe TouchDevice()
         {
             NativeMethods.GetPointerDevices(out uint count, null);
             POINTER_DEVICE_INFO[] pointerDevices = new POINTER_DEVICE_INFO[count];
@@ -21,7 +21,7 @@ namespace VoiDPlugins.OutputMode
                 if (device.pointerDeviceType == POINTER_DEVICE_TYPE.EXTERNAL_PEN ||
                     device.pointerDeviceType == POINTER_DEVICE_TYPE.INTEGRATED_PEN)
                 {
-                    _pointerId = (uint)device.startingCursorId;
+                    _pointerId = device.startingCursorId;
                     _sourceDevice = new IntPtr(device.device);
                 }
             }
@@ -77,7 +77,7 @@ namespace VoiDPlugins.OutputMode
             ClearPointerFlags(POINTER_FLAGS.INRANGE | POINTER_FLAGS.PRIMARY);
         }
 
-        public static void Inject()
+        public void Inject()
         {
             if (!NativeMethods.InjectSyntheticPointerInput(_penHandle, pointer!, 1))
             {
@@ -85,38 +85,38 @@ namespace VoiDPlugins.OutputMode
             }
         }
 
-        public static void SetTarget()
+        public void SetTarget()
         {
             pointer![0].penInfo.pointerInfo.hwndTarget = NativeMethods.GetForegroundWindow();
         }
 
-        public static void SetPosition(POINT point)
+        public void SetPosition(POINT point)
         {
             pointer![0].penInfo.pointerInfo.ptPixelLocation = point;
             pointer[0].penInfo.pointerInfo.ptPixelLocationRaw = point;
         }
 
-        public static void SetPressure(uint pressure)
+        public void SetPressure(uint pressure)
         {
             pointer![0].penInfo.pressure = pressure;
         }
 
-        public static void SetPointerFlags(POINTER_FLAGS flags)
+        public void SetPointerFlags(POINTER_FLAGS flags)
         {
             pointer![0].penInfo.pointerInfo.pointerFlags |= flags;
         }
 
-        public static void UnsetPointerFlags(POINTER_FLAGS flags)
+        public void UnsetPointerFlags(POINTER_FLAGS flags)
         {
             pointer![0].penInfo.pointerInfo.pointerFlags &= ~flags;
         }
 
-        public static void ClearPointerFlags()
+        public void ClearPointerFlags()
         {
             pointer![0].penInfo.pointerInfo.pointerFlags = 0;
         }
 
-        public static void ClearPointerFlags(POINTER_FLAGS flags)
+        public void ClearPointerFlags(POINTER_FLAGS flags)
         {
             pointer![0].penInfo.pointerInfo.pointerFlags = flags;
         }

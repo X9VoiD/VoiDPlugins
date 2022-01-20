@@ -13,7 +13,7 @@ namespace VoiDPlugins.OutputMode
         [OnDependencyLoad]
         public void Initialize()
         {
-            _pointer = new VMultiRelativePointer(TabletReference);
+            _pointer = new VMultiRelativePointer(Tablet);
         }
 
         public override IRelativePointer Pointer
