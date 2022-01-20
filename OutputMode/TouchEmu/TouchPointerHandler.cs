@@ -3,7 +3,7 @@ using OpenTabletDriver.Plugin.Platform.Pointer;
 
 namespace VoiDPlugins.OutputMode
 {
-    public class TouchPointerHandler : IAbsolutePointer, IPressureHandler
+    public class TouchPointerHandler : IAbsolutePointer, IPressureHandler, ISynchronousPointer
     {
         private readonly TouchDevice _touchDevice;
         private bool _inContact;
@@ -16,8 +16,19 @@ namespace VoiDPlugins.OutputMode
             _lastContact = false;
         }
 
+        public void Flush()
+        {
+            _touchDevice.Inject();
+        }
+
+        public void Reset()
+        {
+            _touchDevice.UnsetPointerFlags(POINTER_FLAGS.INRANGE);
+        }
+
         public void SetPosition(Vector2 pos)
         {
+            _touchDevice.SetPointerFlags(POINTER_FLAGS.INRANGE);
             _touchDevice.SetPosition(new POINT((int)pos.X, (int)pos.Y));
             if (_inContact != _lastContact)
             {
@@ -39,7 +50,6 @@ namespace VoiDPlugins.OutputMode
                 _touchDevice.SetPointerFlags(POINTER_FLAGS.UPDATE);
             }
             _touchDevice.SetTarget();
-            _touchDevice.Inject();
         }
 
         public void SetPressure(float percentage)
