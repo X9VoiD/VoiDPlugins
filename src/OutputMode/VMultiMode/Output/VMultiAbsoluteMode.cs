@@ -4,6 +4,7 @@ using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace VoiDPlugins.OutputMode
 {
@@ -19,10 +20,14 @@ namespace VoiDPlugins.OutputMode
             set => _virtualScreen = (IVirtualScreen)value.GetService(typeof(IVirtualScreen))!;
         }
 
-        [OnDependencyLoad]
-        public void Initialize()
+        public override TabletReference Tablet
         {
-            _pointer = new VMultiAbsolutePointer(Tablet, _virtualScreen!);
+            get => base.Tablet;
+            set
+            {
+                base.Tablet = value;
+                _pointer = new VMultiAbsolutePointer(value, _virtualScreen!);
+            }
         }
 
         public override IAbsolutePointer Pointer

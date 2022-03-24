@@ -14,6 +14,16 @@ namespace VoiDPlugins.Library.VoiD
         private static readonly object _syncLock = new();
         private static readonly Dictionary<string, T> _map = new();
 
+        public static U Set<U>(TabletReference tabletReference, Func<U> factory) where U : T
+        {
+            lock (_syncLock)
+            {
+                ref var instance = ref CollectionsMarshal.GetValueRefOrAddDefault(_map, tabletReference.Properties.Name, out var exists);
+                instance = factory();
+                return (U)instance;
+            }
+        }
+
         public static U GetOrInitialize<U>(TabletReference tabletReference, Func<U> initialValue) where U : T
         {
             lock (_syncLock)

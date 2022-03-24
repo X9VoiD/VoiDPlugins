@@ -16,7 +16,7 @@ namespace VoiDPlugins.OutputMode
 
         public VMultiAbsolutePointer(TabletReference tabletReference, IVirtualScreen virtualScreen)
         {
-            _instance = GlobalStore<VMultiInstance>.GetOrInitialize(tabletReference, () => new VMultiInstance<AbsoluteInputReport>("VMultiAbs", new AbsoluteInputReport()));
+            _instance = GlobalStore<VMultiInstance>.Set(tabletReference, () => new VMultiInstance<AbsoluteInputReport>("VMultiAbs", new AbsoluteInputReport()));
             _rawPointer = _instance.Pointer;
             _conversionFactor = new Vector2(32767, 32767) / new Vector2(virtualScreen.Width, virtualScreen.Height);
         }

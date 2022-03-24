@@ -1,7 +1,7 @@
 using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Plugin.Tablet;
 
 namespace VoiDPlugins.OutputMode
 {
@@ -10,10 +10,14 @@ namespace VoiDPlugins.OutputMode
     {
         private VMultiRelativePointer? _pointer;
 
-        [OnDependencyLoad]
-        public void Initialize()
+        public override TabletReference Tablet
         {
-            _pointer = new VMultiRelativePointer(Tablet);
+            get => base.Tablet;
+            set
+            {
+                base.Tablet = value;
+                _pointer = new VMultiRelativePointer(value);
+            }
         }
 
         public override IRelativePointer Pointer

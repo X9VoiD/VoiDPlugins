@@ -18,7 +18,7 @@ namespace VoiDPlugins.OutputMode
         public WinInkBasePointer(string name, TabletReference tabletReference)
         {
             Instance = new VMultiInstance<DigitizerInputReport>(name, new DigitizerInputReport());
-            SharedStore = GlobalStore<SharedStore>.GetOrInitialize(tabletReference, () => new SharedStore());
+            SharedStore = GlobalStore<SharedStore>.Set(tabletReference, () => new SharedStore());
             SharedStore.InitializeData(INSTANCE, Instance);
             SharedStore.InitializeData(POINTER, this);
             SharedStore.InitializeData(ERASER_STATE, new Boxed<bool>(false));

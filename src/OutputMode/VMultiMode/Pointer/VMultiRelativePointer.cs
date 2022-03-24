@@ -15,7 +15,7 @@ namespace VoiDPlugins.OutputMode
 
         public VMultiRelativePointer(TabletReference tabletReference)
         {
-            _instance = GlobalStore<VMultiInstance>.GetOrInitialize(tabletReference, () => new VMultiInstance<RelativeInputReport>("VMultiAbs", new RelativeInputReport()));
+            _instance = GlobalStore<VMultiInstance>.Set(tabletReference, () => new VMultiInstance<RelativeInputReport>("VMultiAbs", new RelativeInputReport()));
             _rawPointer = _instance.Pointer;
         }
 
