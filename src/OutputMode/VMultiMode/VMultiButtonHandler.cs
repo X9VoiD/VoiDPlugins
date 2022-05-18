@@ -5,6 +5,7 @@ using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Tablet;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VoiD;
+using static VoiDPlugins.OutputMode.VMultiModeConstants;
 
 namespace VoiDPlugins.OutputMode
 {
@@ -30,7 +31,7 @@ namespace VoiDPlugins.OutputMode
 
         private void Initialize(TabletReference tabletReference)
         {
-            _instance = GlobalStore<VMultiInstance>.Get(tabletReference);
+            _instance = SharedStore.GetStore(tabletReference, STORE_KEY).Get<VMultiInstance>(INSTANCE);
         }
 
         public void Press(TabletReference tablet, IDeviceReport report)

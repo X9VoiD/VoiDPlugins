@@ -1,7 +1,6 @@
 using System.Numerics;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
-using VoiDPlugins.Library;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
 using VoiDPlugins.Library.VoiD;
@@ -12,26 +11,26 @@ namespace VoiDPlugins.OutputMode
     public unsafe abstract class WinInkBasePointer : IPressureHandler, ITiltHandler, IEraserHandler, ISynchronousPointer
     {
         protected DigitizerInputReport* RawPointer { get; }
-        protected VMultiInstance<DigitizerInputReport>? Instance { get; }
-        protected SharedStore? SharedStore { get; }
+        protected VMultiInstance<DigitizerInputReport> Instance { get; }
+        protected SharedStore SharedStore { get; }
         protected bool Dirty { get; set; }
 
         public WinInkBasePointer(string name, TabletReference tabletReference)
         {
             Instance = new VMultiInstance<DigitizerInputReport>(name, new DigitizerInputReport());
-            SharedStore = GlobalStore<SharedStore>.Set(tabletReference, () => new SharedStore());
-            SharedStore.InitializeData(INSTANCE, Instance);
-            SharedStore.InitializeData(POINTER, this);
-            SharedStore.InitializeData(ERASER_STATE, new Boxed<bool>(false));
-            SharedStore.InitializeData(MANUAL_ERASER, new Boxed<bool>(false));
+            SharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
+            SharedStore.Add(INSTANCE, Instance);
+            SharedStore.Add(POINTER, this);
+            SharedStore.Add(ERASER_STATE, false);
+            SharedStore.Add(MANUAL_ERASER, false);
             RawPointer = Instance.Pointer;
         }
 
         public void SetEraser(bool isEraser)
         {
-            if (!SharedStore!.GetData<Boxed<bool>>(MANUAL_ERASER).Value)
+            if (!SharedStore.Get<bool>(MANUAL_ERASER))
             {
-                WindowsInkButtonHandler.EraserStateTransition(Instance!, ref GetEraser(), isEraser);
+                WindowsInkButtonHandler.EraserStateTransition(SharedStore, Instance, isEraser);
             }
         }
 
@@ -57,11 +56,6 @@ namespace VoiDPlugins.OutputMode
                 Dirty = false;
                 Instance!.Write();
             }
-        }
-
-        private ref Boxed<bool> GetEraser()
-        {
-            return ref SharedStore!.GetData<Boxed<bool>>(ERASER_STATE);
         }
     }
 }
