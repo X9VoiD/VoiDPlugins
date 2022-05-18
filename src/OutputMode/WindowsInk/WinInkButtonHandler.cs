@@ -58,6 +58,7 @@ namespace VoiDPlugins.OutputMode
                     EraserStateTransition(_instance!, ref eraserState, true);
                     break;
             }
+            _instance!.Write();
         }
 
         public void Release(TabletReference tablet, IDeviceReport report)
@@ -77,6 +78,7 @@ namespace VoiDPlugins.OutputMode
                     EraserStateTransition(_instance!, ref GetEraser(), false);
                     break;
             }
+            _instance!.Write();
         }
 
         public static void EraserStateTransition(VMultiInstance instance, ref Boxed<bool> eraserState, bool isEraser)

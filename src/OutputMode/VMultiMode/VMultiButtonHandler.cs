@@ -36,11 +36,13 @@ namespace VoiDPlugins.OutputMode
         public void Press(TabletReference tablet, IDeviceReport report)
         {
             _instance!.EnableButtonBit(Bindings[Button!]);
+            _instance.Write();
         }
 
         public void Release(TabletReference tablet, IDeviceReport report)
         {
             _instance!.DisableButtonBit(Bindings[Button!]);
+            _instance.Write();
         }
     }
 }
