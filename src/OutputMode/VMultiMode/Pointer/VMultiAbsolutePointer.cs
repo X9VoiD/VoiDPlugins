@@ -13,6 +13,7 @@ namespace VoiDPlugins.OutputMode
         private readonly AbsoluteInputReport* _rawPointer;
         private readonly VMultiInstance<AbsoluteInputReport>? _instance;
         private Vector2 _conversionFactor;
+        private bool _dirty;
 
         public VMultiAbsolutePointer(TabletReference tabletReference, IVirtualScreen virtualScreen)
         {
@@ -34,7 +35,11 @@ namespace VoiDPlugins.OutputMode
 
         public void Flush()
         {
-            _instance!.Write();
+            if (_dirty)
+            {
+                _dirty = false;
+                _instance!.Write();
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ namespace VoiDPlugins.OutputMode
         private readonly RelativeInputReport* _rawPointer;
         private readonly VMultiInstance<RelativeInputReport>? _instance;
         private Vector2 _error;
+        private bool _dirty;
 
         public VMultiRelativePointer(TabletReference tabletReference)
         {
@@ -25,6 +26,7 @@ namespace VoiDPlugins.OutputMode
             _error = new Vector2(delta.X % 1, delta.Y % 1);
             _rawPointer->X = (byte)delta.X;
             _rawPointer->Y = (byte)delta.Y;
+            _dirty = true;
         }
 
         public void Reset()
@@ -33,7 +35,11 @@ namespace VoiDPlugins.OutputMode
 
         public void Flush()
         {
-            _instance!.Write();
+            if (_dirty)
+            {
+                _dirty = false;
+                _instance!.Write();
+            }
         }
     }
 }

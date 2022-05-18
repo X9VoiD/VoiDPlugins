@@ -14,6 +14,7 @@ namespace VoiDPlugins.OutputMode
         protected DigitizerInputReport* RawPointer { get; }
         protected VMultiInstance<DigitizerInputReport>? Instance { get; }
         protected SharedStore? SharedStore { get; }
+        protected bool Dirty { get; set; }
 
         public WinInkBasePointer(string name, TabletReference tabletReference)
         {
@@ -51,7 +52,11 @@ namespace VoiDPlugins.OutputMode
 
         public void Flush()
         {
-            Instance!.Write();
+            if (Dirty)
+            {
+                Dirty = false;
+                Instance!.Write();
+            }
         }
 
         private ref Boxed<bool> GetEraser()

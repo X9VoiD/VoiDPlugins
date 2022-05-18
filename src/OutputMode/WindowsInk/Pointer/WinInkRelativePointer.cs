@@ -26,6 +26,7 @@ namespace VoiDPlugins.OutputMode
             _currentPoint = Vector2.Clamp(_currentPoint + delta, Vector2.Zero, _maxPoint);
             RawPointer->X = (ushort)_currentPoint.X;
             RawPointer->Y = (ushort)_currentPoint.Y;
+            Dirty = true;
         }
     }
 }
