@@ -28,6 +28,7 @@ namespace VoiDPlugins.OutputMode
             delta += _error;
             _error = new Vector2(delta.X % 1, delta.Y % 1);
             _currentPoint = Vector2.Clamp(_currentPoint + delta, Vector2.Zero, _maxPoint);
+            SetInternalPosition(_currentPoint);
             RawPointer->X = (ushort)_currentPoint.X;
             RawPointer->Y = (ushort)_currentPoint.Y;
             Dirty = true;

@@ -14,6 +14,7 @@ namespace VoiDPlugins.OutputMode
     {
         private readonly IVirtualScreen _screen;
         private ThinVMultiAbsPointer? _osPointer;
+        private Vector2 _internalPos;
         protected DigitizerInputReport* RawPointer { get; }
         protected VMultiInstance<DigitizerInputReport> Instance { get; }
         protected SharedStore SharedStore { get; }
@@ -73,7 +74,7 @@ namespace VoiDPlugins.OutputMode
         public void Reset()
         {
             if (_osPointer is not null && !ForcedSync)
-                _osPointer.SetPosition(new Vector2(RawPointer->X, RawPointer->Y));
+                SyncOSCursor();
         }
 
         public void Flush()
@@ -83,10 +84,19 @@ namespace VoiDPlugins.OutputMode
                 Dirty = false;
 
                 if (ForcedSync)
-                    _osPointer?.SetPosition(new Vector2(RawPointer->X, RawPointer->Y));
-
+                    SyncOSCursor();
                 Instance.Write();
             }
+        }
+
+        protected void SetInternalPosition(Vector2 pos)
+        {
+            _internalPos = pos;
+        }
+
+        private void SyncOSCursor()
+        {
+            _osPointer?.SetPosition(_internalPos);
         }
     }
 }

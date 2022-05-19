@@ -21,6 +21,7 @@ namespace VoiDPlugins.OutputMode
             if (pos == _prev)
                 return;
 
+            SetInternalPosition(pos);
             Instance.EnableButtonBit((int)WindowsInkButtonFlags.InRange);
             pos *= _conversionFactor;
             RawPointer->X = (ushort)pos.X;
