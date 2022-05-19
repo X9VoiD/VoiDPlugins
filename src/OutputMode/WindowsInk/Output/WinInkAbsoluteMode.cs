@@ -14,6 +14,14 @@ namespace VoiDPlugins.OutputMode
         private WinInkAbsolutePointer? _pointer;
         private IVirtualScreen? _virtualScreen;
 
+        [BooleanProperty("Sync", "Synchronize OS cursor with Windows Ink's current position when pen goes out of range.")]
+        [DefaultPropertyValue(true)]
+        public bool Sync { get; set; } = true;
+
+        [BooleanProperty("Forced Sync", "If this and \"Sync\" is enabled, the OS cursor will always be resynced with Windows Ink's current position.")]
+        [DefaultPropertyValue(false)]
+        public bool ForcedSync { get; set; }
+
         [Resolved]
         public IServiceProvider ServiceProvider
         {
@@ -26,7 +34,11 @@ namespace VoiDPlugins.OutputMode
             set
             {
                 base.Tablet = value;
-                _pointer = new WinInkAbsolutePointer(value, _virtualScreen!);
+                _pointer = new WinInkAbsolutePointer(value, _virtualScreen!)
+                {
+                    Sync = Sync,
+                    ForcedSync = ForcedSync
+                };
             }
         }
 
