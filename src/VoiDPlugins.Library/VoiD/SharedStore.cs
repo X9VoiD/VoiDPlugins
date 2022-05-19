@@ -49,6 +49,11 @@ namespace VoiDPlugins.Library.VoiD
             ((IDictionary<int, object>)_sharedStore).Add(key, value);
         }
 
+        public bool TryAdd(int key, object value)
+        {
+            return _sharedStore.TryAdd(key, value);
+        }
+
         public void Add(KeyValuePair<int, object> item)
         {
             ((ICollection<KeyValuePair<int, object>>)_sharedStore).Add(item);

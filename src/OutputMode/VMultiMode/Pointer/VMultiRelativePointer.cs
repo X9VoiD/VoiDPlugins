@@ -19,13 +19,21 @@ namespace VoiDPlugins.OutputMode
         public VMultiRelativePointer(TabletReference tabletReference)
         {
             _instance = new VMultiInstance<RelativeInputReport>("VMultiRel", new RelativeInputReport());
-            SharedStore.GetStore(tabletReference, STORE_KEY).Add(INSTANCE, _instance);
-            _rawPointer = _instance.Pointer;
+            if (SharedStore.GetStore(tabletReference, STORE_KEY).TryAdd(INSTANCE, _instance))
+            {
+                _rawPointer = _instance.Pointer;
+            }
+            else
+            {
+                _instance = null;
+            }
         }
 
         public void SetPosition(Vector2 delta)
         {
             if (delta == Vector2.Zero && _prev == Vector2.Zero)
+                return;
+            if (_rawPointer is null)
                 return;
 
             delta += _error;
@@ -42,10 +50,10 @@ namespace VoiDPlugins.OutputMode
 
         public void Flush()
         {
-            if (_dirty)
+            if (_dirty && _instance is not null)
             {
                 _dirty = false;
-                _instance!.Write();
+                _instance.Write();
             }
         }
     }

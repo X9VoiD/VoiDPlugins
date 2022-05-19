@@ -10,7 +10,8 @@ namespace VoiDPlugins.OutputMode
         private readonly Vector2 _conversionFactor;
         private Vector2 _prev;
 
-        public WinInkAbsolutePointer(TabletReference tabletReference, IVirtualScreen screen) : base("Windows Ink", tabletReference)
+        public WinInkAbsolutePointer(TabletReference tabletReference, IVirtualScreen screen)
+            : base("Windows Ink", tabletReference, screen)
         {
             _conversionFactor = new Vector2(32767, 32767) / new Vector2(screen.Width, screen.Height);
         }
@@ -18,6 +19,8 @@ namespace VoiDPlugins.OutputMode
         public void SetPosition(Vector2 pos)
         {
             if (pos == _prev)
+                return;
+            if (Instance is null)
                 return;
 
             Instance!.EnableButtonBit((int)WindowsInkButtonFlags.InRange);

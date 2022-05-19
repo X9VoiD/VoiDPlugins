@@ -21,14 +21,22 @@ namespace VoiDPlugins.OutputMode
         public VMultiAbsolutePointer(TabletReference tabletReference, IVirtualScreen virtualScreen)
         {
             _instance = new VMultiInstance<AbsoluteInputReport>("VMultiAbs", new AbsoluteInputReport());
-            SharedStore.GetStore(tabletReference, STORE_KEY).Add(INSTANCE, _instance);
-            _rawPointer = _instance.Pointer;
-            _conversionFactor = new Vector2(32767, 32767) / new Vector2(virtualScreen.Width, virtualScreen.Height);
+            if (SharedStore.GetStore(tabletReference, STORE_KEY).TryAdd(INSTANCE, _instance))
+            {
+                _rawPointer = _instance.Pointer;
+                _conversionFactor = new Vector2(32767, 32767) / new Vector2(virtualScreen.Width, virtualScreen.Height);
+            }
+            else
+            {
+                _instance = null;
+            }
         }
 
         public void SetPosition(Vector2 pos)
         {
             if (pos == _prev)
+                return;
+            if (_rawPointer is null)
                 return;
 
             pos *= _conversionFactor;
@@ -44,10 +52,10 @@ namespace VoiDPlugins.OutputMode
 
         public void Flush()
         {
-            if (_dirty)
+            if (_dirty && _instance is not null)
             {
                 _dirty = false;
-                _instance!.Write();
+                _instance.Write();
             }
         }
     }
