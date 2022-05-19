@@ -13,24 +13,18 @@ namespace VoiDPlugins.OutputMode
     public unsafe abstract class WinInkBasePointer : IPressureHandler, ITiltHandler, IEraserHandler, ISynchronousPointer
     {
         private readonly IVirtualScreen _screen;
-        private ThinVMultiAbsPointer? _osPointer;
+        private ThinOSPointer? _osPointer;
         private Vector2 _internalPos;
         protected DigitizerInputReport* RawPointer { get; }
         protected VMultiInstance<DigitizerInputReport> Instance { get; }
         protected SharedStore SharedStore { get; }
         protected bool Dirty { get; set; }
 
-        [Property("Sync")]
-        [ToolTip("Synchronize OS cursor with Windows Ink's current position when pen goes out of range.")]
-        [DefaultPropertyValue(true)]
         public bool Sync
         {
-            set => _osPointer = value ? new ThinVMultiAbsPointer(_screen) : null;
+            set => _osPointer = value ? new ThinOSPointer(_screen) : null;
         }
 
-        [Property("Forced Sync")]
-        [ToolTip("If this and \"Sync\" is enabled, the OS cursor will always be resynced with Windows Ink's current position.")]
-        [DefaultPropertyValue(false)]
         public bool ForcedSync { get; set; }
 
         public WinInkBasePointer(string name, TabletReference tabletReference, IVirtualScreen screen)
