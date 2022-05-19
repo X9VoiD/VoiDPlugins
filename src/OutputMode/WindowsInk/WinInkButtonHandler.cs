@@ -30,12 +30,24 @@ namespace VoiDPlugins.OutputMode
 
         private void Initialize(TabletReference tabletReference)
         {
-            _sharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
-            _instance = _sharedStore.Get<VMultiInstance>(INSTANCE);
+            try
+            {
+                _sharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
+                _instance = _sharedStore.Get<VMultiInstance>(INSTANCE);
+            }
+            catch
+            {
+                Log.Write("WinInk",
+                          "Windows Ink bindings are being used without an active Windows Ink output mode.",
+                          LogLevel.Error);
+            }
         }
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
+            if (_instance == null)
+                return;
+
             var eraserState = _sharedStore.Get<bool>(ERASER_STATE);
             switch (Button)
             {
@@ -62,6 +74,9 @@ namespace VoiDPlugins.OutputMode
 
         public void Release(TabletReference tablet, IDeviceReport report)
         {
+            if (_instance == null)
+                return;
+
             switch (Button)
             {
                 case "Pen Tip":

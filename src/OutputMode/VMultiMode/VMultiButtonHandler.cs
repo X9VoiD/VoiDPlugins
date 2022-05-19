@@ -31,18 +31,33 @@ namespace VoiDPlugins.OutputMode
 
         private void Initialize(TabletReference tabletReference)
         {
-            _instance = SharedStore.GetStore(tabletReference, STORE_KEY).Get<VMultiInstance>(INSTANCE);
+            try
+            {
+                _instance = SharedStore.GetStore(tabletReference, STORE_KEY).Get<VMultiInstance>(INSTANCE);
+            }
+            catch
+            {
+                Log.Write("VMulti",
+                          "VMulti bindings are being used without an active VMulti output mode.",
+                          LogLevel.Error);
+            }
         }
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
-            _instance!.EnableButtonBit(Bindings[Button!]);
+            if (_instance == null)
+                return;
+
+            _instance.EnableButtonBit(Bindings[Button!]);
             _instance.Write();
         }
 
         public void Release(TabletReference tablet, IDeviceReport report)
         {
-            _instance!.DisableButtonBit(Bindings[Button!]);
+            if (_instance == null)
+                return;
+
+            _instance.DisableButtonBit(Bindings[Button!]);
             _instance.Write();
         }
     }
