@@ -15,8 +15,8 @@ namespace VoiDPlugins.OutputMode
         private readonly IVirtualScreen _screen;
         private ThinVMultiAbsPointer? _osPointer;
         protected DigitizerInputReport* RawPointer { get; }
-        protected VMultiInstance<DigitizerInputReport>? Instance { get; }
-        protected SharedStore? SharedStore { get; }
+        protected VMultiInstance<DigitizerInputReport> Instance { get; }
+        protected SharedStore SharedStore { get; }
         protected bool Dirty { get; set; }
 
         [Property("Sync")]
@@ -46,53 +46,46 @@ namespace VoiDPlugins.OutputMode
             }
             else
             {
-                Instance = null;
-                SharedStore = null;
-                RawPointer = null;
+                Instance = SharedStore.Get<VMultiInstance<DigitizerInputReport>>(INSTANCE);
+                RawPointer = Instance.Pointer;
             }
         }
 
         public void SetEraser(bool isEraser)
         {
-            if (!SharedStore?.Get<bool>(MANUAL_ERASER) ?? false)
+            if (!SharedStore.Get<bool>(MANUAL_ERASER))
             {
-                WindowsInkButtonHandler.EraserStateTransition(SharedStore!, Instance!, isEraser);
+                WindowsInkButtonHandler.EraserStateTransition(SharedStore, Instance, isEraser);
             }
         }
 
         public void SetPressure(float percentage)
         {
-            if (RawPointer != null)
-                RawPointer->Pressure = (ushort)(percentage * 8191);
+            RawPointer->Pressure = (ushort)(percentage * 8191);
         }
 
         public void SetTilt(Vector2 tilt)
         {
-            if (RawPointer != null)
-            {
-                RawPointer->XTilt = (byte)tilt.X;
-                RawPointer->YTilt = (byte)tilt.Y;
-            }
+            RawPointer->XTilt = (byte)tilt.X;
+            RawPointer->YTilt = (byte)tilt.Y;
         }
 
         public void Reset()
         {
-            if (RawPointer is not null && _osPointer is not null && !ForcedSync)
-            {
+            if (_osPointer is not null && !ForcedSync)
                 _osPointer.SetPosition(new Vector2(RawPointer->X, RawPointer->Y));
-            }
         }
 
         public void Flush()
         {
-            if (RawPointer is not null && Dirty)
+            if (Dirty)
             {
                 Dirty = false;
 
                 if (ForcedSync)
                     _osPointer?.SetPosition(new Vector2(RawPointer->X, RawPointer->Y));
 
-                Instance!.Write();
+                Instance.Write();
             }
         }
     }

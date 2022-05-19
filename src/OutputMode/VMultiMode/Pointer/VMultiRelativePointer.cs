@@ -11,7 +11,7 @@ namespace VoiDPlugins.OutputMode
     public unsafe class VMultiRelativePointer : IRelativePointer, ISynchronousPointer
     {
         private readonly RelativeInputReport* _rawPointer;
-        private readonly VMultiInstance<RelativeInputReport>? _instance;
+        private readonly VMultiInstance<RelativeInputReport> _instance;
         private Vector2 _error;
         private Vector2 _prev;
         private bool _dirty;
@@ -19,14 +19,11 @@ namespace VoiDPlugins.OutputMode
         public VMultiRelativePointer(TabletReference tabletReference)
         {
             _instance = new VMultiInstance<RelativeInputReport>("VMultiRel", new RelativeInputReport());
-            if (SharedStore.GetStore(tabletReference, STORE_KEY).TryAdd(INSTANCE, _instance))
-            {
-                _rawPointer = _instance.Pointer;
-            }
-            else
-            {
-                _instance = null;
-            }
+            var sharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
+            if (!sharedStore.TryAdd(INSTANCE, _instance))
+                _instance = sharedStore.Get<VMultiInstance<RelativeInputReport>>(INSTANCE);
+
+            _rawPointer = _instance.Pointer;
         }
 
         public void SetPosition(Vector2 delta)

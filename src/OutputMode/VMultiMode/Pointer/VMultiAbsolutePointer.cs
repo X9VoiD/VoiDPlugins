@@ -13,7 +13,7 @@ namespace VoiDPlugins.OutputMode
     public unsafe class VMultiAbsolutePointer : IAbsolutePointer, ISynchronousPointer
     {
         private readonly AbsoluteInputReport* _rawPointer;
-        private readonly VMultiInstance<AbsoluteInputReport>? _instance;
+        private readonly VMultiInstance<AbsoluteInputReport> _instance;
         private Vector2 _conversionFactor;
         private Vector2 _prev;
         private bool _dirty;
@@ -21,22 +21,17 @@ namespace VoiDPlugins.OutputMode
         public VMultiAbsolutePointer(TabletReference tabletReference, IVirtualScreen virtualScreen)
         {
             _instance = new VMultiInstance<AbsoluteInputReport>("VMultiAbs", new AbsoluteInputReport());
-            if (SharedStore.GetStore(tabletReference, STORE_KEY).TryAdd(INSTANCE, _instance))
-            {
-                _rawPointer = _instance.Pointer;
-                _conversionFactor = new Vector2(32767, 32767) / new Vector2(virtualScreen.Width, virtualScreen.Height);
-            }
-            else
-            {
-                _instance = null;
-            }
+            var sharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
+            if (!sharedStore.TryAdd(INSTANCE, _instance))
+                _instance = sharedStore.Get<VMultiInstance<AbsoluteInputReport>>(INSTANCE);
+
+            _rawPointer = _instance.Pointer;
+            _conversionFactor = new Vector2(32767, 32767) / new Vector2(virtualScreen.Width, virtualScreen.Height);
         }
 
         public void SetPosition(Vector2 pos)
         {
             if (pos == _prev)
-                return;
-            if (_rawPointer is null)
                 return;
 
             pos *= _conversionFactor;
@@ -52,7 +47,7 @@ namespace VoiDPlugins.OutputMode
 
         public void Flush()
         {
-            if (_dirty && _instance is not null)
+            if (_dirty)
             {
                 _dirty = false;
                 _instance.Write();

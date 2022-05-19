@@ -20,10 +20,8 @@ namespace VoiDPlugins.OutputMode
         {
             if (pos == _prev)
                 return;
-            if (Instance is null)
-                return;
 
-            Instance!.EnableButtonBit((int)WindowsInkButtonFlags.InRange);
+            Instance.EnableButtonBit((int)WindowsInkButtonFlags.InRange);
             pos *= _conversionFactor;
             RawPointer->X = (ushort)pos.X;
             RawPointer->Y = (ushort)pos.Y;

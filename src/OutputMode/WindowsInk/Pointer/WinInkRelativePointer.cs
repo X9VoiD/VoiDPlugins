@@ -23,8 +23,6 @@ namespace VoiDPlugins.OutputMode
         {
             if (_prev == Vector2.Zero && delta == Vector2.Zero)
                 return;
-            if (Instance is null)
-                return;
 
             Instance.EnableButtonBit((int)WindowsInkButtonFlags.InRange);
             delta += _error;
