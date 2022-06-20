@@ -58,8 +58,7 @@ namespace VoiDPlugins.Library.VMulti
 
             if (VMultiDev == null)
             {
-                Log.Write(Name, "Cannot find VirtualHID", LogLevel.Error);
-                Log.Write(Name, "Install VMulti driver here: https://github.com/X9VoiD/vmulti-bin/releases/latest", LogLevel.Error);
+                Log.WriteNotify(Name, "Cannot find VirtualHID. Install VMulti driver here: https://github.com/X9VoiD/vmulti-bin/releases/latest", LogLevel.Error);
             }
 
             return VMultiDev;
