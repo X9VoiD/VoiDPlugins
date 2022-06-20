@@ -37,7 +37,7 @@ namespace VoiDPlugins.OutputMode
             }
             catch
             {
-                Log.Write("WinInk",
+                Log.WriteNotify("WinInk",
                           "Windows Ink bindings are being used without an active Windows Ink output mode.",
                           LogLevel.Error);
             }
@@ -52,6 +52,7 @@ namespace VoiDPlugins.OutputMode
             switch (Button)
             {
                 case "Pen Tip":
+                    _sharedStore.Set(TIP_PRESSED, true);
                     _instance.EnableButtonBit((int)(eraserState ? WindowsInkButtonFlags.Eraser : WindowsInkButtonFlags.Press));
                     break;
 
@@ -80,6 +81,7 @@ namespace VoiDPlugins.OutputMode
             switch (Button)
             {
                 case "Pen Tip":
+                    _sharedStore.Set(TIP_PRESSED, false);
                     _instance.DisableButtonBit((int)(WindowsInkButtonFlags.Press | WindowsInkButtonFlags.Eraser));
                     break;
 

@@ -37,6 +37,7 @@ namespace VoiDPlugins.OutputMode
                 SharedStore.TryAdd(POINTER, this);
                 SharedStore.TryAdd(ERASER_STATE, false);
                 SharedStore.TryAdd(MANUAL_ERASER, false);
+                SharedStore.TryAdd(TIP_PRESSED, false);
                 RawPointer = Instance.Pointer;
             }
             else
@@ -76,6 +77,9 @@ namespace VoiDPlugins.OutputMode
             if (Dirty)
             {
                 Dirty = false;
+
+                if (!SharedStore.Get<bool>(TIP_PRESSED))
+                    SetPressure(0);
 
                 if (ForcedSync)
                     SyncOSCursor();
