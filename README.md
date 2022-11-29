@@ -1,4 +1,4 @@
-# VoiDPlugins ![.NET Core](https://github.com/X9VoiD/VoiDPlugins/workflows/.NET%20Core/badge.svg)
+# VoiDPlugins [![.NET](https://github.com/X9VoiD/VoiDPlugins/actions/workflows/dotnet.yml/badge.svg)](https://github.com/X9VoiD/VoiDPlugins/actions/workflows/dotnet.yml)
 
 VoiDPlugins is a collection of extensions for [OpenTabletDriver](https://github.com/InfinityGhost/OpenTabletDriver).
 
