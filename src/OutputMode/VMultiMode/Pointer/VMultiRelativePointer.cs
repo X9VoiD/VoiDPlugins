@@ -32,7 +32,7 @@ namespace VoiDPlugins.OutputMode
 
         public void SetPosition(Vector2 delta)
         {
-            if (delta == Vector2.Zero && _prev == Vector2.Zero)
+            if (delta == Vector2.Zero)
                 return;
 
             delta += _error;
