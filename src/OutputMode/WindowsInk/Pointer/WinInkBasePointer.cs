@@ -12,6 +12,7 @@ namespace VoiDPlugins.OutputMode
 {
     public unsafe abstract class WinInkBasePointer : IPressureHandler, ITiltHandler, IEraserHandler, ISynchronousPointer
     {
+        private readonly Vector2 _conversionFactor;
         private readonly IVirtualScreen _screen;
         private ThinOSPointer? _osPointer;
         private Vector2 _internalPos;
@@ -30,20 +31,22 @@ namespace VoiDPlugins.OutputMode
         public WinInkBasePointer(string name, TabletReference tabletReference, IVirtualScreen screen)
         {
             _screen = screen;
-            Instance = new VMultiInstance<DigitizerInputReport>(name, new DigitizerInputReport());
+            _conversionFactor = new Vector2(32767, 32767) / new Vector2(screen.Width, screen.Height);
             SharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
-            if (SharedStore.TryAdd(INSTANCE, Instance))
+            Instance = SharedStore.GetOrUpdate(INSTANCE, createInstance, out var updated);
+            RawPointer = Instance.Pointer;
+
+            if (updated)
             {
-                SharedStore.TryAdd(POINTER, this);
-                SharedStore.TryAdd(ERASER_STATE, false);
-                SharedStore.TryAdd(MANUAL_ERASER, false);
-                SharedStore.TryAdd(TIP_PRESSED, false);
-                RawPointer = Instance.Pointer;
+                SharedStore.SetOrAdd(POINTER, this);
+                SharedStore.SetOrAdd(ERASER_STATE, false);
+                SharedStore.SetOrAdd(MANUAL_ERASER, false);
+                SharedStore.SetOrAdd(TIP_PRESSED, false);
             }
-            else
+
+            VMultiInstance<DigitizerInputReport> createInstance()
             {
-                Instance = SharedStore.Get<VMultiInstance<DigitizerInputReport>>(INSTANCE);
-                RawPointer = Instance.Pointer;
+                return new VMultiInstance<DigitizerInputReport>(name, new DigitizerInputReport());
             }
         }
 
@@ -85,6 +88,11 @@ namespace VoiDPlugins.OutputMode
                     SyncOSCursor();
                 Instance.Write();
             }
+        }
+
+        protected Vector2 Convert(Vector2 pos)
+        {
+            return pos * _conversionFactor;
         }
 
         protected void SetInternalPosition(Vector2 pos)

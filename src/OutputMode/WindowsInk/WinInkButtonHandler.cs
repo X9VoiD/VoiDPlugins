@@ -97,7 +97,7 @@ namespace VoiDPlugins.OutputMode
             _instance.Write();
         }
 
-        public static void EraserStateTransition(SharedStore store, VMultiInstance instance, bool isEraser)
+        internal static void EraserStateTransition(SharedStore store, VMultiInstance instance, bool isEraser)
         {
             var eraserState = store.Get<bool>(ERASER_STATE);
             if (eraserState != isEraser)

@@ -7,13 +7,11 @@ namespace VoiDPlugins.OutputMode
 {
     public unsafe class WinInkAbsolutePointer : WinInkBasePointer, IAbsolutePointer
     {
-        private readonly Vector2 _conversionFactor;
         private Vector2 _prev;
 
         public WinInkAbsolutePointer(TabletReference tabletReference, IVirtualScreen screen)
             : base("Windows Ink", tabletReference, screen)
         {
-            _conversionFactor = new Vector2(32767, 32767) / new Vector2(screen.Width, screen.Height);
         }
 
         public void SetPosition(Vector2 pos)
@@ -23,7 +21,7 @@ namespace VoiDPlugins.OutputMode
 
             SetInternalPosition(pos);
             Instance.EnableButtonBit((int)WindowsInkButtonFlags.InRange);
-            pos *= _conversionFactor;
+            pos = Convert(pos);
             RawPointer->X = (ushort)pos.X;
             RawPointer->Y = (ushort)pos.Y;
             Dirty = true;

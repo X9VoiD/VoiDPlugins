@@ -18,19 +18,21 @@ namespace VoiDPlugins.OutputMode
 
         public VMultiRelativePointer(TabletReference tabletReference)
         {
-            _instance = new VMultiInstance<RelativeInputReport>("VMultiRel", new RelativeInputReport());
             var sharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
-            if (!sharedStore.TryAdd(INSTANCE, _instance))
-                _instance = sharedStore.Get<VMultiInstance<RelativeInputReport>>(INSTANCE);
-
+            _instance = sharedStore.GetOrUpdate(REL_INSTANCE, createInstance, out var updated);
             _rawPointer = _instance.Pointer;
+
+            sharedStore.SetOrAdd(MODE, REL_INSTANCE);
+
+            static VMultiInstance<RelativeInputReport> createInstance()
+            {
+                return new VMultiInstance<RelativeInputReport>("VMultiRel", new RelativeInputReport());
+            }
         }
 
         public void SetPosition(Vector2 delta)
         {
             if (delta == Vector2.Zero && _prev == Vector2.Zero)
-                return;
-            if (_rawPointer is null)
                 return;
 
             delta += _error;

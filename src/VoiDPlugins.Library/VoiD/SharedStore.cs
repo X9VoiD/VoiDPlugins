@@ -1,22 +1,15 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using OpenTabletDriver.Plugin.Tablet;
 
 namespace VoiDPlugins.Library.VoiD
 {
-    public class SharedStore : IDictionary<int, object>
+    public class SharedStore
     {
         private static readonly Dictionary<TabletReference, Dictionary<string, SharedStore>> _storeMap = new(new Comparer());
 
         private readonly Dictionary<int, object> _sharedStore = new();
-
-        public object this[int key] { get => ((IDictionary<int, object>)_sharedStore)[key]; set => ((IDictionary<int, object>)_sharedStore)[key] = value; }
-        public ICollection<int> Keys => ((IDictionary<int, object>)_sharedStore).Keys;
-        public ICollection<object> Values => ((IDictionary<int, object>)_sharedStore).Values;
-        public int Count => ((ICollection<KeyValuePair<int, object>>)_sharedStore).Count;
-        public bool IsReadOnly => ((ICollection<KeyValuePair<int, object>>)_sharedStore).IsReadOnly;
 
         public static SharedStore GetStore(TabletReference reference, string storeKey)
         {
@@ -39,69 +32,52 @@ namespace VoiDPlugins.Library.VoiD
             return (T)_sharedStore[key];
         }
 
+        public T GetOrUpdate<T>(int key, Func<T> valueFactory, out bool updated)
+        {
+            if (_sharedStore.TryGetValue(key, out object? value) && SafeCast<T>(value) is T casted)
+            {
+                updated = false;
+                return casted;
+            }
+
+            var newValue = valueFactory();
+            _sharedStore[key] = newValue!;
+            updated = true;
+            return newValue;
+        }
+
         public void Set<T>(int key, T value)
         {
             _sharedStore[key] = value!;
         }
 
-        public void Add(int key, object value)
+        public void Add<T>(int key, T value)
         {
-            ((IDictionary<int, object>)_sharedStore).Add(key, value);
+            _sharedStore.Add(key, value!);
         }
 
-        public bool TryAdd(int key, object value)
+        public void SetOrAdd<T>(int key, T value)
         {
-            return _sharedStore.TryAdd(key, value);
+            if (_sharedStore.ContainsKey(key))
+            {
+                _sharedStore[key] = value!;
+            }
+            else
+            {
+                _sharedStore.Add(key, value!);
+            }
         }
 
-        public void Add(KeyValuePair<int, object> item)
+        private static T? SafeCast<T>(object value)
         {
-            ((ICollection<KeyValuePair<int, object>>)_sharedStore).Add(item);
-        }
-
-        public void Clear()
-        {
-            ((ICollection<KeyValuePair<int, object>>)_sharedStore).Clear();
-        }
-
-        public bool Contains(KeyValuePair<int, object> item)
-        {
-            return ((ICollection<KeyValuePair<int, object>>)_sharedStore).Contains(item);
-        }
-
-        public bool ContainsKey(int key)
-        {
-            return ((IDictionary<int, object>)_sharedStore).ContainsKey(key);
-        }
-
-        public void CopyTo(KeyValuePair<int, object>[] array, int arrayIndex)
-        {
-            ((ICollection<KeyValuePair<int, object>>)_sharedStore).CopyTo(array, arrayIndex);
-        }
-
-        public IEnumerator<KeyValuePair<int, object>> GetEnumerator()
-        {
-            return ((IEnumerable<KeyValuePair<int, object>>)_sharedStore).GetEnumerator();
-        }
-
-        public bool Remove(int key)
-        {
-            return ((IDictionary<int, object>)_sharedStore).Remove(key);
-        }
-
-        public bool Remove(KeyValuePair<int, object> item)
-        {
-            return ((ICollection<KeyValuePair<int, object>>)_sharedStore).Remove(item);
-        }
-
-        public bool TryGetValue(int key, [MaybeNullWhen(false)] out object value)
-        {
-            return ((IDictionary<int, object>)_sharedStore).TryGetValue(key, out value);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)_sharedStore).GetEnumerator();
+            try
+            {
+                return (T)value;
+            }
+            catch
+            {
+                return default;
+            }
         }
 
         private class Comparer : IEqualityComparer<TabletReference>

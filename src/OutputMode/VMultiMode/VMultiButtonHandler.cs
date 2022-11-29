@@ -33,7 +33,9 @@ namespace VoiDPlugins.OutputMode
         {
             try
             {
-                _instance = SharedStore.GetStore(tabletReference, STORE_KEY).Get<VMultiInstance>(INSTANCE);
+                var sharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
+                var mode = sharedStore.Get<int>(MODE);
+                _instance = sharedStore.Get<VMultiInstance>(mode);
             }
             catch
             {

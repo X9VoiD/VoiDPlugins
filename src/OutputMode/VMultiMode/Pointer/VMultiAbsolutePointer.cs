@@ -20,13 +20,17 @@ namespace VoiDPlugins.OutputMode
 
         public VMultiAbsolutePointer(TabletReference tabletReference, IVirtualScreen virtualScreen)
         {
-            _instance = new VMultiInstance<AbsoluteInputReport>("VMultiAbs", new AbsoluteInputReport());
             var sharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
-            if (!sharedStore.TryAdd(INSTANCE, _instance))
-                _instance = sharedStore.Get<VMultiInstance<AbsoluteInputReport>>(INSTANCE);
-
+            _instance = sharedStore.GetOrUpdate(ABS_INSTANCE, createInstance, out _);
             _rawPointer = _instance.Pointer;
             _conversionFactor = new Vector2(32767, 32767) / new Vector2(virtualScreen.Width, virtualScreen.Height);
+
+            sharedStore.SetOrAdd(MODE, ABS_INSTANCE);
+
+            static VMultiInstance<AbsoluteInputReport> createInstance()
+            {
+                return new VMultiInstance<AbsoluteInputReport>("VMultiAbs", new AbsoluteInputReport());
+            }
         }
 
         public void SetPosition(Vector2 pos)
