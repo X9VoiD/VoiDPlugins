@@ -9,8 +9,6 @@ namespace VoiDPlugins.OutputMode
     {
         private Vector2 _maxPoint;
         private Vector2 _currentPoint;
-        private Vector2 _error;
-        private Vector2 _prev;
 
         public WinInkRelativePointer(TabletReference tabletReference, IVirtualScreen screen)
             : base("Windows Ink", tabletReference, screen)
@@ -21,11 +19,6 @@ namespace VoiDPlugins.OutputMode
 
         public void SetPosition(Vector2 delta)
         {
-            if (delta == Vector2.Zero)
-                return;
-
-            delta += _error;
-            _error = new Vector2(delta.X % 1, delta.Y % 1);
             _currentPoint = Vector2.Clamp(_currentPoint + delta, Vector2.Zero, _maxPoint);
 
             SetInternalPosition(_currentPoint);
@@ -34,7 +27,6 @@ namespace VoiDPlugins.OutputMode
             RawPointer->X = (ushort)pos.X;
             RawPointer->Y = (ushort)pos.Y;
             Dirty = true;
-            _prev = delta;
         }
     }
 }
