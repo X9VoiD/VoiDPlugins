@@ -7,33 +7,17 @@ namespace VoiDPlugins.OutputMode
     {
         private readonly IntPtr _penHandle;
         private readonly POINTER_TYPE_INFO[]? pointer;
-        private readonly uint _pointerId;
         private readonly IntPtr _sourceDevice;
 
         public unsafe TouchDevice()
         {
-            NativeMethods.GetPointerDevices(out uint count, null);
-            POINTER_DEVICE_INFO[] pointerDevices = new POINTER_DEVICE_INFO[count];
-            NativeMethods.GetPointerDevices(out count, pointerDevices);
-            for (int i = 0; i < count; i++)
-            {
-                var device = pointerDevices[i];
-                if (device.pointerDeviceType == POINTER_DEVICE_TYPE.EXTERNAL_PEN ||
-                    device.pointerDeviceType == POINTER_DEVICE_TYPE.INTEGRATED_PEN)
-                {
-                    _pointerId = device.startingCursorId;
-                    _sourceDevice = new IntPtr(device.device);
-                }
-            }
-
             var _pointerInfo = new POINTER_INFO
             {
                 pointerType = POINTER_INPUT_TYPE.PT_PEN,
-                pointerId = _pointerId,
+                pointerId = 1,
                 frameId = 0,
                 pointerFlags = POINTER_FLAGS.NONE,
                 sourceDevice = _sourceDevice,
-                hwndTarget = NativeMethods.GetForegroundWindow(),
                 ptPixelLocation = new POINT(),
                 ptPixelLocationRaw = new POINT(),
                 dwTime = 0,
