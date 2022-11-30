@@ -8,6 +8,7 @@ namespace VoiDPlugins.OutputMode
         private readonly TouchDevice _touchDevice;
         private bool _inContact;
         private bool _lastContact;
+        private bool _dirty;
 
         public TouchPointerHandler()
         {
@@ -18,7 +19,11 @@ namespace VoiDPlugins.OutputMode
 
         public void Flush()
         {
-            _touchDevice.Inject();
+            if (_dirty)
+            {
+                _touchDevice.Inject();
+                _dirty = false;
+            }
         }
 
         public void Reset()
@@ -28,6 +33,7 @@ namespace VoiDPlugins.OutputMode
 
         public void SetPosition(Vector2 pos)
         {
+            _dirty = true;
             _touchDevice.SetPointerFlags(POINTER_FLAGS.INRANGE);
             _touchDevice.SetPosition(new POINT((int)pos.X, (int)pos.Y));
             if (_inContact != _lastContact)
