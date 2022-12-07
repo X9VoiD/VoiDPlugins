@@ -44,7 +44,7 @@ namespace VoiDPlugins.Filter
         [SliderProperty("Precision Multiplier", 0.0f, 10f, 0.3f), DefaultPropertyValue(0.3f)]
         public float Scale { get; set; }
 
-        public PipelinePosition Position => PipelinePosition.PostTransform;
+        public PipelinePosition Position => PipelinePosition.PreTransform;
 
         public void Consume(IDeviceReport value)
         {
