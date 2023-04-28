@@ -30,17 +30,12 @@ jobs:
 
     - name: Build
       env:
-        path: ${{ matrix.path }} 
+        path: ${{ matrix.path }}
         plugin: ${{ matrix.plugin }}
-      run: dotnet publish ./src/$path/$plugin --configuration Release --framework net6.0 -o ./build/$plugin
+      run: ./build.sh --single "$path/$plugin" --no-zip
 
     - uses: actions/upload-artifact@main
       with:
         name: ${{ matrix.plugin }}
         path: |
-          ./build/${{ matrix.plugin }}/*.dll
-          !./build/${{ matrix.plugin }}/*.json
-          !./build/${{ matrix.plugin }}/*.pdb
-          !./build/${{ matrix.plugin }}/OpenTabletDriver.Plugin.dll
-          !./build/${{ matrix.plugin }}/Newtonsoft.Json.dll
-          !./build/${{ matrix.plugin }}/HidSharpCore.dll
+          ./build/${{ matrix.plugin }}/*

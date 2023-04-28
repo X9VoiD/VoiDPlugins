@@ -1,53 +1,36 @@
-using System;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Display;
-using OpenTabletDriver.Plugin.Platform.Pointer;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Output;
+using OpenTabletDriver.Platform.Display;
 
 namespace VoiDPlugins.OutputMode
 {
     [PluginName("Windows Ink Relative Mode")]
     public class WinInkRelativeMode : RelativeOutputMode
     {
-        private WinInkRelativePointer? _pointer;
-        private IVirtualScreen? _virtualScreen;
+        // [Setting("Sync")]
+        // [ToolTip("Synchronize OS cursor with Windows Ink's current position when pen goes out of range.")]
+        // [DefaultValue(true)]
+        // public bool Sync { get; set; } = true;
 
-        [Property("Sync")]
-        [ToolTip("Synchronize OS cursor with Windows Ink's current position when pen goes out of range.")]
-        [DefaultPropertyValue(true)]
-        public bool Sync { get; set; } = true;
+        // [Setting("Forced Sync")]
+        // [ToolTip("If this and \"Sync\" is enabled, the OS cursor will always be resynced with Windows Ink's current position.")]
+        // [DefaultValue(false)]
+        // public bool ForcedSync { get; set; }
 
-        [Property("Forced Sync")]
-        [ToolTip("If this and \"Sync\" is enabled, the OS cursor will always be resynced with Windows Ink's current position.")]
-        [DefaultPropertyValue(false)]
-        public bool ForcedSync { get; set; }
-
-        [Resolved]
-        public IServiceProvider ServiceProvider
+        public WinInkRelativeMode(InputDevice inputDevice, IVirtualScreen virtualScreen, ISettingsProvider settingsProvider)
+            : base(inputDevice, CreatePointer(inputDevice, virtualScreen))
         {
-            set => _virtualScreen = (IVirtualScreen)value.GetService(typeof(IVirtualScreen))!;
+            settingsProvider.Inject(this);
         }
 
-        public override TabletReference Tablet
+        private static WinInkRelativePointer CreatePointer(InputDevice inputDevice, IVirtualScreen virtualScreen)
         {
-            get => base.Tablet;
-            set
+            return new WinInkRelativePointer(inputDevice, virtualScreen)
             {
-                base.Tablet = value;
-                _pointer = new WinInkRelativePointer(value, _virtualScreen!)
-                {
-                    Sync = Sync,
-                    ForcedSync = ForcedSync
-                };
-            }
-        }
-
-        public override IRelativePointer Pointer
-        {
-            get => _pointer!;
-            set { }
+                Sync = true,
+                ForcedSync = false
+            };
         }
     }
 }

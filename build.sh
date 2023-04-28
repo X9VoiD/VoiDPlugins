@@ -7,10 +7,12 @@ output="./build"
 declare -a extra_options
 dry_run="false"
 plugins=("Binding/ScriptRunner" "Filter/MeL" "Filter/PrecisionControl" "Filter/Reconstructor" "OutputMode/TouchEmu" "OutputMode/VMultiMode" "OutputMode/WindowsInk")
+extra_whitelist=("VoiD.dll" "MathNet.Numerics.dll" "VMulti.dll")
 generate_zip="true"
 generate_sha256="true"
 clean_builds="true"
 sources="./src"
+single_build=""
 
 contains_space() { [[ "$1" =~ " " ]]; return $?; }
 
@@ -32,11 +34,27 @@ build_plugin() {
     echo "Building $1"
     echo
     local plugin="$1"
-    local plugin_output="$2"
+    local plugin_output="$output/${plugin##*/}"
     wrap_exec dotnet publish "$sources/$plugin" -c $config -f $framework -o "$plugin_output" "${extra_options[@]}"
-    wrap_exec rm "$plugin_output/${plugin##*/}.deps.json"
-    wrap_exec rm "$plugin_output/OpenTabletDriver.Plugin.dll"
-    wrap_exec rm "$plugin_output/OpenTabletDriver.Plugin.pdb"
+    cleanup_plugin "$plugin_output"
+
+    if [ "$generate_zip" = "true" ]; then
+        generate_zip "$plugin_output" "$plugin_output.zip"
+    fi
+}
+
+cleanup_plugin() {
+    local plugin="$1"
+    local plugin_name="${plugin##*/}"
+
+    for file in "${plugin}"/*; do
+        local filename="${file#$plugin/}"
+
+        if [[ "$filename" != "${plugin_name}.dll" && ! "${extra_whitelist[@]}" =~ "$filename" ]]; then
+            echo "  removing: $filename"
+            wrap_exec rm "$file"
+        fi
+    done
 }
 
 generate_zip() {
@@ -60,6 +78,10 @@ generate_zip() {
 
 while [ $# -gt 0 ]; do
     case $1 in
+        --single)
+            single_build="$2"
+            shift
+            ;;
         --sources)
             sources="$2"
             shift
@@ -110,11 +132,12 @@ done
 
 clean_output
 
+if [[ -n "$single_build" ]]; then
+    build_plugin "$single_build"
+    exit
+fi
+
 for plugin in "${plugins[@]}"; do
-    plugin_output="$output/${plugin##*/}"
-    build_plugin "$plugin" "$plugin_output"
-    if [ "$generate_zip" = "true" ]; then
-        generate_zip "$plugin_output" "$plugin_output.zip"
-    fi
+    build_plugin "$plugin"
     echo
 done

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using HidSharp;
-using OpenTabletDriver.Plugin;
+using OpenTabletDriver;
 using VoiDPlugins.Library.VMulti.Device;
 
 namespace VoiDPlugins.Library.VMulti

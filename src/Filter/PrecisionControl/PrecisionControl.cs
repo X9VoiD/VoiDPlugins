@@ -1,9 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Numerics;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Output;
+using OpenTabletDriver.Tablet;
 
 namespace VoiDPlugins.Filter
 {
@@ -16,10 +17,15 @@ namespace VoiDPlugins.Filter
 
         public static string[] ValidModes => new[] { "Toggle", "Hold" };
 
-        [Property("Mode"), PropertyValidated(nameof(ValidModes))]
+        [Setting("Mode"), MemberValidated(nameof(ValidModes))]
         public string? Mode { set; get; }
 
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public PrecisionControlBinding(ISettingsProvider settingsProvider)
+        {
+            settingsProvider.Inject(this);
+        }
+
+        public void Press(IDeviceReport report)
         {
             if (Mode == "Toggle")
                 IsActive = !IsActive;
@@ -29,7 +35,7 @@ namespace VoiDPlugins.Filter
             SetPosition = true;
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report)
+        public void Release(IDeviceReport report)
         {
             if (Mode == "Hold")
                 IsActive = false;
@@ -37,14 +43,19 @@ namespace VoiDPlugins.Filter
     }
 
     [PluginName("Precision Control")]
-    public class PrecisionControl : IPositionedPipelineElement<IDeviceReport>
+    public class PrecisionControl : IDevicePipelineElement
     {
         public event Action<IDeviceReport>? Emit;
 
-        [SliderProperty("Precision Multiplier", 0.0f, 10f, 0.3f), DefaultPropertyValue(0.3f)]
+        [RangeSetting("Precision Multiplier", 0.0f, 10f, 0.3f), DefaultValue(0.3f)]
         public float Scale { get; set; }
 
         public PipelinePosition Position => PipelinePosition.PostTransform;
+
+        public PrecisionControl(ISettingsProvider settingsProvider)
+        {
+            settingsProvider.Inject(this);
+        }
 
         public void Consume(IDeviceReport value)
         {

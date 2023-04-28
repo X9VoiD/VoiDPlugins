@@ -1,28 +1,33 @@
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Tablet;
-using OpenTabletDriver.Plugin.Timing;
+using System.ComponentModel;
+using OpenTabletDriver;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Output;
+using OpenTabletDriver.Tablet;
 using VoiDPlugins.Filter.MeL.Core;
 
 namespace VoiDPlugins.Filter.MeL
 {
     [PluginName("MeL Async")]
-    public class MeLAsync : AsyncPositionedPipelineElement<IDeviceReport>
+    public class MeLAsync : AsyncDevicePipelineElement
     {
         private readonly MLCore Core = new MLCore();
         private readonly HPETDeltaStopwatch watch = new HPETDeltaStopwatch();
         private float? reportMsAvg;
 
+        public MeLAsync(ISettingsProvider settingsProvider, ITimer scheduler) : base(scheduler)
+        {
+            settingsProvider.Inject(this);
+        }
+
         public override PipelinePosition Position => PipelinePosition.PostTransform;
 
-        [Property("Samples"), DefaultPropertyValue(20)]
+        [Setting("Samples"), DefaultValue(20)]
         public int Samples { set => Core.Samples = value; }
 
-        [Property("Complexity"), DefaultPropertyValue(2)]
+        [Setting("Complexity"), DefaultValue(2)]
         public int Complexity { set => Core.Complexity = value; }
 
-        [Property("Weight"), DefaultPropertyValue(1.4f)]
+        [Setting("Weight"), DefaultValue(1.4f)]
         public float Weight { set => Core.Weight = value; }
 
         protected override void ConsumeState()

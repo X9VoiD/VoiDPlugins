@@ -1,8 +1,7 @@
-using System.Collections.Generic;
 using System.Numerics;
-using OpenTabletDriver.Plugin.Platform.Display;
-using OpenTabletDriver.Plugin.Platform.Pointer;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver;
+using OpenTabletDriver.Platform.Display;
+using OpenTabletDriver.Platform.Pointer;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
 using VoiDPlugins.Library.VoiD;
@@ -18,9 +17,9 @@ namespace VoiDPlugins.OutputMode
         private Vector2 _prev;
         private bool _dirty;
 
-        public VMultiAbsolutePointer(TabletReference tabletReference, IVirtualScreen virtualScreen)
+        public VMultiAbsolutePointer(InputDevice inputDevice, IVirtualScreen virtualScreen)
         {
-            var sharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
+            var sharedStore = SharedStore.GetStore(inputDevice, STORE_KEY);
             _instance = sharedStore.GetOrUpdate(ABS_INSTANCE, createInstance, out _);
             _rawPointer = _instance.Pointer;
             _conversionFactor = new Vector2(32767, 32767) / new Vector2(virtualScreen.Width, virtualScreen.Height);
@@ -56,6 +55,14 @@ namespace VoiDPlugins.OutputMode
                 _dirty = false;
                 _instance.Write();
             }
+        }
+
+        public void MouseDown(MouseButton button)
+        {
+        }
+
+        public void MouseUp(MouseButton button)
+        {
         }
     }
 }

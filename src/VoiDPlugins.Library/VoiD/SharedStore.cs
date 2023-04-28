@@ -1,21 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver;
+using OpenTabletDriver.Tablet;
 
 namespace VoiDPlugins.Library.VoiD
 {
     public class SharedStore
     {
-        private static readonly Dictionary<TabletReference, Dictionary<string, SharedStore>> _storeMap = new(new Comparer());
+        private static readonly Dictionary<InputDevice, Dictionary<string, SharedStore>> _storeMap = new();
 
         private readonly Dictionary<int, object> _sharedStore = new();
 
-        public static SharedStore GetStore(TabletReference reference, string storeKey)
+        public static SharedStore GetStore(InputDevice inputDevice, string storeKey)
         {
             lock (_storeMap)
             {
-                ref var tabletStore = ref CollectionsMarshal.GetValueRefOrAddDefault(_storeMap, reference, out var exists);
+                ref var tabletStore = ref CollectionsMarshal.GetValueRefOrAddDefault(_storeMap, inputDevice, out var exists);
                 if (!exists)
                     tabletStore = new Dictionary<string, SharedStore>();
 
@@ -77,19 +78,6 @@ namespace VoiDPlugins.Library.VoiD
             catch
             {
                 return default;
-            }
-        }
-
-        private class Comparer : IEqualityComparer<TabletReference>
-        {
-            public bool Equals(TabletReference? x, TabletReference? y)
-            {
-                return x?.Properties.Name == y?.Properties.Name;
-            }
-
-            public int GetHashCode(TabletReference obj)
-            {
-                return obj.Properties.Name.GetHashCode();
             }
         }
     }

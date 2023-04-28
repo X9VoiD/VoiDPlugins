@@ -1,13 +1,16 @@
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Output;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace VoiDPlugins.OutputMode
 {
-    [PluginName("Touch Emu"), SupportedPlatform(PluginPlatform.Windows)]
+    [PluginName("Touch Emu"), SupportedPlatform(SystemPlatform.Windows)]
     public class TouchOutputMode : AbsoluteOutputMode
     {
-        public override IAbsolutePointer Pointer { get; set; } = new TouchPointerHandler();
+        public TouchOutputMode(InputDevice tablet, ISettingsProvider settingsProvider) : base(tablet, new TouchPointerHandler())
+        {
+            settingsProvider.Inject(this);
+        }
     }
 }

@@ -1,14 +1,15 @@
 using System;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Tablet;
+using System.ComponentModel;
+using OpenTabletDriver;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Output;
+using OpenTabletDriver.Tablet;
 using VoiDPlugins.Filter.MeL.Core;
 
 namespace VoiDPlugins.Filter.MeL
 {
     [PluginName("MeL Filter")]
-    public class MeLFilter : IPositionedPipelineElement<IDeviceReport>
+    public class MeLFilter : IDevicePipelineElement
     {
         private readonly MLCore Core = new();
         private bool rateLimit;
@@ -17,16 +18,21 @@ namespace VoiDPlugins.Filter.MeL
 
         public PipelinePosition Position => PipelinePosition.PostTransform;
 
-        [Property("Offset"), Unit("ms"), DefaultPropertyValue(0f)]
+        public MeLFilter(ISettingsProvider settingsProvider)
+        {
+            settingsProvider.Inject(this);
+        }
+
+        [Setting("Offset"), Unit("ms"), DefaultValue(0f)]
         public float Offset { set; get; }
 
-        [Property("Samples"), DefaultPropertyValue(20)]
+        [Setting("Samples"), DefaultValue(20)]
         public int Samples { set => Core.Samples = value; }
 
-        [Property("Complexity"), DefaultPropertyValue(2)]
+        [Setting("Complexity"), DefaultValue(2)]
         public int Complexity { set => Core.Complexity = value; }
 
-        [Property("Weight"), DefaultPropertyValue(1.4f)]
+        [Setting("Weight"), DefaultValue(1.4f)]
         public float Weight { set => Core.Weight = value; }
 
         public void Consume(IDeviceReport value)
