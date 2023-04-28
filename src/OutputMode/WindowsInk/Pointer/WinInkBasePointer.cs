@@ -1,8 +1,9 @@
 using System.Numerics;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Platform.Display;
-using OpenTabletDriver.Plugin.Platform.Pointer;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Platform.Display;
+using OpenTabletDriver.Platform.Pointer;
+using OpenTabletDriver.Tablet;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
 using VoiDPlugins.Library.VoiD;
@@ -28,11 +29,11 @@ namespace VoiDPlugins.OutputMode
 
         public bool ForcedSync { get; set; }
 
-        public WinInkBasePointer(string name, TabletReference tabletReference, IVirtualScreen screen)
+        public WinInkBasePointer(string name, InputDevice inputDevice, IVirtualScreen screen)
         {
             _screen = screen;
             _conversionFactor = new Vector2(32767, 32767) / new Vector2(screen.Width, screen.Height);
-            SharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
+            SharedStore = SharedStore.GetStore(inputDevice, STORE_KEY);
             Instance = SharedStore.GetOrUpdate(INSTANCE, createInstance, out var updated);
             RawPointer = Instance.Pointer;
 
@@ -103,6 +104,16 @@ namespace VoiDPlugins.OutputMode
         private void SyncOSCursor()
         {
             _osPointer?.SetPosition(_internalPos);
+        }
+
+        public abstract void SetPosition(Vector2 pos);
+
+        public void MouseDown(MouseButton button)
+        {
+        }
+
+        public void MouseUp(MouseButton button)
+        {
         }
     }
 }

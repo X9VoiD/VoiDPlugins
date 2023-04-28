@@ -1,7 +1,7 @@
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using OpenTabletDriver.Plugin.Platform.Display;
+using OpenTabletDriver.Platform.Display;
 
 namespace VoiDPlugins.OutputMode
 {

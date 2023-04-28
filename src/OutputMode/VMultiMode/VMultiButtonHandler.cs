@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Tablet;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VoiD;
 using static VoiDPlugins.OutputMode.VMultiModeConstants;
@@ -23,29 +23,27 @@ namespace VoiDPlugins.OutputMode
 
         public static string[] ValidButtons { get; } = Bindings.Keys.ToArray();
 
-        [Property("Button"), PropertyValidated(nameof(ValidButtons))]
+        [Setting("Button"), MemberValidated(nameof(ValidButtons))]
         public string? Button { get; set; }
 
-        [TabletReference]
-        public TabletReference Reference { set => Initialize(value); }
-
-        private void Initialize(TabletReference tabletReference)
+        public VMultiButtonHandler(InputDevice inputDevice, ISettingsProvider settingsProvider)
         {
+            settingsProvider.Inject(this);
             try
             {
-                var sharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
+                var sharedStore = SharedStore.GetStore(inputDevice, STORE_KEY);
                 var mode = sharedStore.Get<int>(MODE);
                 _instance = sharedStore.Get<VMultiInstance>(mode);
             }
             catch
             {
-                Log.Write("VMulti",
+                Log.WriteNotify("VMulti",
                           "VMulti bindings are being used without an active VMulti output mode.",
                           LogLevel.Error);
             }
         }
 
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public void Press(IDeviceReport report)
         {
             if (_instance == null)
                 return;
@@ -54,7 +52,7 @@ namespace VoiDPlugins.OutputMode
             _instance.Write();
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report)
+        public void Release(IDeviceReport report)
         {
             if (_instance == null)
                 return;

@@ -1,6 +1,6 @@
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Tablet;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
 using VoiDPlugins.Library.VoiD;
@@ -22,17 +22,15 @@ namespace VoiDPlugins.OutputMode
             "Eraser (Hold)"
         };
 
-        [Property("Button"), PropertyValidated(nameof(ValidButtons))]
+        [Setting("Button"), MemberValidated(nameof(ValidButtons))]
         public string? Button { get; set; }
 
-        [TabletReference]
-        public TabletReference Reference { set => Initialize(value); }
-
-        private void Initialize(TabletReference tabletReference)
+        public WindowsInkButtonHandler(InputDevice inputDevice, ISettingsProvider settingsProvider)
         {
+            settingsProvider.Inject(this);
             try
             {
-                _sharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
+                _sharedStore = SharedStore.GetStore(inputDevice, STORE_KEY);
                 _instance = _sharedStore.Get<VMultiInstance>(INSTANCE);
             }
             catch
@@ -43,7 +41,7 @@ namespace VoiDPlugins.OutputMode
             }
         }
 
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public void Press(IDeviceReport report)
         {
             if (_instance == null)
                 return;
@@ -73,7 +71,7 @@ namespace VoiDPlugins.OutputMode
             _instance.Write();
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report)
+        public void Release(IDeviceReport report)
         {
             if (_instance == null)
                 return;

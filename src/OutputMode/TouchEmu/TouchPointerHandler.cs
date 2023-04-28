@@ -1,5 +1,5 @@
 using System.Numerics;
-using OpenTabletDriver.Plugin.Platform.Pointer;
+using OpenTabletDriver.Platform.Pointer;
 
 namespace VoiDPlugins.OutputMode
 {
@@ -24,6 +24,14 @@ namespace VoiDPlugins.OutputMode
                 _touchDevice.Inject();
                 _dirty = false;
             }
+        }
+
+        public void MouseDown(MouseButton button)
+        {
+        }
+
+        public void MouseUp(MouseButton button)
+        {
         }
 
         public void Reset()

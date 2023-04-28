@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Diagnostics;
-using OpenTabletDriver.Plugin;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Tablet;
 
 namespace VoiDPlugins.Binding.ScriptRunner
 {
     [PluginName("Script Runner")]
     public class ScriptRunner : IStateBinding
     {
-        [Property("Run")]
+        [Setting("Run")]
         public string? Script { get; set; }
 
-        public void Press(TabletReference tablet, IDeviceReport report)
+        public void Press(IDeviceReport report)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace VoiDPlugins.Binding.ScriptRunner
             }
         }
 
-        public void Release(TabletReference tablet, IDeviceReport report)
+        public void Release(IDeviceReport report)
         {
             return;
         }

@@ -1,20 +1,19 @@
 using System.Numerics;
-using OpenTabletDriver.Plugin.Platform.Display;
-using OpenTabletDriver.Plugin.Platform.Pointer;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver;
+using OpenTabletDriver.Platform.Display;
 
 namespace VoiDPlugins.OutputMode
 {
-    public unsafe class WinInkAbsolutePointer : WinInkBasePointer, IAbsolutePointer
+    public unsafe class WinInkAbsolutePointer : WinInkBasePointer
     {
         private Vector2 _prev;
 
-        public WinInkAbsolutePointer(TabletReference tabletReference, IVirtualScreen screen)
-            : base("Windows Ink", tabletReference, screen)
+        public WinInkAbsolutePointer(InputDevice inputDevice, IVirtualScreen screen)
+            : base("Windows Ink", inputDevice, screen)
         {
         }
 
-        public void SetPosition(Vector2 pos)
+        public override void SetPosition(Vector2 pos)
         {
             if (pos == _prev)
                 return;

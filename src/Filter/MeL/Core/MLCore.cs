@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using MathNet.Numerics;
-using OpenTabletDriver.Plugin;
+using OpenTabletDriver;
 using VoiDPlugins.Library;
 
 namespace VoiDPlugins.Filter.MeL.Core

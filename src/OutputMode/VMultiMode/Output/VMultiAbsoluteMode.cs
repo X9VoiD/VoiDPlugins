@@ -1,39 +1,17 @@
-using System;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Display;
-using OpenTabletDriver.Plugin.Platform.Pointer;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Output;
+using OpenTabletDriver.Platform.Display;
 
 namespace VoiDPlugins.OutputMode
 {
     [PluginName("VMulti Absolute Mode")]
     public class VMultiAbsoluteMode : AbsoluteOutputMode
     {
-        private VMultiAbsolutePointer? _pointer;
-        private IVirtualScreen? _virtualScreen;
-
-        [Resolved]
-        public IServiceProvider ServiceProvider
+        public VMultiAbsoluteMode(InputDevice inputDevice, IVirtualScreen screen, ISettingsProvider settingsProvider)
+            : base(inputDevice, new VMultiAbsolutePointer(inputDevice, screen))
         {
-            set => _virtualScreen = (IVirtualScreen)value.GetService(typeof(IVirtualScreen))!;
-        }
-
-        public override TabletReference Tablet
-        {
-            get => base.Tablet;
-            set
-            {
-                base.Tablet = value;
-                _pointer = new VMultiAbsolutePointer(value, _virtualScreen!);
-            }
-        }
-
-        public override IAbsolutePointer Pointer
-        {
-            get => _pointer!;
-            set { }
+            settingsProvider.Inject(this);
         }
     }
 }

@@ -1,6 +1,6 @@
 using System.Numerics;
-using OpenTabletDriver.Plugin.Platform.Pointer;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver;
+using OpenTabletDriver.Platform.Pointer;
 using VoiDPlugins.Library.VMulti;
 using VoiDPlugins.Library.VMulti.Device;
 using VoiDPlugins.Library.VoiD;
@@ -16,9 +16,9 @@ namespace VoiDPlugins.OutputMode
         private Vector2 _prev;
         private bool _dirty;
 
-        public VMultiRelativePointer(TabletReference tabletReference)
+        public VMultiRelativePointer(InputDevice inputDevice)
         {
-            var sharedStore = SharedStore.GetStore(tabletReference, STORE_KEY);
+            var sharedStore = SharedStore.GetStore(inputDevice, STORE_KEY);
             _instance = sharedStore.GetOrUpdate(REL_INSTANCE, createInstance, out var updated);
             _rawPointer = _instance.Pointer;
 
@@ -54,6 +54,14 @@ namespace VoiDPlugins.OutputMode
                 _dirty = false;
                 _instance.Write();
             }
+        }
+
+        public void MouseDown(MouseButton button)
+        {
+        }
+
+        public void MouseUp(MouseButton button)
+        {
         }
     }
 }

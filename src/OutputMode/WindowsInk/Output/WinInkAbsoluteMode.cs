@@ -1,51 +1,37 @@
-using System;
-using OpenTabletDriver.Plugin.Attributes;
-using OpenTabletDriver.Plugin.DependencyInjection;
-using OpenTabletDriver.Plugin.Output;
-using OpenTabletDriver.Plugin.Platform.Display;
-using OpenTabletDriver.Plugin.Platform.Pointer;
-using OpenTabletDriver.Plugin.Tablet;
+using OpenTabletDriver;
+using OpenTabletDriver.Attributes;
+using OpenTabletDriver.Output;
+using OpenTabletDriver.Platform.Display;
 
 namespace VoiDPlugins.OutputMode
 {
     [PluginName("Windows Ink Absolute Mode")]
     public class WinInkAbsoluteMode : AbsoluteOutputMode
     {
-        private WinInkAbsolutePointer? _pointer;
-        private IVirtualScreen? _virtualScreen;
+        // Hardcode the following for now since OTD 0.7.x doesn't allow us to pass
+        // these settings to the pointer.
 
-        [BooleanProperty("Sync", "Synchronize OS cursor with Windows Ink's current position when pen goes out of range.")]
-        [DefaultPropertyValue(true)]
-        public bool Sync { get; set; } = true;
+        // [Setting("Sync", "Synchronize OS cursor with Windows Ink's current position when pen goes out of range.")]
+        // [DefaultValue(true)]
+        // public bool Sync { get; set; } = true;
 
-        [BooleanProperty("Forced Sync", "If this and \"Sync\" is enabled, the OS cursor will always be resynced with Windows Ink's current position.")]
-        [DefaultPropertyValue(false)]
-        public bool ForcedSync { get; set; }
+        // [Setting("Forced Sync", "If this and \"Sync\" is enabled, the OS cursor will always be resynced with Windows Ink's current position.")]
+        // [DefaultValue(false)]
+        // public bool ForcedSync { get; set; }
 
-        [Resolved]
-        public IServiceProvider ServiceProvider
+        public WinInkAbsoluteMode(InputDevice inputDevice, IVirtualScreen virtualScreen, ISettingsProvider settingsProvider)
+            : base(inputDevice, CreatePointer(inputDevice, virtualScreen))
         {
-            set => _virtualScreen = (IVirtualScreen)value.GetService(typeof(IVirtualScreen))!;
+            settingsProvider.Inject(this);
         }
 
-        public override TabletReference Tablet
+        private static WinInkAbsolutePointer CreatePointer(InputDevice inputDevice, IVirtualScreen virtualScreen)
         {
-            get => base.Tablet;
-            set
+            return new WinInkAbsolutePointer(inputDevice, virtualScreen)
             {
-                base.Tablet = value;
-                _pointer = new WinInkAbsolutePointer(value, _virtualScreen!)
-                {
-                    Sync = Sync,
-                    ForcedSync = ForcedSync
-                };
-            }
-        }
-
-        public override IAbsolutePointer Pointer
-        {
-            get => _pointer!;
-            set { }
+                Sync = true,
+                ForcedSync = false
+            };
         }
     }
 }
