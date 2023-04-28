@@ -7,7 +7,7 @@ output="./build"
 declare -a extra_options
 dry_run="false"
 plugins=("Binding/ScriptRunner" "Filter/MeL" "Filter/PrecisionControl" "Filter/Reconstructor" "OutputMode/TouchEmu" "OutputMode/VMultiMode" "OutputMode/WindowsInk")
-extra_whitelist=("VoiD.dll" "MathNet.Numerics.dll")
+extra_whitelist=("VoiD.dll" "MathNet.Numerics.dll" "VMulti.dll")
 generate_zip="true"
 generate_sha256="true"
 clean_builds="true"
