@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
@@ -13,7 +14,7 @@ namespace VoiDPlugins.OutputMode
         private readonly RelativeInputReport* _rawPointer;
         private readonly VMultiInstance<RelativeInputReport> _instance;
         private Vector2 _error;
-        private Vector2 _prev;
+        private Vector2 _delta;
         private bool _dirty;
 
         public VMultiRelativePointer(TabletReference tabletReference)
@@ -34,13 +35,8 @@ namespace VoiDPlugins.OutputMode
         {
             if (delta == Vector2.Zero)
                 return;
-
-            delta += _error;
-            _error = new Vector2(delta.X % 1, delta.Y % 1);
-            _rawPointer->X = (byte)delta.X;
-            _rawPointer->Y = (byte)delta.Y;
             _dirty = true;
-            _prev = delta;
+            _delta = delta;
         }
 
         public void Reset()
@@ -52,8 +48,26 @@ namespace VoiDPlugins.OutputMode
             if (_dirty && _instance is not null)
             {
                 _dirty = false;
-                _instance.Write();
+                Send(_delta);
             }
+        }
+
+        private void Send(Vector2 delta)
+        {
+            var remaining = delta + _error;
+            while (Math.Abs(remaining.X) > 127 || Math.Abs(remaining.Y) > 127)
+            {
+                var partialDelta = new Vector2(Math.Clamp(remaining.X, -127, 127), Math.Clamp(remaining.Y, -127, 127));
+                _rawPointer->X = (byte)partialDelta.X;
+                _rawPointer->Y = (byte)partialDelta.Y;
+                _instance.Write();
+                remaining -= partialDelta;
+            }
+
+            _error = new Vector2(remaining.X % 1, remaining.Y % 1);
+            _rawPointer->X = (byte)remaining.X;
+            _rawPointer->Y = (byte)remaining.Y;
+            _instance.Write();
         }
     }
 }
