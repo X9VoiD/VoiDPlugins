@@ -37,11 +37,15 @@ namespace VoiDPlugins.Filter.MeL
                 if (reportMs >= reportMsAvg * 0.75f)
                     Core.Add(report.Position);
             }
+            else
+            {
+                OnEmit();
+            }
         }
 
         protected override void UpdateState()
         {
-            if (State is ITabletReport report && Core.IsReady)
+            if (State is ITabletReport report && Core.IsReady && PenIsInRange())
             {
                 try
                 {
@@ -52,10 +56,7 @@ namespace VoiDPlugins.Filter.MeL
                 {
                     Log.Write("MeLInterp", "Unknown error in MeLCore");
                 }
-            }
 
-            if (PenIsInRange() || State is not ITabletReport)
-            {
                 OnEmit();
             }
         }
