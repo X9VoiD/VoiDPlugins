@@ -8,7 +8,7 @@ namespace VoiDPlugins.Library.VMulti.Device
     {
         public DigitizerInputReport()
         {
-            Header = new VMultiReportHeader(Unsafe.SizeOf<DigitizerInputReport>(), 0x05);
+            Header = new VMultiReportHeader(Unsafe.SizeOf<DigitizerInputReport>(), 0x06);
             X = 0;
             Y = 0;
             Pressure = 0;
@@ -19,7 +19,7 @@ namespace VoiDPlugins.Library.VMulti.Device
         public VMultiReportHeader Header;
         public ushort X;            // X position of the pen from 0 to 32767
         public ushort Y;            // Y position of the pen from 0 to 32767
-        public ushort Pressure;     // Pressure level from 0 to 8191
+        public ushort Pressure;     // Pressure level from 0 to 16383
         public byte XTilt;          // X tilt of the pen from -127 to 127
         public byte YTilt;          // Y tilt of the pen from -127 to 127
     }

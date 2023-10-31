@@ -60,7 +60,7 @@ namespace VoiDPlugins.OutputMode
 
         public void SetPressure(float percentage)
         {
-            RawPointer->Pressure = (ushort)(percentage * 8191);
+            RawPointer->Pressure = (ushort)(percentage * 16383);
         }
 
         public void SetTilt(Vector2 tilt)
