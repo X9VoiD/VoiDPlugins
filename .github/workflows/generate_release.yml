@@ -32,6 +32,6 @@ jobs:
       run: |
         declare -a files
         for file in $(ls ./build); do
-          files+=("-a" "./build/$file")
+          files+=("./build/$file")
         done
-        hub release create -d -m "VoiDPlugins v$TAG" "$TAG" "${files[@]}"
+        gh release create -d -t "VoiDPlugins v$TAG" "$TAG" "${files[@]}"
