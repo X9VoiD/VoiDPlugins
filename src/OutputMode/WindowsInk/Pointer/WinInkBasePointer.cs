@@ -1,5 +1,5 @@
 using System.Numerics;
-using OpenTabletDriver.Plugin.Attributes;
+using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Platform.Display;
 using OpenTabletDriver.Plugin.Platform.Pointer;
 using OpenTabletDriver.Plugin.Tablet;
@@ -13,6 +13,7 @@ namespace VoiDPlugins.OutputMode
     public unsafe abstract class WinInkBasePointer : IPressureHandler, ITiltHandler, IEraserHandler, ISynchronousPointer
     {
         private readonly Vector2 _conversionFactor;
+        private readonly int _pressureConv;
         private readonly IVirtualScreen _screen;
         private ThinOSPointer? _osPointer;
         private Vector2 _internalPos;
@@ -44,9 +45,25 @@ namespace VoiDPlugins.OutputMode
                 SharedStore.SetOrAdd(TIP_PRESSED, false);
             }
 
+            if (Instance.Extended)
+            {
+                Log.Write(name, "Using extended VMulti digitizer");
+                _pressureConv = 16383;
+            }
+            else
+            {
+                _pressureConv = 8191;
+            }
+
             VMultiInstance<DigitizerInputReport> createInstance()
             {
-                return new VMultiInstance<DigitizerInputReport>(name, new DigitizerInputReport());
+                return new VMultiInstance<DigitizerInputReport>(name, extended =>
+                {
+                    if (extended)
+                        return DigitizerInputReport.Extended();
+                    else
+                        return DigitizerInputReport.Normal();
+                });
             }
         }
 
@@ -60,7 +77,7 @@ namespace VoiDPlugins.OutputMode
 
         public void SetPressure(float percentage)
         {
-            RawPointer->Pressure = (ushort)(percentage * 16383);
+            RawPointer->Pressure = (ushort)(percentage * _pressureConv);
         }
 
         public void SetTilt(Vector2 tilt)
