@@ -20,10 +20,10 @@ namespace VoiDPlugins.Filter
         public static string[] ValidModes => new[] { "Toggle", "Hold" };
         public static string[] ValidRelativeModes => new[] { "Absolute", "Relative" };
 
-        [Property("Mode"), PropertyValidated(nameof(ValidModes))]
+        [Property("Mode"), PropertyValidated(nameof(ValidModes)), DefaultPropertyValue("Toggle")]
         public string? Mode { set; get; }
 
-        [Property("Relative Mode"), PropertyValidated(nameof(ValidRelativeModes))]
+        [Property("Relative Mode"), PropertyValidated(nameof(ValidRelativeModes)), DefaultPropertyValue("Absolute")]
         public string? RelativeMode { set; get; }
 
         [SliderProperty("Precision Multiplier", 0.0f, 10f, 0.3f), DefaultPropertyValue(0.3f)]
