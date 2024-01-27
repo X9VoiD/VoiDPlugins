@@ -20,10 +20,13 @@ namespace VoiDPlugins.Filter
         public static string[] ValidModes => new[] { "Toggle", "Hold" };
         public static string[] ValidRelativeModes => new[] { "Absolute", "Relative" };
 
-        [Property("Mode"), PropertyValidated(nameof(ValidModes)), DefaultPropertyValue("Toggle")]
+        [Property("Activation Mode"), PropertyValidated(nameof(ValidModes)), DefaultPropertyValue("Toggle")]
+        [ToolTip("Whether to toggle the precision mode or only activate while the button is held.")]
         public string? Mode { set; get; }
 
-        [Property("Relative Mode"), PropertyValidated(nameof(ValidRelativeModes)), DefaultPropertyValue("Absolute")]
+        [Property("Output Mode"), PropertyValidated(nameof(ValidRelativeModes)), DefaultPropertyValue("Absolute")]
+        [ToolTip("Whether to emulate the relative output mode or stick to absolute mode. "
+        + "In relative mode lifting the pen completely of the tablet and putting it down somewhere else does not change the position.")]
         public string? RelativeMode { set; get; }
 
         [SliderProperty("Precision Multiplier", 0.0f, 10f, 0.3f), DefaultPropertyValue(0.3f)]
