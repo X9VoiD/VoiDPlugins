@@ -15,6 +15,7 @@ namespace VoiDPlugins.Filter
         internal static bool IsActive { set; get; }
         internal static bool IsRelative { set; get; }
         internal static bool SetPosition { set; get; }
+        internal static float CurrentScale { set; get; }
 
         public static string[] ValidModes => new[] { "Toggle", "Hold" };
         public static string[] ValidRelativeModes => new[] { "Absolute", "Relative" };
@@ -24,6 +25,9 @@ namespace VoiDPlugins.Filter
 
         [Property("Relative Mode"), PropertyValidated(nameof(ValidRelativeModes))]
         public string? RelativeMode { set; get; }
+
+        [SliderProperty("Precision Multiplier", 0.0f, 10f, 0.3f), DefaultPropertyValue(0.3f)]
+        public float Scale { get; set; }
 
         public void Press(TabletReference tablet, IDeviceReport report)
         {
@@ -35,6 +39,7 @@ namespace VoiDPlugins.Filter
             IsRelative = (RelativeMode == "Relative");
 
 
+            CurrentScale = Scale;
             SetPosition = true;
         }
 
@@ -51,9 +56,6 @@ namespace VoiDPlugins.Filter
         public event Action<IDeviceReport>? Emit;
 
         private readonly HPETDeltaStopwatch _stopwatch = new HPETDeltaStopwatch();
-
-        [SliderProperty("Precision Multiplier", 0.0f, 10f, 0.3f), DefaultPropertyValue(0.3f)]
-        public float Scale { get; set; }
 
         [SliderProperty("Timeout", 100f, 1000f, 1f), DefaultPropertyValue(50), Unit("ms")]
         [ToolTip("Time period after which the position is reset in relative mode.")]
@@ -92,7 +94,7 @@ namespace VoiDPlugins.Filter
                 if (PrecisionControlBinding.IsActive)
                 {
                     var relativeTo = PrecisionControlBinding.IsRelative ? NewZero : PrecisionControlBinding.StartingPoint;
-                    var delta = (report.Position - relativeTo) * Scale;
+                    var delta = (report.Position - relativeTo) * PrecisionControlBinding.CurrentScale;
                     report.Position = PrecisionControlBinding.StartingPoint + delta;
                 }
 
